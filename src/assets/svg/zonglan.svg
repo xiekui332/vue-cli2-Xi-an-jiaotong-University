@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="首页" transform="translate(-293.000000, -20.000000)" stroke="#FFFFFF">
+            <g id="Top-Bar" transform="translate(240.000000, 0.000000)">
+                <g id="横" transform="translate(20.000000, 0.000000)">
+                    <g id="App">
+                        <g id="Content" transform="translate(34.000000, 21.000000)">
+                            <g id="Group">
+                                <path d="M8,10 L2,10 C0.896,10 0,9.104 0,8 L0,2 C0,0.896 0.896,0 2,0 L8,0 C9.104,0 10,0.896 10,2 L10,8 C10,9.104 9.104,10 8,10 Z" id="Stroke-1"></path>
+                                <path d="M8,23 L2,23 C0.896,23 0,22.104 0,21 L0,15 C0,13.896 0.896,13 2,13 L8,13 C9.104,13 10,13.896 10,15 L10,21 C10,22.104 9.104,23 8,23 Z" id="Stroke-1"></path>
+                                <path d="M21,10 L15,10 C13.896,10 13,9.104 13,8 L13,2 C13,0.896 13.896,0 15,0 L21,0 C22.104,0 23,0.896 23,2 L23,8 C23,9.104 22.104,10 21,10 Z" id="Stroke-1"></path>
+                                <path d="M21,23 L15,23 C13.896,23 13,22.104 13,21 L13,15 C13,13.896 13.896,13 15,13 L21,13 C22.104,13 23,13.896 23,15 L23,21 C23,22.104 22.104,23 21,23 Z" id="Stroke-1"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
