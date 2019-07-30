@@ -1,5 +1,5 @@
 <template>
-    <Maintenance v-if="hasEdit" @hasMainPage='hasMainPage' />
+    <Maintenance v-if="hasEdit" @hasMainPage='hasMainPage' :hasDisabled='hasDisabled' />
 
     <div id="detail" v-else>
         <HeaderSearch 
@@ -12,85 +12,70 @@
             :select3 = 'select3' 
             :select4 = 'select4' 
             :searchTex = 'searchTex'
-            @handleSearch = 'handleSearchRes'
+            @handleSearchRes = 'handleSearchRes'
         />
 
         <el-divider></el-divider>
 
         <div class="ma-btn-wrapper">
-            <el-row class="de-btn de-search-btn">
-                <el-button type="primary" round>新建</el-button>
-            </el-row>
+            <div class="ma-btn-block">
+                <el-row class="de-btn de-search-btn">
+                    <el-button type="primary" round @click="handleBuilt">新建</el-button>
+                </el-row>
 
-            <el-row class="de-btn de-reset-btn">
-                <el-button type="primary" round>指定负责人</el-button>
-            </el-row>
+                <el-row class="de-btn de-reset-btn">
+                    <el-button type="primary" round @click="handleAssign">指定负责人</el-button>
+                </el-row>
 
-            <el-row class="de-btn de-reset-btn">
-                <el-button type="primary" round>Excel批量导入</el-button>
-            </el-row>
-
+                <el-row class="de-btn de-reset-btn">
+                    <el-button type="primary" round>Excel批量导入</el-button>
+                </el-row>
+            </div>
             <el-checkbox class="de-show-none" v-model="checked" @change="checkSpecified">显示未指定负责人的项目</el-checkbox>
         </div>
 
-        <el-table
-            ref="multipleTable"
-            :data="tableData"
-            tooltip-effect="dark"
-            style="width: 100%"
-            :stripe='true'
-            :cell-class-name="cell"
-            @selection-change="handleSelectionChange">
-            <el-table-column
-                type="selection"
-                width="55">
-            </el-table-column>
-            <el-table-column
-                label="项目编号"
-                width="120">
-            <template slot-scope="scope">{{ scope.row.num }}</template>
-            </el-table-column>
-            <el-table-column
-                prop="name"
-                label="项目"
-                width="300"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="money"
-                label="预算金额"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="resource"
-                label="经费来源"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="men"
-                label="负责人"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="kind"
-                label="类型"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="time"
-                label="立项时间"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop=""
-                label="操作"
-                show-overflow-tooltip>
-                <div class="pub-css ma-edit ma-icon" @click="handleEdit"></div>
-                <div class="pub-css ma-del ma-icon" @click="handleDel"></div>
-            </el-table-column>
-        </el-table>
+        <TableCommon @handleChangeEdit = 'handleChangeEdit' />
 
         <CommPage :hasPage='hasPage' />
+
+        <el-dialog
+        :class="'ma-dialog'"
+        :visible.sync='exchangeMan'
+        :show-close='hasClose'
+        :close-on-click-modal=true 
+        :close-on-press-escape=true
+        title='指定负责人'
+        >
+        <el-divider></el-divider>
+        <div class="ma-dia-content">
+            <div>
+                <span>项目编号:</span>
+                <span>ssss</span>
+            </div>
+            <div>
+                <span>项目名称:</span>
+                <span>ssss</span>
+            </div>
+            <div>
+                <span><i>*</i> 项目负责人:</span>
+                <el-select v-model="manVal" placeholder="请选择" multiple class="ma-dia-sel">
+                    <el-option
+                    v-for="item in leadMan"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            
+            <div>
+                <el-row class="ma-btn-block">
+                    <el-button type="" round @click="handleMaBtn('cancel')">取消</el-button>
+                    <el-button type="primary" round @click="handleMaBtn('sure')">确定</el-button>
+                </el-row>
+            </div>
+        </div>
+        </el-dialog>
     </div>
 
 </template>
@@ -99,12 +84,14 @@
 import HeaderSearch from '@/components/HeaderSearch'
 import CommPage from '@/components/CommPage'
 import Maintenance from '@/components/Maintenance'
+import TableCommon from '@/components/Common/TableCommon'
 export default {
     // 注册组件
     components:{
         HeaderSearch,
         CommPage,
-        Maintenance
+        Maintenance,
+        TableCommon
     },
     data() {
         return {
@@ -129,10 +116,27 @@ export default {
             options3: [
                 {
                     value: '0',
-                    label: '项目类型'
-                }, {
+                    label: '改善办学条件'
+                }, 
+                {
                     value: '1',
-                    label: '项目类型'
+                    label: '一流大学'
+                }, 
+                {
+                    value: '2',
+                    label: '校级专项'
+                }, 
+                {
+                    value: '3',
+                    label: '课题经费'
+                }, 
+                {
+                    value: '4',
+                    label: '银行投资经费'
+                }, 
+                {
+                    value: '5',
+                    label: '其他'
                 }
             ],
             options4: [
@@ -149,81 +153,65 @@ export default {
             select3: '',
             select4: '',
             searchTex:'',
-            tableData:[
+            hasPage:true,
+            checked: false,
+            hasEdit:false,
+            hasDisabled:false,
+            exchangeMan:false,
+            hasClose:true,
+            leadMan:[
                 {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
-                },
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
+                    value:'1',
+                    label:'谢奎'
                 }
             ],
-            hasPage:false,
-            checked: false,
-            hasEdit:false
+            manVal:''
         }
     },
     methods:{
-        format(percentage) {
-            return percentage === 100 ? '' : ``;
-        },
-
         handleSearchRes(params) {
             // console.log(params)
-        },
-
-        toggleSelection(rows) {
-            if (rows) {
-            rows.forEach(row => {
-                this.$refs.multipleTable.toggleRowSelection(row);
-            });
-            } else {
-            this.$refs.multipleTable.clearSelection();
-            }
-        },
-
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
-        },
-
-        cell({row, column, rowIndex, columnIndex}) {
-            if( columnIndex == 6){
-                return 'tex-color'
-            }
         },
 
         checkSpecified() {
             // console.log('in')
         },
 
+        handleChangeEdit(id, disabled) {
+            this.hasEdit = true
+            this.hasDisabled = disabled
+        },
+
         hasMainPage(params) {
             this.hasEdit = params;
         },
 
-        handleEdit() {
-            this.hasEdit = true
+        handleBuilt() {
+            this.handleChangeEdit('', false)
         },
 
-        handleDel() {
+        handleAssign() {
+            this.exchangeMan = true
+        },
 
+        handleMaBtn(type) {
+            if(type == 'cancel') {
+                this.exchangeMan = false
+            }else if(type == 'sure') {
+                this.exchangeMan = false
+            }
         }
+
+        
     }
 }
 </script>
 
 <style lang="less" scoped>
 #detail{
+    & /deep/ input::placeholder{
+        font-size: 12px;
+    }
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
@@ -241,6 +229,7 @@ export default {
     }
     .ma-btn-wrapper{
         display: flex;
+        justify-content: space-between;
         .de-btn button{
             height: 36px;
             font-size: 14px;
@@ -257,8 +246,12 @@ export default {
             border: 1px solid #AEB9CA;
             color: #8392A7;
         }
+        .ma-btn-block{
+            display: flex;
+        }
         .de-show-none{
             flex: 2;
+            max-width: 200px;
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -270,28 +263,63 @@ export default {
         }
         
     }
-    & /deep/ .el-table .cell{
-        font-size: 14px;
-        color: #8998AC;
-        letter-spacing: 0;
-    }
-    & /deep/ .tex-color .cell{
-        color: #B5C5DB;
-    }
-    .ma-icon{
-        cursor: pointer;
-        float: left;
-    }
-    .ma-edit{
-        width: 20px;
-        height: 20px;
-        margin-right: 30px;
-        background-position: -377px -90px;
-    }
-    .ma-del{
-        width: 20px;
-        height: 20px;
-        background-position: -377px -167px;
+    
+    .ma-dialog{
+        & /deep/ .el-dialog{
+            background: #FFFFFF;
+            box-shadow: 0 2px 4px 0 #EFF2F7;
+            border-radius: 4px;
+            .el-dialog__body{
+                margin-top: -20px;
+            }
+        }
+        display: flex;
+        flex-direction:column; 
+        .ma-dia-content{
+            >div{
+                display: flex;
+                margin-top: 10px;
+                align-items: center;
+                span:nth-child(1){
+                    display: inline-block;
+                    min-width: 100px;
+                    text-align: right;
+                    padding-right: 10px;
+                    i{
+                        color: red;
+                        font-size: 14px;
+                    }
+                }
+            }
+            .ma-dia-sel{
+                & /deep/ .el-input{
+                    width: 300px;
+                }
+                & /deep/ .el-input__inner{
+                    height: 36px;
+                }
+            }
+            .ma-btn-block{
+                width: 100%;
+                text-align: center;
+                margin: 50px 0 10px 0;
+                button{
+                    height: 36px;
+                    width: 100px;
+                }
+                button:nth-child(1) {
+                    background: #F9FAFC;
+                    border: 1px solid #AEB9CA;
+                    font-size: 14px;
+                    color: #8392A7;
+                }
+                button:nth-child(2) {
+                    background: #3B7CFF;
+                    font-size: 14px;
+                    color: #FFFFFF;
+                }
+            }
+        }
     }
     
 }

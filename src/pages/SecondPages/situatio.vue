@@ -40,16 +40,21 @@
 
         <div class="si-list-wrapper">
             <HeaderSearch />
+
+            <TableCommon />
         </div>
+        
     </div>
 </template>
 
 <script>
 import HeaderSearch from '@/components/HeaderSearch'
+import TableCommon from '@/components/Common/TableCommon'
 
 export default {
     components:{
-        HeaderSearch
+        HeaderSearch,
+        TableCommon
     },
     data() {
         return {

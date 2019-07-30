@@ -58,15 +58,7 @@ export default {
     },
     data() {
         return {
-            options1: [
-                {
-                    value: '0',
-                    label: '年度'
-                }, {
-                    value: '1',
-                    label: '月度'
-                }
-            ],
+            options1: [],
             options2: [
                 {
                     value: '0',
@@ -113,10 +105,20 @@ export default {
 
         handleLook() {
             this.hasExcutingDetail = true;
+        },
+        
+        getPastYear(n) {
+            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
+                // unshift 插入到数组开头
+                this.options1.unshift({
+                    value:i,
+                    label:i + ' 年'
+                })
+            }
         }
     },
     mounted() {
-        
+        this.getPastYear(20)
     }
 }
 </script>

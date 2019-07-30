@@ -1,6 +1,6 @@
 <template>
     <div class="de-header">
-        <el-select v-model="sel1" placeholder="请选择"
+        <el-select v-model="sel1" placeholder="年度"
         >
             <el-option
             v-for="item in opt1"
@@ -11,7 +11,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel2" placeholder="请选择"
+        <el-select v-model="sel2" placeholder="项目类型"
         >
             <el-option
             v-for="item in opt2"
@@ -22,7 +22,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel3" placeholder="请选择"
+        <el-select v-model="sel3" placeholder="经费来源"
         >
             <el-option
             v-for="item in opt3"
@@ -33,10 +33,21 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel4" placeholder="请选择"
+        <el-select v-model="sel4" placeholder="项目状态"
         >
             <el-option
             v-for="item in opt4"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-select v-model="sel5" placeholder="项目节点"
+        >
+            <el-option
+            v-for="item in opt5"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -48,11 +59,11 @@
 
         <div class="de-btn-wrapper">
             <el-row class="de-btn de-search-btn">
-                <el-button type="primary" round @click="handleSearch()">查询</el-button>
+                <el-button type="primary" round @click="handleSearch('search')">查询</el-button>
             </el-row>
 
             <el-row class="de-btn de-reset-btn">
-                <el-button type="primary" round @click="handleReset()">重置</el-button>
+                <el-button type="primary" round @click="handleSearch('clear')">清空</el-button>
             </el-row>
         </div>
     </div>
@@ -78,44 +89,43 @@ export default {
             opt2:this.options2,
             opt3:this.options3,
             opt4:this.options4,
+            opt5:this.options5,
             sel1:this.select1,
             sel2:this.select2,
             sel3:this.select3,
             sel4:this.select4,
+            sel5:this.select5,
             tex:this.searchTex
         }
     },
     methods:{
-        handleSearch() {
-            this.$emit('handleSearch', this.dataCollation())
-        },
-
-        handleReset() {
-            this.$emit('handleSearch', this.dataCollation('reset'))
+        handleSearch(type) {
+            if(type === 'search') {
+                this.$emit('handleSearchRes', this.dataCollation())
+            }else if( type === 'clear') {
+                this.$emit('handleSearchRes', this.dataCollation('clear'))
+            }
         },
 
         dataCollation(type) {
             let obj = {}
-            if(type === 'reset') {
+            if(type === 'clear') {
                 this.sel1 = ''
                 this.sel2 = ''
                 this.sel3 = ''
-                this.sel4 = ''
                 this.tex = ''
                 obj = {
                     a:this.sel1,
                     b:this.sel2,
                     c:this.sel3,
-                    d:this.sel4,
-                    e:this.tex
+                    d:this.tex
                 }
             }else{
                 obj = {
                     a:this.sel1,
                     b:this.sel2,
                     c:this.sel3,
-                    d:this.sel4,
-                    e:this.tex
+                    d:this.tex
                 }
             }
             return obj

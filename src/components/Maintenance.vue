@@ -5,13 +5,13 @@
             <span class="ro-title-b">项目编号：</span>
             <div class="ro-item-content">
                 <span class="ro-num">GS2019001</span>
-                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory">是否历史项目</el-checkbox>
+                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasDis">是否历史项目</el-checkbox>
             </div>
         </div>
         <div class="ro-item">
             <span class="ro-title-b">项目名称：</span>
             <div class="ro-item-content">
-                <el-input v-model="name" placeholder="请输入内容"></el-input>
+                <el-input v-model="name" placeholder="请输入内容" :disabled="hasDis"></el-input>
             </div>
         </div>
         <div class="ro-item">
@@ -22,6 +22,7 @@
                     type="date"
                     placeholder="选择日期"
                     :clearable='hasClear'
+                    :disabled="hasDis"
                     >
                 </el-date-picker>
             </div>
@@ -37,6 +38,7 @@
                     :clearable='hasClear'
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    :disabled="hasDis"
                     >
                 </el-date-picker>
             </div>
@@ -44,7 +46,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目预算：</span>
             <div class="ro-item-content">
-                <el-input placeholder="请输入内容" class="ro-budget" v-model="budgetNum">
+                <el-input placeholder="请输入内容" class="ro-budget" v-model="budgetNum" :disabled="hasDis">
                     <template slot="append">万元</template>
                 </el-input>
             </div>
@@ -52,12 +54,13 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类别：</span>
             <div class="ro-item-content">
-                <el-select v-model="kind" placeholder="请选择">
+                <el-select v-model="kind" placeholder="请选择" :disabled="hasDis" @change='handleSel()'>
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt1"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -65,12 +68,13 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类型：</span>
             <div class="ro-item-content">
-                <el-select v-model="types" placeholder="请选择">
+                <el-select v-model="types" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt2"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -78,12 +82,13 @@
         <div class="ro-item">
             <span class="ro-title-b">经费来源：</span>
             <div class="ro-item-content">
-                <el-select v-model="moneySource" placeholder="请选择">
+                <el-select v-model="moneySource" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt3"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -91,12 +96,14 @@
         <div class="ro-item">
             <span class="ro-title-b">项目负责人：</span>
             <div class="ro-item-content">
-                <el-select v-model="leading" placeholder="请选择">
+                <el-select v-model="leading" placeholder="请选择" multiple :disabled="hasDis">
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt1"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -104,12 +111,13 @@
         <div class="ro-item">
             <span class="ro-title-b">项目状态：</span>
             <div class="ro-item-content">
-                <el-select v-model="proState" placeholder="请选择">
+                <el-select v-model="proState" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt1"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -117,12 +125,13 @@
         <div class="ro-item">
             <span class="ro-title-b">项目节点：</span>
             <div class="ro-item-content">
-                <el-select v-model="proNode" placeholder="请选择">
+                <el-select v-model="proNode" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in options"
+                    v-for="item in opt1"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
+                    :value="item.value"
+                    >
                     </el-option>
                 </el-select>
             </div>
@@ -134,7 +143,10 @@
                     type="textarea"
                     :rows="2"
                     placeholder="请输入内容"
-                    v-model="proNote">
+                    v-model="proNote"
+                    :disabled="hasDis"
+                    maxlength="200"
+                    >
                 </el-input>
             </div>
         </div>
@@ -151,7 +163,8 @@
                     :limit="3"
                     :on-exceed="handleExceed"
                     :file-list="fileList"
-                    accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.zip,.doc,.rar,.docx'
+                    accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                    :disabled="hasDis"
                     >
                     <el-button size="small" type="primary">支持扩展名：.rar .zip .doc .docx .pdf .jpg...</el-button>
                 </el-upload>
@@ -160,10 +173,13 @@
 
         <div class="ro-btn-wrapper">
             <el-row>
-                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle">取消</el-button>
+                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle" v-if="!hasDis">取消</el-button>
             </el-row>
             <el-row>
-                <el-button type="primary" round class="ro-btn ro-save">保存</el-button>
+                <el-button type="primary" round class="ro-btn ro-save" v-if="!hasDis">保存</el-button>
+            </el-row>
+            <el-row>
+                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle" v-if="hasDis">返回</el-button>
             </el-row>
         </div>
     </div>
@@ -171,9 +187,12 @@
 
 <script>
 export default {
+    props:[
+        'hasDisabled'
+    ],
     data() {
         return {
-            checked:false,
+            checked:false,      // 当选择为历史项目时，必须填写项目负责人，反之项目负责人不是必填项
             name:'',
             establishmenTime:'',
             planningTime:'',
@@ -186,14 +205,50 @@ export default {
             proState:'',        // 项目状态
             proNode:'',         // 项目节点
             proNote:'',         // 项目说明
-            options: [{
-                value: '选项1',
-                label: '黄金糕'
-            }, {
-                value: '选项2',
-                label: '双皮奶'
-            }],
-            fileList:[]
+            opt1: [
+                {
+                    value: '1',
+                    label: '服务类'
+                }, 
+                {
+                    value: '2',
+                    label: '货物类'
+                }, 
+                {
+                    value: '3',
+                    label: '工程类'
+                }
+            ],
+            opt2: [],
+            opt3:[
+                {
+                    value:'1',
+                    label:'改善办学条件'
+                },
+                {
+                    value:'2',
+                    label:'一流大学'
+                },
+                {
+                    value:'3',
+                    label:'校级专项'
+                },
+                {
+                    value:'4',
+                    label:'课题经费'
+                },
+                {
+                    value:'5',
+                    label:'银行投资经费'
+                },
+                {
+                    value:'6',
+                    label:'其他'
+                }
+
+            ],
+            fileList:[],
+            hasDis:this.hasDisabled
         }
     },
     methods:{
@@ -214,6 +269,50 @@ export default {
         },
         handleCancle() {
             this.$emit('hasMainPage', false)
+        },
+        handleSel() {
+            
+        }
+    },
+    watch: {
+        hasDisabled(params) {
+            this.hasDis = params
+        },
+        kind(params) {
+            if(params == 1) {
+                this.opt2 = [
+                    {
+                        value:1,
+                        label:'服务项目'
+                    }
+                ]
+                
+            }else if(params == 2) {
+                this.opt2 = [
+                    {
+                        value:1,
+                        label:'软件项目'
+                    },
+                    {
+                        value:2,
+                        label:'硬件项目'
+                    },
+                    {
+                        value:3,
+                        label:'集成项目'
+                    }
+                ]
+            }else if(params == 3) {
+                this.opt2 = [
+                    {
+                        value:1,
+                        label:'工程项目'
+                    }
+                ]
+            }else{
+                this.opt2 = []
+            }
+            
         }
     }
 }
