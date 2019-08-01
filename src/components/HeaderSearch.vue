@@ -1,6 +1,28 @@
 <template>
     <div class="de-header">
-        <el-select v-model="sel1" placeholder="年度"
+        <el-select v-model="selD" placeholder="到期时间" v-if="optD"
+        >
+            <el-option
+            v-for="item in optD"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-select v-model="sel6" placeholder="分类" v-if="opt6"
+        >
+            <el-option
+            v-for="item in opt6"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-select v-model="sel1" placeholder="年度" v-if="opt1"
         >
             <el-option
             v-for="item in opt1"
@@ -11,7 +33,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel2" placeholder="项目类型"
+        <el-select v-model="sel2" placeholder="项目类型" v-if="opt2"
         >
             <el-option
             v-for="item in opt2"
@@ -22,7 +44,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel3" placeholder="经费来源"
+        <el-select v-model="sel3" placeholder="经费来源" v-if="opt3"
         >
             <el-option
             v-for="item in opt3"
@@ -33,7 +55,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel4" placeholder="项目状态"
+        <el-select v-model="sel4" placeholder="项目状态" v-if="opt4"
         >
             <el-option
             v-for="item in opt4"
@@ -44,7 +66,7 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel5" placeholder="项目节点"
+        <el-select v-model="sel5" placeholder="项目节点" v-if="opt5"
         >
             <el-option
             v-for="item in opt5"
@@ -76,11 +98,10 @@ export default {
         'options2',
         'options3',
         'options4',
-        'select1',
-        'select2',
-        'select3',
-        'select4',
-        'searchTex'
+        'options5',
+        'options6',
+        'optionsDate',
+        'type'
     ],
     name:'',
     data() {
@@ -90,17 +111,22 @@ export default {
             opt3:this.options3,
             opt4:this.options4,
             opt5:this.options5,
-            sel1:this.select1,
-            sel2:this.select2,
-            sel3:this.select3,
-            sel4:this.select4,
-            sel5:this.select5,
-            tex:this.searchTex
+            opt6:this.options6,
+            sel1:'',
+            sel2:'',
+            sel3:'',
+            sel4:'',
+            sel5:'',
+            sel6:'',
+            tex:'',
+            selD:'',
+            optD:this.optionsDate
         }
     },
     methods:{
         handleSearch(type) {
             if(type === 'search') {
+                
                 this.$emit('handleSearchRes', this.dataCollation())
             }else if( type === 'clear') {
                 this.$emit('handleSearchRes', this.dataCollation('clear'))
@@ -109,24 +135,32 @@ export default {
 
         dataCollation(type) {
             let obj = {}
+            
             if(type === 'clear') {
                 this.sel1 = ''
                 this.sel2 = ''
                 this.sel3 = ''
+                this.sel4 = ''
+                this.sel5 = ''
+                this.selD = ''
                 this.tex = ''
                 obj = {
-                    a:this.sel1,
-                    b:this.sel2,
-                    c:this.sel3,
-                    d:this.tex
+                    sel1:this.sel1,
+                    sel2:this.sel2,
+                    sel3:this.sel3,
+                    sel4:this.sel4,
+                    sel5:this.sel5,
+                    selD:this.selD,
+                    tex:this.tex
                 }
             }else{
-                obj = {
-                    a:this.sel1,
-                    b:this.sel2,
-                    c:this.sel3,
-                    d:this.tex
+                if(this.type === 'tracking') {
+                    obj = {
+                        selD:this.selD,
+                        tex:this.tex
+                    }
                 }
+                
             }
             return obj
         }

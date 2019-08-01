@@ -53,6 +53,9 @@
 import stepsComm from '@/components/ProjectProgress/StepsComponents'
 import proInfoHead from '@/components/Common/ProInfoHead'
 export default {
+    props:[
+        'type'
+    ],
     components:{
         stepsComm,
         proInfoHead
@@ -66,12 +69,12 @@ export default {
                   children:[
                       {
                         title:'执行计划', 
-                        path:'/proj/excuting/plan',
+                        path:'/proj/'+ this.type +'/plan',
                         status:false
                       },
                       {
                         title:'立项准备', 
-                        path:'/proj/excuting/preparation',
+                        path:'/proj/'+ this.type +'/preparation',
                         status:false
                       },
                   ] 
@@ -83,22 +86,22 @@ export default {
                   children:[
                       {
                         title:'需求论证', 
-                        path:'/proj/excuting/plan',
+                        path:'/proj/'+ this.type +'/plan',
                         status:false
                       },
                       {
                         title:'采购申请', 
-                        path:'/proj/excuting/plan',
+                        path:'/proj/'+ this.type +'/plan',
                         status:false
                       },
                       {
                         title:'采购会', 
-                        path:'/proj/excuting/plan',
+                        path:'/proj/'+ this.type +'/plan',
                         status:false
                       },
                       {
                         title:'签订合同', 
-                        path:'/proj/excuting/sign?type=sign',
+                        path:'/proj/'+ this.type +'/sign',
                         status:true
                       }
                   ]  
@@ -135,14 +138,25 @@ export default {
         },
         handleClose(){
             this.hasErrorTips = false
+        },
+
+        initType() {
+            if(this.type === 'tracking') {
+                
+            }else if(this.type === 'excuting'){
+                
+            }
         }
     },
     mounted() {
         this.handleToRoute()
-        
+        this.initType()
     },
     destroyed(){
-
+       
+    },
+    beforeRouteUpdate(to, from, next) {
+        console.log(1)
     }
 }
 </script>
@@ -199,7 +213,7 @@ export default {
                                 color: #3B4859;
                             }
                             
-                            .router-link-exact-active{
+                            .router-link-exact-active,.router-link-active{
                                 color: #3B7CFF;
                             }
                         }

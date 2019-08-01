@@ -1,4 +1,5 @@
 import children from "./second";
+import approveChild from './approveRouter'
 export default [
     {
       path: '/stage',
@@ -14,8 +15,10 @@ export default [
     },
     {
       path: '/approve',
+      redirect:'/approve/todo',
       name: 'approve',
-      component: () => import('@/pages/approve/index')
+      component: () => import('@/pages/approve/index'),
+      children:[...approveChild]
     },
     {
       path: '/system',

@@ -1,12 +1,13 @@
 <template>
     <!-- 执行中项目查看 -->
-    <ExcutingDetail v-if="hasExcutingDetail" />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' />
     <div id="detail" v-else>
         <HeaderSearch 
             :options1='options1' 
             :options2='options2' 
             :options3='options3' 
             :options4='options4'
+            :options5='options5'
             :select1 = 'select1' 
             :select2 = 'select2' 
             :select3 = 'select3' 
@@ -59,31 +60,88 @@ export default {
     data() {
         return {
             options1: [],
-            options2: [
+            options2: [     // 项目类型
                 {
                     value: '0',
-                    label: '项目状态'
+                    label: '全部'
                 }, {
                     value: '1',
-                    label: '项目状态'
+                    label: '软件项目'
+                }, {
+                    value: '2',
+                    label: '硬件项目'
+                }, {
+                    value: '3',
+                    label: '集成项目'
+                }, {
+                    value: '4',
+                    label: '服务项目'
+                }, {
+                    value: '5',
+                    label: '工程项目'
                 }
             ],
-            options3: [
+            options3: [     // 经费来源
                 {
                     value: '0',
-                    label: '项目类型'
+                    label: '全部'
                 }, {
                     value: '1',
-                    label: '项目类型'
+                    label: '改善办学条件'
+                }, {
+                    value: '2',
+                    label: '一流大学'
+                }, {
+                    value: '3',
+                    label: '校级专项'
+                }, {
+                    value: '4',
+                    label: '课题经费'
+                }, {
+                    value: '5',
+                    label: '银行投资经费'
+                }, {
+                    value: '6',
+                    label: '其他'
                 }
             ],
-            options4: [
+            options4: [     // 项目状态
                 {
                     value: '0',
-                    label: '经费来源'
+                    label: '全部'
                 }, {
                     value: '1',
-                    label: '经费来源'
+                    label: '项目立项'
+                }, {
+                    value: '2',
+                    label: '项目采购'
+                }, {
+                    value: '3',
+                    label: '项目执行'
+                }, {
+                    value: '4',
+                    label: '项目验收'
+                }, {
+                    value: '5',
+                    label: '项目维保'
+                }
+            ],
+            options5: [     // 项目节点
+                {
+                    value: '0',
+                    label: '全部'
+                },{
+                    value: '1',
+                    label: '需求论证'
+                },{
+                    value: '2',
+                    label: '采购申请'
+                },{
+                    value: '3',
+                    label: '采购会'
+                },{
+                    value: '4',
+                    label: '合同签订'
                 }
             ],
             select1: '',
@@ -91,7 +149,8 @@ export default {
             select3: '',
             select4: '',
             searchTex:'',
-            hasExcutingDetail:false
+            hasExcutingDetail:false,
+            type:'excuting',
         }
     },
     methods:{
@@ -119,6 +178,13 @@ export default {
     },
     mounted() {
         this.getPastYear(20)
+    },
+    watch:{
+        '$route'(to, from) {
+            if(to.name === 'excuting') {
+                this.hasExcutingDetail = false
+            }
+        }
     }
 }
 </script>
@@ -127,7 +193,6 @@ export default {
 #detail{
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
-    border-radius: 4px;
     border-radius: 4px;
     padding: 20px;
     min-height: 100%;

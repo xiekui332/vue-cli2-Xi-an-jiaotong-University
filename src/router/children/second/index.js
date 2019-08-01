@@ -1,4 +1,6 @@
 import children from '../steps/steps'
+import trackChild from '../trackingChild'
+import situatioChild from '../situatioChild'
 export default [
     {
         path: '/proj/first',
@@ -14,12 +16,8 @@ export default [
     {
         path: '/proj/tracking',
         name: 'tracking',   // 尾款跟踪
-        component: () => import('@/pages/SecondPages/tracking')
-    },
-    {
-        path: '/proj/history',
-        name: 'history',    // 历史项目
-        component: () => import('@/pages/SecondPages/history')
+        component: () => import('@/pages/SecondPages/tracking'),
+        children:[...trackChild]
     },
     {
         path: '/proj/all',
@@ -29,11 +27,7 @@ export default [
     {
         path: '/proj/situatio',
         name: 'situatio',    // 项目情况总览
-        component: () => import('@/pages/SecondPages/situatio')
-    },
-    {
-        path: '/proj/payment',
-        name: 'payment',    // 付款进度查询
-        component: () => import('@/pages/SecondPages/all')
+        component: () => import('@/pages/SecondPages/situatio'),
+        children:[...situatioChild]
     }
 ]

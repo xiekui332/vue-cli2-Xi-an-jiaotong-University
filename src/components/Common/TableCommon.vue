@@ -2,7 +2,7 @@
     <div id="ta-wrapper">
         <el-table
             ref="multipleTable"
-            :data="tableData"
+            :data="extableData"
             tooltip-effect="dark"
             style="width: 100%"
             :stripe='true'
@@ -13,52 +13,36 @@
                 type="selection"
                 width="55">
             </el-table-column>
-            <el-table-column
-                label="项目编号"
-                width="120">
-            <template slot-scope="scope">{{ scope.row.num }}</template>
-            </el-table-column>
-            <el-table-column
-                prop="name"
-                label="项目"
-                width="300"
-                show-overflow-tooltip
-                >
-            </el-table-column>
-            <el-table-column
-                prop="money"
-                label="预算金额"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="resource"
-                label="经费来源"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="men"
-                label="负责人"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="kind"
-                label="类型"
-                show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-                prop="time"
-                label="立项时间"
+            <el-table-column 
+                v-for="(i, ind) in extablekind"
+                :key="ind"
+                :prop="i.prop"
+                :label="i.label"
+                :width="i.width"
                 show-overflow-tooltip>
             </el-table-column>
             <el-table-column
                 prop=""
                 label="操作"
                 show-overflow-tooltip
+                v-if="extype !== 'situatio'"
+                
                 >
-                <div class="pub-css ma-edit ma-icon" @click="handleOpa('edit')"></div>
-                <div class="pub-css ma-del ma-icon" @click="handleOpa('del')"></div>
-                <div class="ma-icon" @click="handleOpa('stop')">
-                    <img src="../../assets/img/stop.png" class="ma-stop" alt="img" />
+                
+                <div class="ma-icon" v-if="extype === 'tracking'" @click="trackingDetail('tracking')">
+                    详情
+                </div>
+                <div class="ma-icon ma-todo" v-else-if="extype === 'todo'" @click="trackingDetail('todo')">
+                    审批
+                </div>
+                <div class="ma-btn-wrapper" v-else>
+                    <div class="pub-css ma-edit ma-icon" @click="handleOpa('edit')"><a href="javascript:;" title='编辑'></a></div>
+                    <div class="pub-css ma-del ma-icon" @click="handleOpa('del')"><a href="javascript:;" title='删除'></a></div>
+                    <div class="ma-icon" @click="handleOpa('stop')">
+                        <a href="javascript:;" title='终止\中止'>
+                            <img src="../../assets/img/stop.png" class="ma-stop" alt="img" />
+                        </a>
+                    </div>
                 </div>
             </el-table-column>
         </el-table>
@@ -117,32 +101,17 @@
 </template>
 
 <script>
+
 export default {
     props:[
-        'handleChangeEdit'
+        'handleChangeEdit',
+        'tableData',
+        'tablekind',
+        'type'
     ],
     data() {
         return {
-            tableData:[
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
-                },
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
-                }
-            ],
+            extableData:this.tableData,
             hasNewClass:false,
             hasClose:false,
             hasdialog:false,
@@ -151,7 +120,9 @@ export default {
             hasStop:false,
             textarea:'',
             dialogTitle:'确认删除',
-            handleType:''
+            handleType:'',
+            extablekind:this.tablekind,
+            extype:this.type
         }
     },
     methods:{
@@ -195,13 +166,29 @@ export default {
         },
 
         cell({row, column, rowIndex, columnIndex}) {
-            if( columnIndex == 6){
-                return 'tex-color'
-            }else if(columnIndex == 8) {
-                return 'oparate-space'
-            }else if(columnIndex == 2) {
-                return 'project-style'
+            if(this.type === 'tracking') {
+                if( columnIndex == 2){
+                    return 'project-style'
+                }else if(columnIndex == 7) {
+                    return 'tex-color'
+                }else if(columnIndex == 8) {
+                    return 'oparate-space'
+                }
+            }else if(this.type === 'todo') {
+                if(columnIndex == 8) {
+                    return 'todo-style'
+                }
             }
+            else {
+                if( columnIndex == 6){
+                    return 'tex-color'
+                }else if(columnIndex == 8) {
+                    return 'oparate-space'
+                }else if(columnIndex == 2) {
+                    return 'project-style'
+                }
+            }
+            
         },
 
         handleBtn(type) {
@@ -224,9 +211,23 @@ export default {
         },
 
         handleLookDetail(row, column, cell ,event) {    
-            if(column.label === '项目') {
-                this.$emit('handleChangeEdit', column.id, true)
+            if(this.type === 'tracking') {
+
+            }else {
+                if(column.label === '项目') {
+                    this.$emit('handleChangeEdit', column.id, true)
+                }
             }
+            
+        },
+
+        trackingDetail(type) {
+            if(type === 'tracking') {
+                this.$emit('handleTrackLook')
+            }else if(type === 'todo') {
+
+            }
+            
         }
     }
 }
@@ -241,10 +242,17 @@ export default {
         background: url('../../assets/img/css_sprites.png');
         background-size:440px 391px; 
     }
-    & /deep/ .el-table .cell{
+    & /deep/ .el-table .el-table__header-wrapper .cell{
+        font-size: 14px;
+        color: #39475B;
+        letter-spacing: 0;
+        text-align: center;
+    }
+    & /deep/ .el-table .el-table__body-wrapper .cell{
         font-size: 14px;
         color: #8998AC;
         letter-spacing: 0;
+        text-align: center;
     }
     & /deep/ .tex-color .cell{
         color: #B5C5DB;
@@ -260,7 +268,13 @@ export default {
     .ma-icon{
         cursor: pointer;
         float: left;
-        // margin-right: 30px;
+        font-size: 14px;
+        a{
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            float: left;
+        }
     }
     .ma-edit{
         width: 20px;
@@ -273,8 +287,11 @@ export default {
         background-position: -377px -167px;
     }
     .ma-stop{
-        width: 16px;
-        height: 16px;
+        width: 17px;
+        height: 17px;
+        float: left;
+        margin-top: 2px;
+        
     }
 
     .ta-dialog-new{
@@ -338,6 +355,19 @@ export default {
                 }
             }
         }
+    }
+    
+    .ma-btn-wrapper{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        >div{
+            flex: 1;
+        }
+    }
+    .ma-todo{
+        color: #3B7CFF;
     }
 }
 </style>

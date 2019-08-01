@@ -1,9 +1,5 @@
+
 export default [
-    {
-        path: '/proj/excuting',
-        name:'',
-        component: () => import('@/components/ProjectProgress/StepsComponents')
-    },
     {
         path: '/proj/excuting/plan',
         name: 'plan',    // 项目进度 执行计划

@@ -235,7 +235,7 @@
 </template>
 
 <script>
-import FillAppalication from '@/components/Common/FillAppalication'
+import FillAppalication from '@/components/Common/fillAppalication'
 import Sign from '@/components/ProjectProgress/ChildComponents/Sign'
 import { store } from '@/store'
 export default {
@@ -358,7 +358,7 @@ export default {
         }
     },
     beforeRouteEnter(to,from,next) {
-        store.dispatch('commitChangeStatus', to.query.type)
+        
         next((vm) => {
             // 此处的vm就是当前组件的实例
             vm.pageType = store.state.pageType

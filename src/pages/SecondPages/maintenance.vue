@@ -1,4 +1,5 @@
 <template>
+    <!-- 执行计划维护 -->
     <Maintenance v-if="hasEdit" @hasMainPage='hasMainPage' :hasDisabled='hasDisabled' />
 
     <div id="detail" v-else>
@@ -6,7 +7,6 @@
             :options1='options1' 
             :options2='options2' 
             :options3='options3' 
-            :options4='options4'
             :select1 = 'select1' 
             :select2 = 'select2' 
             :select3 = 'select3' 
@@ -34,9 +34,9 @@
             <el-checkbox class="de-show-none" v-model="checked" @change="checkSpecified">显示未指定负责人的项目</el-checkbox>
         </div>
 
-        <TableCommon @handleChangeEdit = 'handleChangeEdit' />
+        <TableCommon @handleChangeEdit = 'handleChangeEdit' :tableData='tableData' :tablekind='tablekind' />
 
-        <CommPage :hasPage='hasPage' />
+        <CommPage :hasPage='hasPage' @handlePageUp='handlePageUp' />
 
         <el-dialog
         :class="'ma-dialog'"
@@ -95,57 +95,50 @@ export default {
     },
     data() {
         return {
-            options1: [
+            options1: [],
+            options2: [     // 项目类型
                 {
                     value: '0',
-                    label: '年度'
+                    label: '全部'
                 }, {
                     value: '1',
-                    label: '月度'
-                }
-            ],
-            options2: [
-                {
-                    value: '0',
-                    label: '项目状态'
+                    label: '软件项目'
                 }, {
-                    value: '1',
-                    label: '项目状态'
-                }
-            ],
-            options3: [
-                {
-                    value: '0',
-                    label: '改善办学条件'
-                }, 
-                {
-                    value: '1',
-                    label: '一流大学'
-                }, 
-                {
                     value: '2',
-                    label: '校级专项'
-                }, 
-                {
+                    label: '硬件项目'
+                }, {
                     value: '3',
-                    label: '课题经费'
-                }, 
-                {
+                    label: '集成项目'
+                }, {
                     value: '4',
-                    label: '银行投资经费'
-                }, 
-                {
+                    label: '服务项目'
+                }, {
                     value: '5',
-                    label: '其他'
+                    label: '工程项目'
                 }
             ],
-            options4: [
+            options3: [     // 经费来源
                 {
                     value: '0',
-                    label: '经费来源'
+                    label: '全部'
                 }, {
                     value: '1',
-                    label: '经费来源'
+                    label: '改善办学条件'
+                }, {
+                    value: '2',
+                    label: '一流大学'
+                }, {
+                    value: '3',
+                    label: '校级专项'
+                }, {
+                    value: '4',
+                    label: '课题经费'
+                }, {
+                    value: '5',
+                    label: '银行投资经费'
+                }, {
+                    value: '6',
+                    label: '其他'
                 }
             ],
             select1: '',
@@ -165,7 +158,64 @@ export default {
                     label:'谢奎'
                 }
             ],
-            manVal:''
+            manVal:'',
+            tablekind:[
+                {
+                    prop:'num',
+                    label:'项目编号',
+                    width:'120'
+                },
+                {
+                    prop:'name',
+                    label:'项目',
+                    width:'300'
+                },
+                {
+                    prop:'money',
+                    label:'预算金额',
+                    width:''
+                },
+                {
+                    prop:'resource',
+                    label:'经费来源',
+                    width:''
+                },
+                {
+                    prop:'men',
+                    label:'负责人',
+                    width:''
+                },
+                {
+                    prop:'kind',
+                    label:'类型',
+                    width:''
+                },
+                {
+                    prop:'time',
+                    label:'立项时间',
+                    width:''
+                }
+            ],
+            tableData:[
+                {
+                    num: 'GS2019001',
+                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
+                    money: '28.1万',
+                    resource: '改善办学条件',
+                    men: '文华',
+                    kind: '货物|软件',
+                    time: '2019-02-18'
+                },
+                {
+                    num: 'GS2019001',
+                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
+                    money: '28.1万',
+                    resource: '改善办学条件',
+                    men: '文华',
+                    kind: '货物|软件',
+                    time: '2019-02-18'
+                }
+            ]
         }
     },
     methods:{
@@ -200,10 +250,29 @@ export default {
             }else if(type == 'sure') {
                 this.exchangeMan = false
             }
+        },
+
+        getPastYear(n) {
+            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
+                // unshift 插入到数组开头
+                this.options1.unshift({
+                    value:i,
+                    label:i + ' 年'
+                })
+            }
+        },
+
+        handlePageUp(params) {
+
         }
 
         
+    },
+
+    mounted() {
+        this.getPastYear(20)
     }
+    
 }
 </script>
 
