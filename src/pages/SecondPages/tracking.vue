@@ -1,6 +1,6 @@
 <template>
 <!-- 执行中项目查看 -->
-    <ExcutingDetail v-if="hasExcutingDetail" :type='type' />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
     <div id="tracking" v-else>
         <div class="tr-wrapper">
             <div class="tr-head">
@@ -45,6 +45,7 @@ export default {
 
             ],
             type:'tracking',
+            parentRoute:'/proj',
             tableData:[
                 {
                     num: 'GS2019001',

@@ -34,15 +34,13 @@
             </div>
             
             <div class="ma-info">
-                <el-dropdown>
-                <span class="el-dropdown-link">
-                    Amy<i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>黄金糕</el-dropdown-item>
-                    <el-dropdown-item>狮子头</el-dropdown-item>
-                    <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                </el-dropdown-menu>
+                <el-dropdown @command='handleCommand'>
+                    <span class="el-dropdown-link">
+                        Amy<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown" >
+                        <el-dropdown-item command="handlelogout">退出系统</el-dropdown-item>
+                    </el-dropdown-menu>
                 </el-dropdown>
             </div>
             
@@ -53,6 +51,7 @@
 </template>
 
 <script>
+import { clearSession } from '../utils/util.js'
 export default {
     data() {
         return {
@@ -75,6 +74,17 @@ export default {
                 }
 
             ]
+        }
+    },
+    methods:{
+        handleCommand(command) {
+            if(command === 'handlelogout') {
+                clearSession()
+                this.$router.push({
+                    path:'/'
+                })
+            }
+            
         }
     }
 }

@@ -1,12 +1,22 @@
 export default [
     {
-        path: '/proj/tracking/plan',
-        name:'trackPlan',
-        component: () => import('@/components/ProjectProgress/StepsComponents')
+        path: '/proj/tracking/step1',
+        name:'trackstep1',
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
     },
     {
-        path: '/proj/tracking/sign',
-        name:'trackSign',
-        component: () => import('@/components/ProjectProgress/StepsComponents')
+        path: '/proj/tracking/step2',
+        name:'trackstep2',
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
+    },
+    {
+        path: '/proj/tracking/step3',
+        name:'trackstep3',
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
+    },
+    {
+        path: '/proj/tracking/step4',
+        name:'trackstep4',
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
     }
 ]

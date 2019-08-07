@@ -25,7 +25,7 @@
                 <div class="et-steps-wrapper">
                     <ul class="et-steps-ul">
                         <li v-for="(i, ind) in steps" :key="ind" :class="{'et-active':i.active}">
-                            <a href="javascript:;">
+                            <a href="javascript:;" class="et-default">
                                 <span>{{i.title}}</span>
                                 <i class="pub-css et-steps-icon" v-if="i.hasNow"></i>
                                 <i v-else></i>
@@ -50,14 +50,13 @@
 </template>
 
 <script>
-import stepsComm from '@/components/ProjectProgress/StepsComponents'
 import proInfoHead from '@/components/Common/ProInfoHead'
 export default {
     props:[
-        'type'
+        'type',
+        'parentRoute'
     ],
     components:{
-        stepsComm,
         proInfoHead
     },
     data() {
@@ -66,15 +65,16 @@ export default {
                 {
                   title:'项目立项',
                   active:true ,
+                  hasNow:true,
                   children:[
                       {
-                        title:'执行计划', 
-                        path:'/proj/'+ this.type +'/plan',
-                        status:false
+                        title:'立项申请', 
+                        path:this.parentRoute + '/' + this.type +'/step1',
+                        status:true
                       },
                       {
-                        title:'立项准备', 
-                        path:'/proj/'+ this.type +'/preparation',
+                        title:'立项论证', 
+                        path:this.parentRoute + '/' + this.type +'/step2',
                         status:false
                       },
                   ] 
@@ -82,29 +82,35 @@ export default {
                 {
                   title:'项目采购',
                   active:true,
-                  hasNow:true,
+                  hasNow:false,
                   children:[
                       {
                         title:'需求论证', 
-                        path:'/proj/'+ this.type +'/plan',
+                        path:this.parentRoute + '/' + this.type +'/step3',
                         status:false
                       },
                       {
                         title:'采购申请', 
-                        path:'/proj/'+ this.type +'/plan',
+                        path:this.parentRoute + '/' + this.type +'/step4',
                         status:false
                       },
                       {
                         title:'采购会', 
-                        path:'/proj/'+ this.type +'/plan',
+                        path:this.parentRoute + '/' + this.type +'/step5',
                         status:false
                       },
                       {
                         title:'签订合同', 
-                        path:'/proj/'+ this.type +'/sign',
-                        status:true
+                        path:this.parentRoute + '/' + this.type +'/step6',
+                        status:false
                       }
                   ]  
+                },
+                {
+                    title:'项目执行',
+                    active:false,
+                    hasNow:false,
+                    children:[]
                 },
                 {
                   title:'项目验收',
@@ -156,7 +162,7 @@ export default {
        
     },
     beforeRouteUpdate(to, from, next) {
-        console.log(1)
+        
     }
 }
 </script>
@@ -184,6 +190,9 @@ export default {
             .et-steps-wrapper{
                 padding-left: 26px;
                 padding-bottom: 30px;
+                .et-steps-ul .et-default{
+                    cursor: default;
+                }
                 .et-steps-ul li{
                     position: relative;
                     .et-steps-line{

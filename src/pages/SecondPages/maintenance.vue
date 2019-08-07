@@ -85,6 +85,7 @@ import HeaderSearch from '@/components/HeaderSearch'
 import CommPage from '@/components/CommPage'
 import Maintenance from '@/components/Maintenance'
 import TableCommon from '@/components/Common/TableCommon'
+import { handleLogin } from '@/utils/api'
 export default {
     // 注册组件
     components:{
@@ -271,6 +272,10 @@ export default {
 
     mounted() {
         this.getPastYear(20)
+        let obj = {
+            username:'',
+            password:''
+        }
     }
     
 }

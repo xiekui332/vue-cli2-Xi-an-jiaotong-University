@@ -1,0 +1,58 @@
+.st-dialog{
+    .st-steps-title{
+        font-size: 18px;
+        color: #3B4859;
+        letter-spacing: 0;
+        margin-top: -45px;
+        margin-bottom: 17px;
+    }
+    .st-steps-name{
+        display: flex;
+        >p{
+            flex: 1;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #AEB9CF;
+        }
+        .st-black{
+            color: #3B4859;
+        }
+    }
+    & /deep/ .el-step__main{
+        >div{
+            font-size: 12px;
+            color: #3B4859;
+        }
+        >div.is-wait{
+            color: #AEB9CF;
+        }
+    }
+    & /deep/ .el-step__head{
+        .el-step__icon-inner{
+            color: #FFFFFF;
+            font-size: 22px;
+        }
+    }
+    & /deep/ .el-step.is-horizontal .el-step__line{
+        top: 18px;
+        height: 6px;
+        background: #D8DFED;
+    }
+    & /deep/ .el-step__head.is-finish{
+        .el-step__icon.is-text{
+            background: #3B7CFF;
+            width: 40px;
+            height: 40px;
+        }
+        
+    }
+    & /deep/ .el-step__head.is-wait{
+        .el-step__icon.is-text{
+            background: #D8DFED;
+            width: 40px;
+            height: 40px;
+            border: none;
+        }
+    }
+}

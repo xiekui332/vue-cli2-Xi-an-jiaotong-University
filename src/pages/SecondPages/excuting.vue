@@ -1,6 +1,6 @@
 <template>
     <!-- 执行中项目查看 -->
-    <ExcutingDetail v-if="hasExcutingDetail" :type='type' />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
     <div id="detail" v-else>
         <HeaderSearch 
             :options1='options1' 
@@ -151,6 +151,7 @@ export default {
             searchTex:'',
             hasExcutingDetail:false,
             type:'excuting',
+            parentRoute:'/proj'
         }
     },
     methods:{

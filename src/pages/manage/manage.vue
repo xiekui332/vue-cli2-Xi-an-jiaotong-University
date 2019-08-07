@@ -1,13 +1,13 @@
 <template>
     <div class="ag-wrapper">
-        <div id="stage">
+        <div id="stage" ref="stage">
             <div class="ag-item" v-for="(i, ind) in 6" :key="ind">
 
             </div>
         </div>
-        <el-row>
+        <el-row class="ag-badge">
             <el-badge :value="msgNum" class="item"></el-badge>
-            <el-button type="primary" round>
+            <el-button type="primary" round @click="handleToapprove">
                 待审批信息
             </el-button>
         </el-row>
@@ -20,26 +20,40 @@ export default {
         return {
             msgNum:12
         }
+    },
+    methods:{
+        handleToapprove() {
+            this.$router.push({
+                path:'/approve/todo'
+            })
+        }
+    },
+    mounted() {
+
     }
 }
 </script>
 
 <style lang="less" scoped>
 .ag-wrapper{
-    position: relative;
+    .ag-badge{
+        position: fixed;
+        right: 0px;
+        bottom: 0px;
+    }
 }
 #stage{
-    display: inline-flex;
+    display: flex;
+    justify-content: flex-start;
+    align-content:space-between;
     flex-wrap: wrap;
     padding: 100px 60px;
-    margin-left: 50px;
 }
 .ag-item{
     width: 340px;
+    background: pink;
     height: 200px;
-    background: rgb(175, 171, 171);
     box-shadow: 0 9px 35px 4px rgba(0,0,0,0.03);
-    border-radius: 4px;
     border-radius: 4px;
     margin: 0 50px 60px;
 }

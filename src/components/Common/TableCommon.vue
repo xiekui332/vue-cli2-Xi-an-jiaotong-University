@@ -26,7 +26,6 @@
                 label="操作"
                 show-overflow-tooltip
                 v-if="extype !== 'situatio'"
-                
                 >
                 
                 <div class="ma-icon" v-if="extype === 'tracking'" @click="trackingDetail('tracking')">
@@ -34,6 +33,12 @@
                 </div>
                 <div class="ma-icon ma-todo" v-else-if="extype === 'todo'" @click="trackingDetail('todo')">
                     审批
+                </div>
+                <div class="ma-icon ma-todo" v-else-if="extype === 'upload'" @click="trackingDetail('upload')">
+                    撤销
+                </div>
+                <div class="ma-icon ma-todo" v-else-if="extype === 'role'" @click="trackingDetail('upload')">
+                    数据权限
                 </div>
                 <div class="ma-btn-wrapper" v-else>
                     <div class="pub-css ma-edit ma-icon" @click="handleOpa('edit')"><a href="javascript:;" title='编辑'></a></div>
@@ -175,7 +180,17 @@ export default {
                     return 'oparate-space'
                 }
             }else if(this.type === 'todo') {
-                if(columnIndex == 8) {
+                if( columnIndex == 2){
+                    return 'project-style'
+                }
+                else if(columnIndex == 8) {
+                    return 'todo-style'
+                }
+            }else if(this.type === 'upload') {
+                if( columnIndex == 1){
+                    return 'project-style upload-style'
+                }
+                else if(columnIndex == 7) {
                     return 'todo-style'
                 }
             }
@@ -225,9 +240,17 @@ export default {
             if(type === 'tracking') {
                 this.$emit('handleTrackLook')
             }else if(type === 'todo') {
-
+                this.$emit('handleChangeEdit', 1)
             }
             
+        }
+    },
+    mounted() {
+        
+    },
+    created() {
+        if(this.type === 'done') {
+            this.extype = 'situatio'
         }
     }
 }
@@ -265,9 +288,16 @@ export default {
     & /deep/ .project-style .cell{
         cursor: pointer;
     }
+    & /deep/ .upload-style .cell{
+        color: #3B7CFF!important;
+    }
+    & /deep/ .todo-style .cell{
+        display: flex;
+        justify-content: center;
+    }
     .ma-icon{
         cursor: pointer;
-        float: left;
+        // float: left;
         font-size: 14px;
         a{
             display: inline-block;
@@ -361,9 +391,9 @@ export default {
         width: 100%;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-around;
         >div{
-            flex: 1;
+            
         }
     }
     .ma-todo{

@@ -1,31 +1,19 @@
 <template>
-    <div class="to-nodata" v-if="hasData">
-        <img src="../../assets/img/wushuju.png" alt="">
-        <div>
-            <p class="to-noapprove">暂无待办审批</p>
-            <el-row class="to-btn">
-                <el-button type="primary" round @click="handleback()">返回总览</el-button>
-            </el-row>
-        </div>
-    </div>
-    <div v-else>
-        <ApproveDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
-        <div id="to-wrapper" v-else>
-            <HeaderSearch 
-            :options1='options1'
-            :options3='options3'
-            :options6='options6'
-            :searchTex='searchTex'
-            @handleSearch = 'handleSearchRes'
-            />
+    <ApproveDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
+    <div id="do-wrapper" v-else>
+        <HeaderSearch 
+        :options1='options1'
+        :options3='options3'
+        :options6='options6'
+        :searchTex='searchTex'
+        @handleSearch = 'handleSearchRes'
+        />
 
-            <el-divider></el-divider>
-            
-            <TableCommon  :tableData='tableData' :tablekind='tablekind' :type='type' @handleChangeEdit='handleChangeEdit' />
-            
-            <CommPage :hasPage='hasPage' @handlePageUp='handlePageUp' />
-            
-        </div>
+        <el-divider></el-divider>
+        
+        <TableCommon  :tableData='tableData' :tablekind='tablekind' :type='type' @handleChangeEdit='handleChangeEdit' />
+        
+        <CommPage :hasPage='hasPage' @handlePageUp='handlePageUp' />
     </div>
 </template>
 
@@ -36,9 +24,9 @@ import HeaderSearch from '@/components/HeaderSearch'
 import ApproveDetail from '@/pages/SecondPages/approveDetail'
 export default {
     components:{
-        HeaderSearch,
         TableCommon,
         CommPage,
+        HeaderSearch,
         ApproveDetail
     },
     data() {
@@ -136,13 +124,17 @@ export default {
                     prop:'kind',
                     label:'类型',
                     width:''
+                },
+                {
+                    prop:'time',
+                    label:'审批时间',
+                    width:''
                 }
             ],
             hasPage:true,
-            type:'todo',
+            type:'done',
             parentRoute:'/approve',
-            hasExcutingDetail:false,
-            hasData:false
+            hasExcutingDetail:false
         }
     },
     methods:{
@@ -166,12 +158,6 @@ export default {
 
         handlePageUp(params) {
             // console.log(params)
-        },
-
-        handleback() {
-            this.$router.push({
-                path:'/stage'
-            })
         }
     },
     mounted() {
@@ -179,7 +165,7 @@ export default {
     },
     watch:{
         '$route'(to, from){
-            if(to.name === 'todo') {
+            if(to.name === 'done') {
                 this.hasExcutingDetail = false
             }
         }
@@ -188,37 +174,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#to-wrapper{
+#do-wrapper{
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
     padding: 20px;
     min-height: 100%;
 }
-.to-nodata{
-    display: flex;
-    min-height: 100%;
-    justify-content: center;
-    align-items: center;
-    img{
-        margin-right: 100px;
-    }
-    .to-noapprove{
-        font-size: 26px;
-        color: #39475B;
-        letter-spacing: 0;
-    }
-    .to-btn{
-        button{
-            width: 128px;
-            height: 36px;
-            background: #3B7CFF;
-            font-size: 14px;
-            color: #FFFFFF;
-            margin-top: 40px;
-        }
-    }
-}
 </style>
-
-

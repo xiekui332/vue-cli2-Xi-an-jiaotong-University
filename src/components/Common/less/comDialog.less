@@ -1,0 +1,84 @@
+.ma-dialog{
+    .el-divider--horizontal{
+        margin: 15px 0;
+        background: #F0F3F7;
+    }
+    & /deep/ input::placeholder{
+        font-size: 12px;
+    }
+    & /deep/ .el-dialog{
+        background: #FFFFFF;
+        box-shadow: 0 2px 4px 0 #EFF2F7;
+        border-radius: 4px;
+        .el-dialog__body{
+            margin-top: -20px;
+        }
+    }
+    display: flex;
+    flex-direction:column; 
+    .ma-dia-content{
+        >div{
+            display: flex;
+            margin-top: 10px;
+            align-items: center;
+            
+        }
+        .ma-btn-block{
+            width: 100%;
+            text-align: center;
+            margin: 50px 0 10px 0;
+            button{
+                height: 36px;
+            }
+            button:nth-child(1) {
+                background: #F9FAFC;
+                border: 1px solid #AEB9CA;
+                font-size: 14px;
+                color: #8392A7;
+            }
+            button:nth-child(2) {
+                background: #3B7CFF;
+                font-size: 14px;
+                color: #FFFFFF;
+            }
+        }
+    }
+    .ma-tips{
+        font-size: 14px;
+        color: #8998AC;
+        margin-top: -42px;
+        margin-left: 90px;
+    }
+    .ma-item-wrapper{
+        display: flex;
+        flex-direction: column;
+        .ma-item{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            >.ma-title{
+                display: inline-block;
+                min-width: 80px;
+                color: #666666;
+                font-size: 14px;
+                padding-left: 10px;
+            }
+            .el-input{
+                width: 400px;
+            }
+            .ma-dia-sel{
+                & /deep/ .el-input{
+                    width: 400px;
+                }
+                & /deep/ .el-input__inner{
+                    height: 36px;
+                }
+            }
+            
+        }
+        .ma-item-baseline{
+            align-items: baseline;
+        }
+    }
+}

@@ -47,6 +47,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
+        // 单独为css配置publicPath 具体路径地址观察加载不到的资源调整
+        publicPath:'../../',
         fallback: 'vue-style-loader'
       })
     } else {

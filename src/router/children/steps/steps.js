@@ -1,18 +1,23 @@
 
 export default [
     {
-        path: '/proj/excuting/plan',
-        name: 'plan',    // 项目进度 执行计划
-        component: () => import('@/components/ProjectProgress/StepsComponents')
+        path: '/proj/excuting/step1',
+        name: 'excutingstep1',    // 项目立项 立项申请
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
     },
     {
-        path: '/proj/excuting/preparation',
-        name: 'preparation',    // 项目进度 立项准备
-        component: () => import('@/components/ProjectProgress/StepsComponents')
+        path: '/proj/excuting/step2',
+        name: 'excutingstep2',    // 项目进度 执行计划
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
     },
     {
-        path: '/proj/excuting/sign',
-        name: 'sign',    // 项目进度 立项准备
-        component: () => import('@/components/ProjectProgress/StepsComponents')
+        path: '/proj/excuting/step3',
+        name: 'excutingstep3',    // 项目进度 执行计划
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
+    },
+    {
+        path: '/proj/excuting/step4',
+        name: 'excutingstep4',    // 项目进度 执行计划
+        component: () => import('@/components/ProjectProgress/nodeDetail/index')
     }
 ]

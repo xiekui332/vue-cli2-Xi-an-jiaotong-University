@@ -1,5 +1,5 @@
 <template>
-    <ExcutingDetail v-if="hasExcutingDetail" :type='type' />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
     <div id="situatio" v-else>
         <div class="si-wrapper">
             <div class="si-block">
@@ -114,11 +114,6 @@ export default {
                     width:''
                 },
                 {
-                    prop:'resource',
-                    label:'经费来源',
-                    width:''
-                },
-                {
                     prop:'men',
                     label:'负责人',
                     width:''
@@ -135,6 +130,7 @@ export default {
                 }
             ],
             type:'situatio',
+            parentRoute:'/proj',
             options1: [],
             options2: [     // 项目类型
                 {
@@ -245,6 +241,7 @@ export default {
 
 <style lang="less" scoped>
 #situatio{
+    min-height: 100%;
     .si-wrapper{
         width: 100%;
         height: 148px;
@@ -302,6 +299,7 @@ export default {
         }
     }
     .si-list-wrapper{
+        min-height: 100%;
         background: #FFFFFF;
         box-shadow: 0 2px 4px 0 #EFF2F7;
         border-radius: 4px;

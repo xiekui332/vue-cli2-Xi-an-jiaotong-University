@@ -4,8 +4,8 @@ import login from '@/pages/login.vue'
 
 // 按模块管理引用路由
 import children from "./children";
-
 Vue.use(Router)
+
 
 export default new Router({
   routes: [

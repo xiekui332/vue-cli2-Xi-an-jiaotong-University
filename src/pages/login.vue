@@ -6,16 +6,12 @@
 			<div class="lg-container">
 				<p class="lg-title">项目管理平台</p>
 				<div class="lg-wrapper">
-					<div class="lg-icon pub-css lg-icon-1 ">
-
-					</div>
-					<el-input v-model="acount" placeholder="工号"></el-input>
+					<div class="lg-icon pub-css lg-icon-1 "></div>
+					<el-input v-model="acount" placeholder="工号" autofocus @keyup.enter.native="login"></el-input>
 				</div>
 				<div class="lg-wrapper">
-					<div class="lg-icon pub-css lg-icon-2 ">
-
-					</div>
-					<el-input v-model="password" placeholder="密码"></el-input>
+					<div class="lg-icon pub-css lg-icon-2 "></div>
+					<el-input v-model="password" placeholder="密码" type="password" @keyup.enter.native="login"></el-input>
 				</div>
 
 				<el-row>
@@ -28,6 +24,8 @@
 </template>
 
 <script>
+import { setSession } from '../utils/util.js'
+import { handleLogin } from '../utils/api.js'
 export default {
     data() {
         return {
@@ -46,9 +44,22 @@ export default {
         },
         login() {
             if(!this.acount || !this.password){
-                this.pubmes('工号或密码错误，请重新输入！', '提示', 'info');
+				this.pubmes('工号或密码错误，请重新输入！', '提示', 'info');
             }else{
-                this.$router.push('/stage')
+				let obj = {
+					username:this.acount,
+					password:this.password
+				}
+				handleLogin(obj).then((res) => {
+					console.log(res)
+					setSession('user', 'user')
+					setSession('token', 'token')
+				})
+				.catch((err) => {
+					console.log(err)
+				})
+				
+				this.$router.push('/stage')
             }
             
         }
@@ -132,6 +143,7 @@ export default {
 		.el-row button{
 			width: 320px;
 			height: 42px;
+
 		}
 		.el-button--primary{
 			background-color:#3B7CFF;
@@ -146,7 +158,10 @@ export default {
 }
 .el-message-box{
 	& /deep/ .el-button--primary{
-		background: #3B7CFF;
+		background-color: #3B7CFF;
+	}
+	& /deep/ .el-button--primary:hover{
+		background-color: #3B7CFF;
 	}
 }
 </style>

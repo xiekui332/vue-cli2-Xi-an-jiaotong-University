@@ -33,28 +33,6 @@
             </el-option>
         </el-select>
 
-        <el-select v-model="sel2" placeholder="项目类型" v-if="opt2"
-        >
-            <el-option
-            v-for="item in opt2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            >
-            </el-option>
-        </el-select>
-
-        <el-select v-model="sel3" placeholder="经费来源" v-if="opt3"
-        >
-            <el-option
-            v-for="item in opt3"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            >
-            </el-option>
-        </el-select>
-
         <el-select v-model="sel4" placeholder="项目状态" v-if="opt4"
         >
             <el-option
@@ -77,7 +55,52 @@
             </el-option>
         </el-select>
 
-        <el-input class="de-search-input" v-model="tex" placeholder="关键字搜索：负责人、编码、项目名称"></el-input>
+        <el-select v-model="sel2" placeholder="项目类型" v-if="opt2"
+        >
+            <el-option
+            v-for="item in opt2"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-select v-model="sel3" placeholder="经费来源" v-if="opt3"
+        >
+            <el-option
+            v-for="item in opt3"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+        
+
+        <el-select v-model="sel7" placeholder="是否发布" v-if="opt7"
+        >
+            <el-option
+            v-for="item in opt7"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-select v-model="sel8" placeholder="是否数据权限" v-if="opt8"
+        >
+            <el-option
+            v-for="item in opt8"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+            </el-option>
+        </el-select>
+
+        <el-input class="de-search-input" v-model="tex" :placeholder="explaceholder"></el-input>
 
         <div class="de-btn-wrapper">
             <el-row class="de-btn de-search-btn">
@@ -100,8 +123,11 @@ export default {
         'options4',
         'options5',
         'options6',
+        'options7',
+        'options8',
         'optionsDate',
-        'type'
+        'type',
+        'placeholder'
     ],
     name:'',
     data() {
@@ -112,15 +138,20 @@ export default {
             opt4:this.options4,
             opt5:this.options5,
             opt6:this.options6,
+            opt7:this.options7,
+            opt8:this.options8,
             sel1:'',
             sel2:'',
             sel3:'',
             sel4:'',
             sel5:'',
             sel6:'',
+            sel7:'',
+            sel8:'',
             tex:'',
             selD:'',
-            optD:this.optionsDate
+            optD:this.optionsDate,
+            explaceholder:''
         }
     },
     methods:{
@@ -163,7 +194,21 @@ export default {
                 
             }
             return obj
+        },
+
+        handlePlaceholder(type) {
+            if(type === 'role') {
+                this.explaceholder = this.placeholder
+            }
+              
+            else{
+                this.explaceholder = '关键字搜索：负责人、项目编号、项目名称'
+            }
         }
+
+    },
+    mounted() {
+        this.handlePlaceholder(this.type)
     }
 }
 </script>
