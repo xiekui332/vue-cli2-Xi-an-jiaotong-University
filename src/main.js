@@ -8,6 +8,7 @@ import ElementUI from 'element-ui'
 import axios from './utils/axios.js'
 import { store } from './store'
 import Print from 'vue-print-nb'
+import 'babel-polyfill';
 import './assets/less/base.less'
 
 Vue.prototype.$http = axios; // 调用方式this.$http

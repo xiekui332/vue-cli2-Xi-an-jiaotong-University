@@ -54,7 +54,7 @@ export default {
 				handleLogin(param).then((res) => {
 					console.log(res)
 					let data = res.data
-					if(data.code === "00000") {
+					if(data.code === "00000") {	
 						setSession('userName', data.data.userName)
 						setSession('userid', data.data.id)
 						this.$router.push({
