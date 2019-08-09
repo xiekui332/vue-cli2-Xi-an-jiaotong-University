@@ -199,6 +199,8 @@ export default {
         handlePlaceholder(type) {
             if(type === 'role') {
                 this.explaceholder = this.placeholder
+            }else if(type === 'upload') {
+                this.explaceholder = '模板名称'
             }
               
             else{

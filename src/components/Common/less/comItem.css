@@ -1,0 +1,172 @@
+.st-item {
+  flex: 2;
+  background: #FFFFFF;
+  box-shadow: 0 2px 4px 0 #EFF2F7;
+  border-radius: 4px;
+  margin-top: 20px;
+  padding: 0 20px 20px;
+}
+.st-item .st-item-header {
+  display: flex;
+  justify-content: space-between;
+}
+.st-item .st-item-header span {
+  font-size: 16px;
+  color: #3B4859;
+  letter-spacing: 0;
+  display: inline-block;
+  margin: 15px 0 0 20px;
+}
+.st-item .st-item-header .st-add {
+  display: block;
+  width: 78px;
+  height: 32px;
+  border-radius: 16px;
+  margin: 8px 22px 0 0;
+  background: #3B7CFF;
+  font-size: 14px;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 32px;
+}
+.st-item .st-edit-content .st-ed-head {
+  display: flex;
+  background: #F8F9FB;
+  margin-top: 20px;
+  height: 50px;
+  overflow: hidden;
+}
+.st-item .st-edit-content .st-ed-head > div {
+  flex: 1;
+  line-height: 50px;
+  text-align: center;
+}
+.st-item .st-edit-content .st-ed-head > div span {
+  font-size: 14px;
+  color: #39475B;
+}
+.st-item .st-edit-content .st-ed-head > div i {
+  color: #FE5959;
+  font-size: 18px;
+  display: inline-block;
+  height: 20px;
+}
+.st-item .st-edit-content .st-edit-item:nth-child(odd) {
+  background: #F8F9FB;
+}
+.st-item .st-edit-content .st-edit-item:nth-child(odd) /deep/ .el-input__inner {
+  background: #F8F9FB;
+}
+.st-item .st-edit-content .st-edit-item:nth-child(even) {
+  background: #FCFDFF;
+}
+.st-item .st-edit-content .st-edit-item:nth-child(even) /deep/ .el-input__inner {
+  background: #FCFDFF;
+}
+.st-item .st-edit-content .st-oparate {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col {
+  flex: 1;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col .el-date-editor.el-input,
+.st-item .st-edit-content .st-oparate .st-oparate-col .el-date-editor.el-input__inner {
+  width: 100%;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col /deep/ input {
+  text-align: center;
+  border: none;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col /deep/ input[type=number]::-webkit-inner-spin-button,
+.st-item .st-edit-content .st-oparate .st-oparate-col /deep/ input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col .st-icon-edit {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-position: -377px -91px;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col .st-icon-del {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-position: -377px -168px;
+  margin-left: 44px;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-col /deep/ .el-input__prefix {
+  display: none;
+}
+.st-item .st-edit-content .st-oparate .st-oparate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.st-templates .st-edit-content .st-ed-head > div {
+  text-align: left;
+}
+.st-templates .st-edit-content .st-ed-head > div:nth-child(1) {
+  text-indent: 5em;
+}
+.st-templates .st-edit-content .st-edit-item {
+  display: flex;
+}
+.st-templates .st-edit-content .st-edit-item > div {
+  height: auto;
+  min-height: 50px;
+  flex: 1;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-title {
+  display: flex;
+  align-items: center;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-title .st-icon-file {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-position: -375px -314px;
+  margin-left: 32px;
+  margin-right: 10px;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-title .st-tips-required {
+  font-size: 14px;
+  color: #FE5959;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-title .st-file-title {
+  font-size: 14px;
+  color: #8998AC;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name .upload-demo {
+  width: 100%;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name /deep/ .el-upload-list {
+  width: 80%;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name /deep/ .el-upload {
+  float: right;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name .el-button--primary {
+  background: rgba(59, 124, 255, 0);
+  border: none;
+  padding: 6px 10px;
+}
+.st-templates .st-edit-content .st-edit-item .st-icon-file-name .st-upload-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-position: -10px -365px;
+  margin-top: 10px;
+}
+.st-templates .st-edit-content .st-edit-item .upload-demo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

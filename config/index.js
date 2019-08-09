@@ -11,15 +11,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      "/api":{
-          target: 'http://192.168.31.176:8081/',
-          ws: true,
-          changeOrigin: true,
-          ws: true,
-          pathRewrite: {
-            '^/api': '/api'
-          }
-      }
+      '/api': {    // 代理Api接口
+        changeOrigin: true, //开启代理
+        target: 'http://192.168.31.176:8081/',    //数据转发到哪里
+        pathRewrite: {
+            '^/api': '/api',//这里重写路径/api就代理到服务器根路径
+        }
+    }
     },
 
     // Various Dev Server settings

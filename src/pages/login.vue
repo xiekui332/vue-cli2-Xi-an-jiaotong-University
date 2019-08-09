@@ -46,24 +46,34 @@ export default {
             if(!this.acount || !this.password){
 				this.pubmes('工号或密码错误，请重新输入！', '提示', 'info');
             }else{
-				let obj = {
-					username:this.acount,
+
+				let param={
+					userName:this.acount,
 					password:this.password
 				}
-				handleLogin(obj).then((res) => {
+				handleLogin(param).then((res) => {
 					console.log(res)
-					setSession('user', 'user')
-					setSession('token', 'token')
+					let data = res.data
+					if(data.code === "00000") {
+						setSession('userName', data.data.userName)
+						setSession('userid', data.data.id)
+						this.$router.push({
+							path:'/stage'
+						})
+					}else{
+						this.pubmes(data.message);
+					}
 				})
 				.catch((err) => {
-					console.log(err)
+					this.pubmes('响应失败');
 				})
-				
-				this.$router.push('/stage')
-            }
-            
+            }           
         }
-    }
+	},
+	
+	mounted() {
+		
+	}
 }
 </script>
 

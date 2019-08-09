@@ -30,6 +30,12 @@
                                 <i class="pub-css et-steps-icon" v-if="i.hasNow"></i>
                                 <i v-else></i>
                             </a>
+                            <transition name="fade">
+                                <div v-show="!i.children || !i.children.length" class="et-tips">
+                                    <i>!</i>
+                                    未进入此阶段，无法查看
+                                </div>
+                            </transition>
                             <div class="et-steps-line"></div>
                             <ul class="et-steps-ul-children">
                                 <li v-for="(i, ind) in i.children" :key="ind">
@@ -110,15 +116,50 @@ export default {
                     title:'项目执行',
                     active:false,
                     hasNow:false,
-                    children:[]
+                    children:[
+                        {
+                            title:'执行资料', 
+                            path:this.parentRoute + '/' + this.type +'/step7',
+                            status:false
+                        }
+                    ]
                 },
                 {
-                  title:'项目验收',
-                  active:false  
+                    title:'项目验收',
+                    active:false,
+                    children:[
+                        {
+                            title:'验收申请', 
+                            path:this.parentRoute + '/' + this.type +'/step8',
+                            status:false
+                        },
+                        {
+                            title:'预验收', 
+                            path:this.parentRoute + '/' + this.type +'/step9',
+                            status:false
+                        },
+                        {
+                            title:'验收复核', 
+                            path:this.parentRoute + '/' + this.type +'/step10',
+                            status:false
+                        }
+                    ]  
                 },
                 {
-                  title:'项目维护',
-                  active:false  
+                    title:'项目维护',
+                    active:false,
+                    children:[
+                        {
+                            title:'维保结束申请', 
+                            path:this.parentRoute + '/' + this.type +'/step11',
+                            status:false
+                        },
+                        {
+                            title:'技术指标验收', 
+                            path:this.parentRoute + '/' + this.type +'/step12',
+                            status:false
+                        }
+                    ]  
                 },
             ],
             hasErrorTips:false
@@ -157,6 +198,7 @@ export default {
     mounted() {
         this.handleToRoute()
         this.initType()
+        
     },
     destroyed(){
        
@@ -190,6 +232,35 @@ export default {
             .et-steps-wrapper{
                 padding-left: 26px;
                 padding-bottom: 30px;
+                .et-steps-ul{
+                    .et-tips{
+                        position: absolute;
+                        top: 2px;
+                        left: 100px;
+                        background-color: #fdf6ec;
+                        font-size: 12px;
+                        line-height: 20px;
+                        color: #666;
+                        border-radius: 4px;
+                        padding: 2px 20px;
+                        white-space: nowrap;
+                        display: none;
+                        i{
+                            display: inline-block;
+                            width: 15px;
+                            height: 15px;
+                            border-radius: 50%;
+                            color: #FFFFFF;
+                            background:#E6A23C;
+                            text-align: center;
+                            margin-right: 5px;
+                            line-height: 15px;
+                        }
+                    }
+                }
+                .et-steps-ul>li:hover .et-tips{
+                    display: block;
+                }
                 .et-steps-ul .et-default{
                     cursor: default;
                 }

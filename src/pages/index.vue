@@ -25,18 +25,13 @@
                             <span class="ma-transparent"></span>
                         </li>
                     </ul>
-
-                    
                 </div>
-
-
-                
             </div>
             
             <div class="ma-info">
                 <el-dropdown @command='handleCommand'>
                     <span class="el-dropdown-link">
-                        Amy<i class="el-icon-arrow-down el-icon--right"></i>
+                        {{user}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" >
                         <el-dropdown-item command="handlelogout">退出系统</el-dropdown-item>
@@ -51,7 +46,7 @@
 </template>
 
 <script>
-import { clearSession } from '../utils/util.js'
+import { clearSession, getSession } from '../utils/util.js'
 export default {
     data() {
         return {
@@ -72,8 +67,8 @@ export default {
                     title:'系统管理',
                     path:'/system'
                 }
-
-            ]
+            ],
+            user:getSession('userName')
         }
     },
     methods:{
@@ -85,7 +80,14 @@ export default {
                 })
             }
             
+        },
+
+        init() {
+            
         }
+    },
+    mounted() {
+        
     }
 }
 </script>
@@ -179,7 +181,6 @@ export default {
                 
                 
             }
-
             
         }
         
@@ -212,5 +213,3 @@ export default {
     }
 }
 </style>
-
-

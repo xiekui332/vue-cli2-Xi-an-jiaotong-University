@@ -16,19 +16,21 @@
                 <span v-else class="upload-title">{{extitle}}</span>
             </el-button>
         </el-upload>
-        <p v-if="!extitle">支持扩展名：.doc .docx .pdf .jpg...</p>
+        <p v-if="exhasTips && !extitle">支持扩展名：.doc .docx .pdf .jpg...</p>
     </div>
 </template>
 
 <script>
 export default {
     props:[
-        'title'
+        'title',
+        'hasTips'
     ],
     data() {
         return {
             fileListL:[],
-            extitle:this.title
+            extitle:this.title,
+            exhasTips:this.hasTips
         }
     },
     methods:{
@@ -88,7 +90,7 @@ export default {
         width: 20px;
         height: 20px;
         background-position: -10px -365px;
-        margin-top: 6px;
+        margin-top: 10px;
     }
 }
 </style>

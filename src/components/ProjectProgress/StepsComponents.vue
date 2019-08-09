@@ -7,205 +7,56 @@
             </el-row>
         </div>
 
-        <Sign v-if="pageType === 'sign'" />
 
-        <div v-else>
-            <div class="st-item st-caigou">
-                <div class="st-item-header">
-                    <span class="pub-family">信息填写</span>
-                </div>
+        <div>
+            
 
-                <div class="st-edit-content"> 
-                    <div class="st-edit-item st-ed-head">
-                        <div> <span>采购申请表</span></div>
-                        <div> <span>操作</span></div>
-                    </div>
-                    <div class="st-edit-item st-oparate">
-                        <div class="st-oparate-col">2019SD001西安交通大学采购申请单</div>
-                        <div class="st-oparate-col">
-                            <span @click="handleFillApplication('open')">填写申请单</span>
-                            <span v-print="'#printFill'">打印</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="st-item">
-                <div class="st-item-header">
-                    <span class="pub-family">信息填写</span>
-                    <a href="javascript:;" class="st-add" @click="handleAddmenu('info')">添加</a>
-                </div>
+            <!-- 立项申请 S -->
+            <StepsApplication v-if="currentstep === 'excutingstep1'" />
 
-                <div class="st-edit-content">
-                    <div class="st-edit-item st-ed-head">
-                        <div><i>*</i> <span>计划付款时间</span></div>
-                        <div><i>*</i> <span>计划付款金额(万元)</span></div>
-                        <div> <span>备注</span></div>
-                        <div> <span>操作</span></div>
-                    </div>
+            <!-- 立项论证 S -->
+            <Demonstration v-if="currentstep === 'excutingstep2'" />
 
-                    <div class="st-edit-item st-oparate" v-for="(i, ind) in infoArr" :key="ind">
-                        <div class="st-oparate-col">
-                            <el-date-picker
-                            v-model="i.timeVal1"
-                            type="date"
-                            placeholder="选择日期"
-                            :disabled='i.isEdit'
-                            >
-                            </el-date-picker>
-                        </div>
-                        <div class="st-oparate-col">
-                            <el-input v-model="i.moneyVal1" placeholder="请输入内容" type='number' :disabled='i.isEdit'></el-input>
-                        </div>
-                        <div class="st-oparate-col">
-                            <el-input v-model="i.remarksVal1" placeholder="请输入备注(选填)" :disabled='i.isEdit' maxlength='20'></el-input>
-                        </div>
-                        <div class="st-oparate-col st-oparate-btn">
-                            <i class="pub-css st-icon-edit" @click="handleEdit(ind)"></i>
-                            <i class="pub-css st-icon-del" @click="handleDel(ind)"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- 项目采购--需求论证 -->
+            <Demand v-if="currentstep === 'excutingstep3'" />
 
-            <div class="st-item st-templates">
-                <div class="st-item-header">
-                    <span class="pub-family">模板资料</span>
-                </div>
+            <!-- 项目采购--采购申请 -->
+            <Requisition v-if="currentstep === 'excutingstep4'" />
+            
+            <!-- 项目采购--采购会 -->
+            <Sourcing v-if="currentstep === 'excutingstep5'" />
 
-                <div class="st-edit-content">
-                    <div class="st-edit-item st-ed-head">
-                        <div> <span>资料模板</span></div>
-                        <div> <span>上传资料</span></div>
-                    </div>
-                    <div class="st-edit-item">
-                        <div class="st-icon-file-title">
-                            <i class="pub-css st-icon-file"></i>
-                            <span class="st-file-title"><i class="st-tips-required">*</i> 立项申请书(模板)</span>
-                        </div>
-                        <div class="st-icon-file-name">
-                            <el-upload
-                                class="upload-demo"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :before-remove="beforeRemove"
-                                multiple
-                                :limit="3"
-                                :on-exceed="handleExceed"
-                                :file-list="fileListL">
-                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                            </el-upload>
-                        </div>
-                    </div>
-                    <div class="st-edit-item">
-                        <div class="st-icon-file-title">
-                            <i class="pub-css st-icon-file"></i>
-                            <span class="st-file-title"><i class="st-tips-required">*</i> 调研报告</span>
-                        </div>
-                        <div class="st-icon-file-name">
-                            <el-upload
-                                class="upload-demo"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :before-remove="beforeRemove"
-                                multiple
-                                :limit="3"
-                                :on-exceed="handleExceed"
-                                :file-list="fileListD">
-                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                            </el-upload>
-                        </div>
-                    </div>
-                    <div class="st-edit-item">
-                        <div class="st-icon-file-title">
-                            <i class="pub-css st-icon-file"></i>
-                            <span class="st-file-title"><i class="st-tips-required">*</i> 询价单(3份)</span>
-                        </div>
-                        <div class="st-icon-file-name">
-                            <el-upload
-                                class="upload-demo"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :before-remove="beforeRemove"
-                                multiple
-                                :limit="3"
-                                :on-exceed="handleExceed"
-                                :file-list="fileListX">
-                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                            </el-upload>
-                        </div>
-                    </div>
-                    <div class="st-edit-item">
-                        <div class="st-icon-file-title">
-                            <i class="pub-css st-icon-file"></i>
-                            <span class="st-file-title"> 调研函</span>
-                        </div>
-                        <div class="st-icon-file-name">
-                            <el-upload
-                                class="upload-demo"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :before-remove="beforeRemove"
-                                multiple
-                                :limit="3"
-                                :on-exceed="handleExceed"
-                                :file-list="fileListY">
-                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                            </el-upload>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- 项目采购--合同签订 -->
+            <Sign v-if="currentstep === 'excutingstep6'" />
 
-            <div class="st-item st-templates st-others">
-                <div class="st-item-header">
-                    <span class="pub-family">其他资料</span>
-                    <a href="javascript:;" class="st-add" @click="handleAddmenu('other')">增行</a>
-                </div>
+            <!-- 项目执行--执行资料 -->
+            <Implementation v-if="currentstep === 'excutingstep7'" />
 
-                <div class="st-edit-content">
-                    <div class="st-edit-item st-ed-head">
-                        <div> <span>资料名称</span></div>
-                        <div> <span>上传资料</span></div>
-                    </div>
-                    <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind">
-                        <div class="st-icon-file-title">
-                            <i class="pub-css st-icon-file"></i>
-                            <span class="st-file-title"> 2019采购合同</span>
-                        </div>
-                        <div class="st-icon-file-name">
-                            <el-upload
-                                class="upload-demo"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :before-remove="beforeRemove"
-                                multiple
-                                :limit="3"
-                                :on-exceed="handleExceed"
-                                :file-list="fileListQ">
-                                <el-button size="small" type="primary">
-                                    <i class="pub-css st-upload-icon"></i>
-                                </el-button>
-                            </el-upload>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- 验收-验收申请 -->
+            <Acceptance v-if="currentstep === 'excutingstep8'" />
 
-            <el-row class="st-checkHandle">
-                <el-button type="primary">提交审核</el-button>
+            <!-- 验收-预验收 -->
+            <Preacceptance v-if="currentstep === 'excutingstep9'" />
+
+
+
+
+
+            <el-row class="st-checkHandle" v-if="currentstep === 'excutingstep4'">
+                <el-button type="primary" :loading="loading" @click="handleFinishNode()">提交审核</el-button>
             </el-row>
 
-            <FillAppalication 
-            v-show="dialogVisibleFill"
-            @handleFillApplication='handleFillApplication'
-            :fillStatus='dialogVisibleFill'
-            :hasLoad='hasLoad'
-            />
+            
+            <el-row class="st-checkHandle" v-else>
+                <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+                <div class="st-checkHandle-tips">
+                    <i class="el-icon-info"></i>
+                    完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
+                </div>
+            </el-row>
+            
+
+            
         </div>
 
         <el-dialog
@@ -214,20 +65,26 @@
             :show-close=false
             width="60%"
             >
-            <p class="st-steps-title pub-family">阶段进行中</p>
-            <div class="st-steps-name">
-                <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in roleArr" :key="ind">{{i.name}}</p>
+            <div v-if="hasnonode">
+                <p class="st-steps-title pub-family st-none-title"><i></i>本节点无审批流程</p>
             </div>
-            <el-steps :active="steps" 
-                align-center
-                process-status='wait'
+            <div v-else>
+                <p class="st-steps-title pub-family">阶段进行中</p>
+                <div class="st-steps-name">
+                    <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in roleArr" :key="ind">{{i.name}}</p>
+                </div>
+                <el-steps :active="steps" 
+                    align-center
+                    process-status='wait'
+                
+                >
+                    <el-step title="曲丽丽" description="待提交"></el-step>
+                    <el-step title="周茂" description="审批"></el-step>
+                    <el-step title="李清" description="审批"></el-step>
+                    <el-step title="林丽莎" description="审批"></el-step>
+                </el-steps>   
+            </div>
             
-            >
-                <el-step title="曲丽丽" description="待提交"></el-step>
-                <el-step title="周茂" description="审批"></el-step>
-                <el-step title="李清" description="审批"></el-step>
-                <el-step title="林丽莎" description="审批"></el-step>
-            </el-steps>   
         </el-dialog>
 
     </div>
@@ -235,34 +92,35 @@
 </template>
 
 <script>
-import FillAppalication from '@/components/Common/fillAppalication'
-import Sign from '@/components/ProjectProgress/ChildComponents/Sign'
+import StepsApplication from '@/components/ProjectProgress/nodeDetail/stepsApplication'
+import Demonstration  from '@/components/ProjectProgress/nodeDetail/demonstration'
+import Demand  from '@/components/ProjectProgress/nodeDetail/demand'
+import Requisition  from '@/components/ProjectProgress/nodeDetail/requisition'
+import Sourcing  from '@/components/ProjectProgress/nodeDetail/sourcing'
+import Sign from '@/components/ProjectProgress/nodeDetail/Sign'
+import Implementation from '@/components/ProjectProgress/nodeDetail/implementation'
+import Acceptance from '@/components/ProjectProgress/nodeDetail/acceptance'
+import Preacceptance from '@/components/ProjectProgress/nodeDetail/preacceptance'
 import { store } from '@/store'
 export default {
     components:{
-        FillAppalication,
-        Sign
+        StepsApplication,
+        Demonstration,
+        Demand,
+        Requisition,
+        Sourcing,
+        Sign,
+        Implementation,
+        Acceptance,
+        Preacceptance
     },
     data() {
         return {
-            infoArr:[
-                {
-                    id:1,
-                    timeVal1:'',
-                    moneyVal1:'',
-                    remarksVal1:'',
-                    isEdit:true
-                }
-            ],
-            otherArr:[{}],
-            fileListL:[],
-            fileListD:[],
-            fileListX:[],
-            fileListY:[],
-            fileListQ:[],
+            hasnonode:false,
+            loading:false,
+            currentstep:this.$route.name,
+            pageType:'',
             dialogVisible:false,
-            dialogVisibleFill:false,
-            steps:1,
             roleArr:[
                 {
                     name:'创立项目'
@@ -277,8 +135,8 @@ export default {
                     name:'采购工作小组组长'
                 }
             ],
-            hasLoad:false,
-            pageType:''
+            steps:1
+
         }
     },
     mounted() {
@@ -288,73 +146,17 @@ export default {
         
     },
     methods:{
-        handleAddmenu(type) {
-            if(type === 'info') {
-                let obj = {}
-                let len = this.infoArr.length
-                if(!len) {
-                    obj = {
-                            id:1,
-                            timeVal1:'',
-                            moneyVal1:'',
-                            remarksVal1:'',
-                            isEdit:true
-                    }
-                    this.infoArr.push(obj)
-                    
-                }else{
-                    let number = this.infoArr[this.infoArr.length - 1].id
-                
-                    if(number > 10){
-                        return
-                    }
-                    obj.id = number + 1
-                    obj['timeVal' + (Number(number) + 1)] = ''
-                    obj['moneyVal' + (Number(number) + 1)] = ''
-                    obj['remarksVal' + (Number(number) + 1)] = ''
-                    obj.isEdit = true
-                    this.infoArr.push(obj)
-                }
-            }else if(type === 'other') {
-                this.otherArr.push({})
-            }
-            
-        },
-
-        handleEdit(ind) {
-            this.infoArr[ind].isEdit = false
-        },
         
-        handleDel(ind){
-            this.infoArr.splice(ind, 1)
-        },
-
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePreview(file) {
-            console.log(file);
-        },
-        handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-        },
-        beforeRemove(file, fileList) {
-            return this.$confirm(`确定移除 ${ file.name }？`);
-        },
 
         handleLookSteps() {
             this.dialogVisible = true;
         },
 
-        handleFillApplication(type) {
-            if(type === 'close') {
-                this.dialogVisibleFill = false
-                this.hasLoad = false
-            }else if(type === 'open') {
-                this.dialogVisibleFill = true
-                this.hasLoad = true
-            }
-            
+        handleFinishNode() {
+            this.loading = true
+            this.$router.push({
+                path:'step2'
+            })
         }
     },
     beforeRouteEnter(to,from,next) {
@@ -363,6 +165,13 @@ export default {
             // 此处的vm就是当前组件的实例
             vm.pageType = store.state.pageType
         })
+    },
+    
+    watch:{
+        "$route.name"(newname, oldname){
+            this.currentstep = newname
+            console.log(this.currentstep)
+        }
     }
 }
 </script>
@@ -389,223 +198,43 @@ export default {
             width: 20px;
         }
     }
-    .st-caigou{
-        .st-oparate-col{
-            text-align: center;
-        }
-        .st-oparate-col:nth-child(1){
-            font-size: 14px;
-            color: #8998AC;
-            letter-spacing: 0;
-        }
-        .st-oparate-col:nth-child(2){
-            font-size: 14px;
-            color: #3B7CFF;
-            letter-spacing: 0;
-            span{
-                cursor: pointer;
-            }
-            span:nth-child(1){
-                margin-right: 40px;
-            }
-        }
-    }
-    .st-item{
-        flex: 2;
-        background: #FFFFFF;
-        box-shadow: 0 2px 4px 0 #EFF2F7;
-        border-radius: 4px;
-        margin-top: 20px;
-        padding:0 20px 20px;
-        .st-item-header{
-            display: flex;
-            justify-content: space-between;
-            span{
-                font-size: 16px;
-                color: #3B4859;
-                letter-spacing: 0;
-                display: inline-block;
-                margin: 15px 0 0 20px;
-            }
-            .st-add{
-                display: block;
-                width: 78px;
-                height: 32px;
-                border-radius:16px; 
-                margin: 8px 22px 0 0;
-                background: #3B7CFF;
-                font-size: 14px;
-                color: #FFFFFF;
-                text-align: center;
-                line-height: 32px;
-            }
-        }
-        .st-edit-content{
-            .st-ed-head{
-                display: flex;
-                background: #F8F9FB;
-                margin-top: 20px;
-                height: 50px;
-                overflow: hidden;
-                >div{
-                    flex: 1;
-                    line-height: 50px;
-                    text-align: center;
-                    span{
-                        font-size: 14px;
-                        color: #39475B;
-                    }
-                    i{
-                        color: #FE5959;
-                        font-size: 18px;
-                        display: inline-block;
-                        height: 20px;
-                    }
-                }
-            }
-            .st-edit-item:nth-child(odd){
-                background: #F8F9FB;
-                & /deep/ .el-input__inner{
-                    background: #F8F9FB;
-                }
-            }
-            .st-edit-item:nth-child(even){
-                background: #FCFDFF;
-                & /deep/ .el-input__inner{
-                    background: #FCFDFF;
-                }
-            }
-            .st-oparate{
-                height: 50px;
-                display: flex;
-                align-items: center;
-                .st-oparate-col{
-                    flex: 1;
-                    & /deep/ input{
-                        text-align: center;
-                        border: none;
-                    }
-                    & /deep/ input[type=number]::-webkit-inner-spin-button,
-                    & /deep/ input[type=number]::-webkit-outer-spin-button {
-                        -webkit-appearance: none;
-                        margin: 0;
-                    }
-                    .st-icon-edit{
-                        display: inline-block;
-                        width: 20px;
-                        height: 20px;
-                        background-position: -377px -91px;
-                    }
-                    .st-icon-del{
-                        display: inline-block;
-                        width: 20px;
-                        height: 20px;
-                        background-position: -377px -168px;
-                        margin-left: 44px;
-                    }
-                    & /deep/ .el-input__prefix{
-                        display: none;
-                    }
-                    
-                }
-                .st-oparate-btn{
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-            }
-        }
-    }
-    .st-templates{
-        .st-edit-content{
-            .st-ed-head{
-                >div{
-                    text-align: left;
-                }
-                >div:nth-child(1){
-                    text-indent: 5em;
-                }
-            }
-            .st-edit-item{
-                display: flex;
-                >div{
-                    height: auto;
-                    min-height: 50px;
-                    flex: 1;
-                }
-                .st-icon-file-title{
-                    display: flex;
-                    align-items: center;
-                    .st-icon-file{
-                        display: inline-block;
-                        width: 20px;
-                        height: 20px;
-                        background-position: -375px -314px;
-                        margin-left: 32px;
-                        margin-right: 10px;
-                    }
-                    .st-tips-required{
-                        font-size: 14px;
-                        color: #FE5959;
-                    }
-                    .st-file-title{
-                        font-size: 14px;
-                        color: #8998AC;
-                    }
-                }
-                .st-icon-file-name{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    .upload-demo{
-                        width: 100%;
-                    }
-                    & /deep/ .el-upload-list{
-                        width: 80%;
-                    }
-                    & /deep/ .el-upload{
-                        float: right;
-                    }
-                    .el-button--primary{
-                        background: rgba(59, 124, 255, 0);
-                        border: none;
-                        padding: 6px 10px;
-                    }
-                    .st-upload-icon{
-                        display: inline-block;
-                        width: 20px;
-                        height: 20px;
-                        background-position: -10px -365px;
-                        margin-top: 10px;
-                    }
-                }
-                .upload-demo{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-            }
-        }
-    }
-    .st-others{
-        .st-edit-content{
-            
-        }
-    }
+    
+
     .st-checkHandle{
         text-align: center;
-        margin: 20px;
+        margin: 30px 20px 20px;
         button{
-            width: 428px;
+            width: 300px;
             height: 40px;
             background: #3B7CFF;
             border-radius: 6px;
         }
+        .st-checkHandle-tips{
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            i{
+                font-size: 16px;
+                border-radius: 50%;
+                color: #3B7CFF;
+            }
+        }
     }
 
     @import url('../Common/less/commNode.less');
+    .st-dialog .st-none-title{
+        margin-top: -25px;
+        i{
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #AEB9CF;
+            margin: 0 20px;
+        }
+    }
 
-    
+
 }
 
 

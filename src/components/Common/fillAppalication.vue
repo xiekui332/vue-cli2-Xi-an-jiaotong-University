@@ -68,7 +68,7 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.content" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.content" placeholder="请输入内容" :disabled="i.disabled" maxlength="50"></el-input>
                                 </div>
                                 <div>
                                     <el-input class="fl-L-input" v-model="i.number" placeholder="请输入内容" :disabled="i.disabled"></el-input>
@@ -110,7 +110,7 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.supName" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.supName" placeholder="请输入内容" :disabled="i.disabled" maxlength="50"></el-input>
                                 </div>
                                 <div>
                                     <el-input class="fl-L-input" v-model="i.supContry" placeholder="请输入内容" :disabled="i.disabled"></el-input>
@@ -156,7 +156,7 @@
                             <el-input
                                 type="textarea"
                                 :rows="4"
-                                maxlength="1000字"
+                                maxlength="10000字"
                                 :show-word-limit='hasLimit'
                                 placeholder="请输入内容"
                                 v-model="txt2">
