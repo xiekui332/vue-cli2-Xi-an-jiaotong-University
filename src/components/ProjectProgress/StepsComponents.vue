@@ -38,7 +38,14 @@
             <!-- 验收-预验收 -->
             <Preacceptance v-if="currentstep === 'excutingstep9'" />
 
+            <!-- 验收-验收复核 -->
+            <Acceptancereview v-if="currentstep === 'excutingstep10'" />
 
+            <!-- 维保-结束申请 -->
+            <Closeapplication v-if="currentstep === 'excutingstep11'" />
+
+            <!-- 维保-技术指标验收 -->
+            <Technical v-if="currentstep === 'excutingstep12'" />
 
 
 
@@ -46,7 +53,14 @@
                 <el-button type="primary" :loading="loading" @click="handleFinishNode()">提交审核</el-button>
             </el-row>
 
-            
+            <el-row class="st-checkHandle" v-else-if="currentstep === 'excutingstep12'">
+                <el-button type="primary" :loading="loading" @click="handleFinishNode()">项目结题</el-button>
+                <div class="st-checkHandle-tips">
+                    <i class="el-icon-info"></i>
+                    结题后项目完结，不能编辑、上传资料。
+                </div>
+            </el-row>
+
             <el-row class="st-checkHandle" v-else>
                 <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
                 <div class="st-checkHandle-tips">
@@ -101,6 +115,9 @@ import Sign from '@/components/ProjectProgress/nodeDetail/Sign'
 import Implementation from '@/components/ProjectProgress/nodeDetail/implementation'
 import Acceptance from '@/components/ProjectProgress/nodeDetail/acceptance'
 import Preacceptance from '@/components/ProjectProgress/nodeDetail/preacceptance'
+import Acceptancereview from '@/components/ProjectProgress/nodeDetail/acceptancereview'
+import Closeapplication from '@/components/ProjectProgress/nodeDetail/closeapplication'
+import Technical from '@/components/ProjectProgress/nodeDetail/technical'
 import { store } from '@/store'
 export default {
     components:{
@@ -112,7 +129,10 @@ export default {
         Sign,
         Implementation,
         Acceptance,
-        Preacceptance
+        Preacceptance,
+        Acceptancereview,
+        Closeapplication,
+        Technical
     },
     data() {
         return {
@@ -154,9 +174,14 @@ export default {
 
         handleFinishNode() {
             this.loading = true
-            this.$router.push({
-                path:'step2'
-            })
+            if(this.currentstep === 'excutingstep12') {
+
+            }else {
+                this.$router.push({
+                    path:'step2'
+                })
+            }
+            
         }
     },
     beforeRouteEnter(to,from,next) {
