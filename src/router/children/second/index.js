@@ -1,6 +1,7 @@
 import children from '../steps/steps'
 import trackChild from '../trackingChild'
 import situatioChild from '../situatioChild'
+import all from '../all'
 export default [
     {
         path: '/proj/first',
@@ -22,7 +23,8 @@ export default [
     {
         path: '/proj/all',
         name: 'all',    // 全部项目
-        component: () => import('@/pages/SecondPages/all')
+        component: () => import('@/pages/SecondPages/all'),
+        children:[...all]
     },
     {
         path: '/proj/situatio',

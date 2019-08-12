@@ -12,40 +12,40 @@
             
 
             <!-- 立项申请 S -->
-            <StepsApplication v-if="currentstep === 'excutingstep1'" />
+            <StepsApplication v-if="currentstep === 'excutingstep1' || currentstep === 'allstep1'" />
 
             <!-- 立项论证 S -->
-            <Demonstration v-if="currentstep === 'excutingstep2'" />
+            <Demonstration v-if="currentstep === 'excutingstep2' || currentstep === 'allstep2'" />
 
             <!-- 项目采购--需求论证 -->
-            <Demand v-if="currentstep === 'excutingstep3'" />
+            <Demand v-if="currentstep === 'excutingstep3' || currentstep === 'allstep3'" />
 
             <!-- 项目采购--采购申请 -->
-            <Requisition v-if="currentstep === 'excutingstep4'" />
+            <Requisition v-if="currentstep === 'excutingstep4' || currentstep === 'allstep4'" />
             
             <!-- 项目采购--采购会 -->
-            <Sourcing v-if="currentstep === 'excutingstep5'" />
+            <Sourcing v-if="currentstep === 'excutingstep5' || currentstep === 'allstep5'" />
 
             <!-- 项目采购--合同签订 -->
-            <Sign v-if="currentstep === 'excutingstep6'" />
+            <Sign v-if="currentstep === 'excutingstep6' || currentstep === 'allstep6'" />
 
             <!-- 项目执行--执行资料 -->
-            <Implementation v-if="currentstep === 'excutingstep7'" />
+            <Implementation v-if="currentstep === 'excutingstep7' || currentstep === 'allstep7'" />
 
             <!-- 验收-验收申请 -->
-            <Acceptance v-if="currentstep === 'excutingstep8'" />
+            <Acceptance v-if="currentstep === 'excutingstep8' || currentstep === 'allstep8'" />
 
             <!-- 验收-预验收 -->
-            <Preacceptance v-if="currentstep === 'excutingstep9'" />
+            <Preacceptance v-if="currentstep === 'excutingstep9' || currentstep === 'allstep9'" />
 
             <!-- 验收-验收复核 -->
-            <Acceptancereview v-if="currentstep === 'excutingstep10'" />
+            <Acceptancereview v-if="currentstep === 'excutingstep10' || currentstep === 'allstep10'" />
 
             <!-- 维保-结束申请 -->
-            <Closeapplication v-if="currentstep === 'excutingstep11'" />
+            <Closeapplication v-if="currentstep === 'excutingstep11' || currentstep === 'allstep11'" />
 
             <!-- 维保-技术指标验收 -->
-            <Technical v-if="currentstep === 'excutingstep12'" />
+            <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'allstep12'" />
 
 
 
