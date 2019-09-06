@@ -13,7 +13,7 @@
             :select3 = 'select3' 
             :select4 = 'select4' 
             :searchTex = 'searchTex'
-            @handleSearch = 'handleSearchRes'
+            @handleSearchRes = 'handleSearchRes'
         />
 
         <div class="de-tips">

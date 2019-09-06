@@ -34,10 +34,11 @@
         </el-select>
 
         <el-select v-model="sel4" placeholder="项目状态" v-if="opt4"
+            @change="changeStatus"
         >
             <el-option
-            v-for="item in opt4"
-            :key="item.value"
+            v-for="(item,index) in opt4"
+            :key="index"
             :label="item.label"
             :value="item.value"
             >
@@ -104,7 +105,7 @@
 
         <div class="de-btn-wrapper">
             <el-row class="de-btn de-search-btn">
-                <el-button type="primary" round @click="handleSearch('search')">查询</el-button>
+                <el-button type="primary" v-trigger round @click="handleSearch('search')">查询</el-button>
             </el-row>
 
             <el-row class="de-btn de-reset-btn">
@@ -127,7 +128,8 @@ export default {
         'options8',
         'optionsDate',
         'type',
-        'placeholder'
+        'placeholder',
+        'handleChangeStatus'
     ],
     name:'',
     data() {
@@ -145,7 +147,7 @@ export default {
             sel3:'',
             sel4:'',
             sel5:'',
-            sel6:'',
+            sel6:'0',
             sel7:'',
             sel8:'',
             tex:'',
@@ -157,7 +159,6 @@ export default {
     methods:{
         handleSearch(type) {
             if(type === 'search') {
-                
                 this.$emit('handleSearchRes', this.dataCollation())
             }else if( type === 'clear') {
                 this.$emit('handleSearchRes', this.dataCollation('clear'))
@@ -165,31 +166,86 @@ export default {
         },
 
         dataCollation(type) {
-            let obj = {}
-            
+            let obj = {}       
             if(type === 'clear') {
                 this.sel1 = ''
                 this.sel2 = ''
                 this.sel3 = ''
                 this.sel4 = ''
                 this.sel5 = ''
+                this.sel6 = '0'
                 this.selD = ''
                 this.tex = ''
-                obj = {
-                    sel1:this.sel1,
-                    sel2:this.sel2,
-                    sel3:this.sel3,
-                    sel4:this.sel4,
-                    sel5:this.sel5,
-                    selD:this.selD,
-                    tex:this.tex
+                if(this.type === 'todo'){
+                    obj.state = this.sel6
+                    obj.year = this.sel1
+                    obj.jfId = this.sel3
+                    obj.noOrName = this.tex
+                    obj.type = '待审批'
                 }
+                if(this.type === 'upload'){
+                    this.sel3='';
+                    this.sel4='';
+                    this.sel5='';
+                    this.sel7='';
+                    this.tex = '';
+                    obj.state=this.sel4;
+                    obj.node=this.sel5;
+                    obj.jfId=this.sel3;
+                    obj.isRelease=this.sel7;
+                    obj.tex=this.tex;
+                }if(this.type ==='role'){              
+                    this.tex='';
+                    obj.tex=this.tex;
+                }
+                if(this.type === 'first'){
+                    obj.sel1=this.sel1;
+                    obj.sel2=this.sel2;
+                    obj.sel3=this.sel3;
+                    obj.tex=this.tex;
+                }
+                if(this.type === 'excuting') {
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectNode = this.sel5
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
+                }
+
             }else{
                 if(this.type === 'tracking') {
-                    obj = {
-                        selD:this.selD,
-                        tex:this.tex
+                    
+                }else if(this.type === 'todo') {
+                    if(this.sel6 == 1){
+                        obj.type = '已审批'
+                    }else{
+                        obj.type = '待审批'
                     }
+                    obj.state = this.sel6
+                    obj.year = this.sel1
+                    obj.jfId = this.sel3
+                    obj.noOrName = this.tex                  
+                }else if(this.type === 'upload'){
+                    obj.state=this.sel4;
+                    obj.node=this.sel5;
+                    obj.jfId=this.sel3;
+                    obj.isRelease=this.sel7;
+                    obj.tex=this.tex;
+                }else if(this.type === 'role'){
+                    obj.tex=this.tex;
+                }else if(this.type === 'first'){
+                    obj.sel1=this.sel1;
+                    obj.sel2=this.sel2;
+                    obj.sel3=this.sel3;
+                    obj.tex=this.tex;
+                }else if(this.type === 'excuting') {
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectNode = this.sel5
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
                 }
                 
             }
@@ -206,11 +262,40 @@ export default {
             else{
                 this.explaceholder = '关键字搜索：负责人、项目编号、项目名称'
             }
+        },
+        changeStatus(param){//状态改变
+              this.$emit('handleChangeStatus', param)
         }
 
     },
     mounted() {
         this.handlePlaceholder(this.type)
+    },
+    watch:{
+        options3(params){
+            this.opt3 = params;
+        },
+        options4(params){
+            this.opt4=params;
+        },
+        options5(params){
+            this.opt5=params;
+        },
+        options1(params){
+            this.opt1 = params;
+        },
+        options2(params){
+            this.opt2 = params;
+        },
+
+
+    },
+    directives:{
+        trigger:{
+            inserted(el,binging){
+                el.click()
+            }
+        }
     }
 }
 </script>

@@ -17,6 +17,7 @@ export default new Router({
     {
       path:'/manage',
       name:'manage',
+      redirect:'/stage',
       component: () => import('@/pages/index.vue'),
       // 子路由分离
       children: [...children]

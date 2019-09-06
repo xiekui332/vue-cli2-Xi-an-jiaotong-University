@@ -9,7 +9,7 @@ import { getSession } from './util'
 
 const service = axios.create({
     baseURL: process.env.NODE_ENV === "development"?'':'http://192.168.31.176:8081/', // 请求URL前缀。和/config/index.js文件中api配置及后台保持同步更改。
-    timeout: 5000, // 超时
+    timeout: 10000, // 超时
     withCredentials: true // 表示跨域请求时是否需要使用凭证，即cookie等验证信息。参考：https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/withCredentials
     
 });
@@ -40,6 +40,12 @@ service.interceptors.request.use(
 
 // 添加 response 拦截器
 service.interceptors.response.use(config => {
+    if(config.status==200){
+        return config.data;
+    }
+    if(config.status==401){
+      return  $router.push({ path:'/'})
+    }
     return config;
 }, err => {
     console.log('响应失败')

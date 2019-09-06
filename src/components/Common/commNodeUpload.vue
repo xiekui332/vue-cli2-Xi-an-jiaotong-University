@@ -2,7 +2,7 @@
     <div class="st-icon-file-name">
         <el-upload
             :class="extitle?'upload-demo upload-title':'upload-demo'"
-            :action= uploadUrl
+            :action= nodeUploadUrl
             :on-preview="handlePreview"
             :on-success="handleSuccess"
             :on-remove="handleRemove"
@@ -22,14 +22,18 @@
     </div>
 </template>
 <script>
-import { uploadUrl } from '../../utils/util.js'
+import { nodeUploadUrl } from '../../utils/util.js'
 export default {
     props:[
         'title',
         'hasTips',
         'handleUpload',
         'fileName1',
-        'isClear'
+        'isClear',
+        'pid',
+        'pl',
+        'nodeId'
+        
     ],
     data() {
         return {
@@ -37,7 +41,7 @@ export default {
             extitle:this.title,
             exhasTips:this.hasTips,
             uploadParams:{},
-            uploadUrl:uploadUrl,
+            nodeUploadUrl:nodeUploadUrl,
             isclears:false
         }
     },
@@ -46,7 +50,7 @@ export default {
             console.log(file);
         },
         handleRemove(file, fileList) {
-            console.log(file, fileList);
+            console.log(file);  
         },
         beforeRemove(file, fileList) {
            

@@ -5,7 +5,7 @@
                 <div class="pub-css ma-logo"></div>
                 <p class="ma-title">项目管理</p>
                 <div class="ma-header-navs">
-                    <ul>
+                    <ul class="ma-header-ul">
                         <li v-for="(i, ind) in nav" :key="ind">
                             <router-link :to='i.path'>
                                 <i class="ma-icon" v-if="i.title ==='总览'">
@@ -51,22 +51,7 @@ export default {
     data() {
         return {
             nav:[
-                {
-                    title:'总览',
-                    path:'/stage'
-                },
-                {
-                    title:'项目',
-                    path:'/proj'
-                },
-                {
-                    title:'审批',
-                    path:'/approve'
-                },
-                {
-                    title:'系统管理',
-                    path:'/system'
-                }
+
             ],
             user:getSession('userName')
         }
@@ -81,13 +66,32 @@ export default {
             }
             
         },
+        getmeneOne(){
+           this.$http.post("/api/user/getUserPowerLevelOne",{}).then(res =>{
+               if(res.code=="00000"){
+
+                    var list=[];
+                    var msglist=res.data;
+                   for(var i=0;i<msglist.length;i++){
+                     var msg={};
+                     msg["title"]=msglist[i].name;
+                     msg["path"]=msglist[i].url;
+                     list[i]=msg;
+                   }
+                   this.nav=list;
+               }
+            })
+        },
 
         init() {
+            let el = document.getElementsByClassName('ma-header-ul')[0]
+            // console.log(el)
             
         }
     },
     mounted() {
-        
+        this.getmeneOne();
+        this.init()
     }
 }
 </script>

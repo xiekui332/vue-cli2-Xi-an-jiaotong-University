@@ -52,13 +52,14 @@ export default {
 					password:this.password
 				}
 				handleLogin(param).then((res) => {
-					console.log(res)
 					let data = res.data
-					if(data.code === "00000") {	
-						setSession('userName', data.data.userName)
-						setSession('userid', data.data.id)
+					if(res.code == "00000") {	
+						setSession('token',true);
+						setSession('userName', data.userName)
+						setSession('userid', data.id)
 						this.$router.push({
-							path:'/stage'
+							// path:'/stage',
+							name:"manage"
 						})
 					}else{
 						this.pubmes(data.message);
@@ -175,5 +176,6 @@ export default {
 	}
 }
 </style>
+
 
 

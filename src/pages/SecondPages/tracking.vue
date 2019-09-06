@@ -6,8 +6,45 @@
             <div class="tr-head">
                 <HeaderSearch :optionsDate='optionsDate' @handleSearchRes='handleSearchRes' :type='type' />
             </div>
+            
+            <el-divider></el-divider>
 
-            <TableCommon :tableData='tableData' :tablekind='tablekind' :type='type' @handleTrackLook='handleTrackLook' />
+            <el-table
+                :data="tableData"
+                tooltip-effect="dark"
+                style="width: 100%"
+                :stripe='true'
+                :cell-class-name="cell"
+                @selection-change="handleSelectionChange"
+                @cell-click='handleLookDetail'>
+
+                <el-table-column
+                    type="index"
+                    label="序号"
+                    width="55">
+                </el-table-column>
+
+                <el-table-column 
+                    v-for="(i, ind) in tablekind"
+                    :key="ind"
+                    :prop="i.prop"
+                    :label="i.label"
+                    :width="i.width"
+                    show-overflow-tooltip>
+                </el-table-column>
+                
+                <el-table-column
+                    prop=""
+                    label="操作"
+                    show-overflow-tooltip
+                    >
+                    <template slot-scope="scope">
+                        <div class="ma-icon ma-todo" @click="trackingDetail(scope.row)">
+                            审批
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
 
             <CommPage :hasPage='hasPage' />
         </div>
@@ -135,7 +172,10 @@ export default {
     padding: 20px;
     height: 100%;
     .tr-wrapper{
-        
+        .el-divider--horizontal{
+            margin: 5px 0;
+            background: #F0F3F7;
+        }
     }
 }
 </style>

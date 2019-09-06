@@ -25,7 +25,9 @@
                                     class="fl-L-input"
                                     v-model="baseDate"
                                     type="date"
-                                    placeholder="选择日期">
+                                    placeholder="选择日期"
+                                    value-format="yyyy-MM-dd"
+                                    >
                                 </el-date-picker>
                             </div>
                             <div class="fl-L">
@@ -39,7 +41,7 @@
                                 </p>
                                 <div class=" fl-L-radio">
                                     <el-radio v-model="radio" label="1">是</el-radio>
-                                    <el-radio v-model="radio" label="2">否</el-radio>
+                                    <el-radio v-model="radio" label="0">否</el-radio>
                                 </div>
                                 
                             </div>
@@ -68,20 +70,20 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.content" placeholder="请输入内容" :disabled="i.disabled" maxlength="50"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.number" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" type="number" v-model="i.cgNumber" placeholder="请输入内容" ></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.part" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.company" placeholder="请输入内容" ></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.money" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.planMoney" placeholder="请输入内容" ></el-input>
                                 </div>
                                 <div>
                                     <i class="pub-css fl-icon-edit" @click="handleListEdit('make', ind)"></i>
-                                    <i class="pub-css fl-icon-del" @click="handleListDel('make', ind)"></i>
+                                    <i class="pub-css fl-icon-del" @click="handleListDel('make', i)"></i>
                                 </div>
                             </div>
                         </div>
@@ -110,23 +112,23 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.supName" placeholder="请输入内容" :disabled="i.disabled" maxlength="50"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.supContry" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.address" placeholder="请输入内容" ></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.supMan" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.legalPerson" placeholder="请输入内容"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.supTell" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.phone" placeholder="请输入内容"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.supEmail" placeholder="请输入内容" :disabled="i.disabled"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.email" placeholder="请输入内容"></el-input>
                                 </div>
                                 <div>
                                     <i class="pub-css fl-icon-edit" @click="handleListEdit('supllier', ind)"></i>
-                                    <i class="pub-css fl-icon-del" @click="handleListDel('supllier', ind)"></i>
+                                    <i class="pub-css fl-icon-del" @click="handleListDel('supllier', i)"></i>
                                 </div>
                             </div>
                         </div>
@@ -167,7 +169,7 @@
                     <el-divider></el-divider>
 
                     <div class="fl-item">
-                        <p class="fl-matters-head">如您申请采购的是进口科教用品，请阅读并确认以下事宜：</p>
+                        <p class="fl-matters-head">如您申请采购的是进口科教用品，请阅读并确认以下事项：</p>
                         <p class="fl-matters-list" v-for="(i, ind) in mattersArr" :key="ind">{{ind + 1 }}<span class="fl-matters">{{i.txt}}</span> </p>
                     </div>
 
@@ -177,7 +179,7 @@
                         <div class="fl-item-head">
                             <span class="pub-family">项目负责人意见</span>
                         </div>
-                        <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实</p>
+                        <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实，</p>
                         <el-checkbox class="fl-check" v-model="checked">同意购置</el-checkbox>
                     </div>
                 </div>
@@ -206,6 +208,7 @@
 
 <script>
 import Success from '@/components/Common/Success'
+import { store } from "@/store"
 export default {
     props:[
         'fillStatus',
@@ -226,10 +229,19 @@ export default {
             txt2:'',
             mattersArr:[
                 {
-                    txt:'项目单位应保证进口Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget'
+                    txt:'项目单位应保证进口科教用品来源合法。'
                 },
                 {
-                    txt:'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX法律责任。'
+                    txt:'进口科教用品免税有严格的规定，并不是所有科教用品都可以免税，项目单位应预留资金以备不能免税时缴纳进口关税及增值税。进口过程的汇率风险及产生的一切费用由项目单位承担。'
+                },
+                {
+                    txt:"外贸合同一经签订即具有法律效力，项目单位不得以免税未批准或经费不充足为由撤销外贸合同，否则责任自负，但项目单位与供货商事先有约定的除外。"
+                },
+                {
+                    txt:"进口科教用品采购周期较长，请项目单位事先做好充分准备并积极配合采购与招标管理办公室工作，以免耽误您的使用时间。项目单位可凭合同号查询进口业务的进展情况。"
+                },
+                {
+                    txt:"在海关监管的五年期间内，使用单位不得将进口免税科教用品擅自转让、移作他用或者进行其他处置（如出租、调换、改装等）。进口免税科教用品须放置于免税申报时的使用地点，只能用于申报时所列的特定用途。如擅自改变特定用途、放置地点的，将视情节依法追究责任人的责任乃至法律责任。"
                 }
             ],
             checked:true,
@@ -242,30 +254,30 @@ export default {
             hasClose:false,
             marTop:'15vh',
             hasNewClass:false,
-            hasSuccessStatus:true
+            hasSuccessStatus:true,
+            sessionGet:{},
+            id:""
         }
     },
     methods:{
         handleAddList(type) {
             if(type === 'make') {
                 let obj = {
-                    content:'',
-                    number:'',
-                    part:'',
-                    money:'',
-                    disabled:true
+                    name:'',
+                    cgNumber:'',
+                    company:'',
+                    planMoney:''
                 }
                 if(this.listArr.length < 10) {
                     this.listArr.push(obj)
                 }
             }else if(type === 'supllier'){
                 let obj = {
-                    supName:'',
-                    supContry:'',
-                    supMan:'',
-                    supTell:'',
-                    supEmail:'',
-                    disabled:true
+                    name:'',
+                    address:'',
+                    legalPerson:'',
+                    phone:'',
+                    email:''
                 }
                 if(this.listArr2.length < 10) {
                     this.listArr2.push(obj)
@@ -281,11 +293,47 @@ export default {
             }
             
         },
-        handleListDel(type, ind) {
+        handleListDel(type, i) {
+            let params = {
+                id:i.id
+            }
+            
             if(type === 'make') {
-                this.listArr.splice(ind, 1)
+                this.$http.post("/api/project/deletedCgqd", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        this.init()
+                    }else{
+                        this.$message({
+                            type:'error',
+                            message:res.message
+                        })
+                    }
+                })
+                .catch((err) => {
+                    this.$message({
+                        type:'error',
+                        message:err.message
+                    })
+                })
             }else if(type === 'supllier') {
-                this.listArr2.splice(ind, 1)
+                this.$http.post("/api/project/deletedSupplier", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        this.init()
+                    }else{
+                        this.$message({
+                            type:'error',
+                            message:res.message
+                        })
+                    }
+                })
+                .catch((err) => {
+                    this.$message({
+                        type:'error',
+                        message:err.message
+                    })
+                })
             }
             
         },
@@ -296,11 +344,121 @@ export default {
                 this.$emit('handleFillApplication', 'close')
             }else if(type === 'save') {
                 // this.exchangeFill = false
-                this.fill = false
-                this.success = true
-                this.dialogWid = '40%'
-                this.marTop = '20vh'
-                this.hasNewClass = true
+                // this.fill = false
+                // this.success = true
+                // this.dialogWid = '40%'
+                // this.marTop = '20vh'
+                // this.hasNewClass = true
+                
+                let cgList = this.listArr
+                let gysList = this.listArr2
+
+                
+                if(!this.baseNum) {
+                    this.$message.warning("请填写采购申请编号")
+                    return false
+                }
+                
+                if(!this.baseDate) {
+                    this.$message.warning("请填写填报日期")
+                    return false
+                }
+                
+                if(!this.baseName) {
+                    this.$message.warning("请填写采购名称")
+                    return false
+                }
+
+                if(!cgList.length) {
+                    this.$message.warning("请先填写采购清单")
+                    return false
+                }
+                if(!gysList.length) {
+                    this.$message.warning("请先添加推荐供应商")
+                    return false
+                }
+                
+                if(!this.txt1) {
+                    this.$message.warning("请填写调研情况")
+                    return false
+                }
+                
+                if(!this.txt2) {
+                    this.$message.warning("请填写技术指标")
+                    return false
+                }
+
+                if(!this.checked) {
+                    this.$message.warning("请先勾选项目负责人意见")
+                    return false
+                }
+                
+
+                let params = {
+                    pid:this.sessionGet.id,
+                    no:this.baseNum,
+                    cgName:this.baseName,
+                    time:this.baseDate,
+                    isChangeStructure:this.radio,
+                    investigation:this.txt1,
+                    technicalIndicators:this.txt2,
+                    cgList:JSON.stringify(cgList),
+                    isAgree:"0",
+                    gysList:JSON.stringify(gysList)
+                }
+
+                if(this.id) {
+                    params.id = this.id
+                    this.$http.post("/api/project/updatecgsq", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.fill = false
+                            this.success = true
+                            this.dialogWid = '40%'
+                            this.marTop = '20vh'
+                            this.hasNewClass = true
+                            this.$emit('hasSubmit', true)
+                        }else{
+                            this.$message({
+                                type:'error',
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:'error',
+                            message:err.message
+                        })
+                    })
+                }else{
+                    this.$http.post("/api/project/addcgsq", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.fill = false
+                            this.success = true
+                            this.dialogWid = '40%'
+                            this.marTop = '20vh'
+                            this.hasNewClass = true
+                            this.$emit('hasSubmit', true)
+                        }else{
+                            this.$message({
+                                type:'error',
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:'error',
+                            message:err.message
+                        })
+                    })
+                }
+
+                
+
+
             }
         },
         hadlePrint() {
@@ -314,10 +472,59 @@ export default {
                 this.dialogWid = '60%'
                 this.marTop = '15vh'
             }
+        },
+
+        init() {
+            let params = {
+                pid:this.sessionGet.id
+            }
+
+            this.$http.post("/api/project/getcgsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    for(let i = 0; i < res.data.cgList.length; i ++) {
+                        res.data.cgList[i].name = res.data.cgList[i].name?res.data.cgList[i].name:""
+                        res.data.cgList[i].cgNumber = res.data.cgList[i].cgNumber?res.data.cgList[i].cgNumber:""
+                        res.data.cgList[i].company = res.data.cgList[i].company?res.data.cgList[i].company:""
+                        res.data.cgList[i].planMoney = res.data.cgList[i].planMoney?res.data.cgList[i].planMoney.toFixed(2):""
+                    }
+
+                    for(let i = 0; i < res.data.gysList.length; i ++) {
+                        res.data.gysList[i].name = res.data.gysList[i].name?res.data.gysList[i].name:""
+                        res.data.gysList[i].phone = res.data.gysList[i].phone?res.data.gysList[i].phone:""
+                        res.data.gysList[i].email = res.data.gysList[i].email?res.data.gysList[i].email:""
+                        res.data.gysList[i].legalPerson = res.data.gysList[i].legalPerson?res.data.gysList[i].legalPerson:""
+                        res.data.gysList[i].address = res.data.gysList[i].address?res.data.gysList[i].address:""
+                    }
+
+
+                    this.listArr = res.data.cgList
+                    this.listArr2 = res.data.gysList
+                    this.baseNum = res.data.cgMsg.purchaseNo
+                    this.baseName = res.data.cgMsg.purchaseName
+                    this.baseDate = res.data.cgMsg.createTime
+                    this.radio = res.data.cgMsg.isChangeStructure.toString()
+                    this.txt1 = res.data.cgMsg.investigation
+                    this.txt2 = res.data.cgMsg.technicalIndicators
+                    this.id = res.data.cgMsg.id
+                }else{
+                    // this.$message({
+                    //     type:'error',
+                    //     message:res.message
+                    // })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
         }
     },
     mounted() {
-        
+        this.sessionGet = store.state.proInfo
+        this.init()
     },
     computed: {
         
@@ -338,4 +545,11 @@ export default {
 
 <style lang="less" scoped>
     @import url('./less/fillAppalication.less'); // 分号要写，不然会报错
+
+    #fl-wrapper{
+        & /deep/ .el-input__prefix, .el-input__suffix{
+            top: -3px;
+        }
+    }
+    
 </style>

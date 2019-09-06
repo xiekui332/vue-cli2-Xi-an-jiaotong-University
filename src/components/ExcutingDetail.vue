@@ -31,13 +31,13 @@
                                 <i v-else></i>
                             </a>
                             <transition name="fade">
-                                <div v-show="!i.children || !i.children.length" class="et-tips">
+                                <div v-show="!i.active" class="et-tips">
                                     <i>!</i>
                                     未进入此阶段，无法查看
                                 </div>
                             </transition>
                             <div class="et-steps-line"></div>
-                            <ul class="et-steps-ul-children">
+                            <ul :class="i.active?'et-steps-ul-children hasHeight':'et-steps-ul-children noHeight'" >
                                 <li v-for="(i, ind) in i.children" :key="ind">
                                     <router-link :to="i.path">{{ind + 1}} {{i.title}}</router-link>
                                 </li>
@@ -57,10 +57,13 @@
 
 <script>
 import proInfoHead from '@/components/Common/ProInfoHead'
+import { store } from '@/store'
 export default {
     props:[
         'type',
-        'parentRoute'
+        'parentRoute',
+        'proInfo',
+        "paramsUrl"
     ],
     components:{
         proInfoHead
@@ -70,13 +73,13 @@ export default {
             steps:[
                 {
                   title:'项目立项',
-                  active:true ,
-                  hasNow:true,
+                  active:false ,
+                  hasNow:false,
                   children:[
                       {
                         title:'立项申请', 
                         path:this.parentRoute + '/' + this.type +'/step1',
-                        status:true
+                        status:false
                       },
                       {
                         title:'立项论证', 
@@ -87,7 +90,7 @@ export default {
                 },
                 {
                   title:'项目采购',
-                  active:true,
+                  active:false,
                   hasNow:false,
                   children:[
                       {
@@ -162,49 +165,162 @@ export default {
                     ]  
                 },
             ],
-            hasErrorTips:false
+            hasErrorTips:false,
+            exproInfo:{},
+            exparamsUrl:''
         }
     },
     methods:{
         handleToRoute() {
-            if(this.steps.length) {
-                for(let i = 0; i < this.steps.length; i ++ ) {
-                    if(this.steps[i].children && this.steps[i].children.length) {
-                        for(let j = 0; j < this.steps[i].children.length; j ++) {
-                            if(this.steps[i].children[j].status === true){
-                                location.hash= this.steps[i].children[j].path
-                            }
-                        }
-                    }
-                }
+            let params = {
+                id:this.exproInfo.id
             }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+                if(res.code === '00000') {
+                    this.sessionGet = res.data
+                    store.dispatch('commitChangeProInfo',res.data)
+                    let routerStep = this.sessionGet.status
+                    console.log(routerStep)
+                    // example
+                    // routerStep = 7
+                    
+                    if(routerStep == 4) {
+                        this.handleSetroute("项目立项", "立项申请")
+                    }else if(routerStep == 5) {
+                        this.handleSetroute("项目立项", "立项论证")
+                    }else if(routerStep == 6) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购", "需求论证")
+                    }else if(routerStep == 7) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购", "采购申请")
+                    }else if(routerStep == 8) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购", "采购会")
+                    }else if(routerStep == 9) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购", "签订合同")
+                    }else if(routerStep == 10) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行", "执行资料")
+                    }else if(routerStep == 11) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收", "验收申请")
+                    }else if(routerStep == 12) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收", "预验收")
+                    }else if(routerStep == 13) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收", "验收复核")
+                    }else if(routerStep == 14) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收")
+                        this.handleSetroute("项目维护", "维保结束申请")
+                    }else if(routerStep == 15) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收")
+                        this.handleSetroute("项目维护", "技术指标验收")
+                    }
+
+                    
+                    
+                }else{
+                    
+                }
+            })
+
+            
+
             
         },
+
+        handleSetroute(parentName, childName) {
+            for(let i = 0; i < this.steps.length; i ++ ) {
+                if(this.steps[i].title == parentName) {
+                    if(childName) {
+                        this.steps[i].active = true
+                        this.steps[i].hasNow = true
+                        for(let j = 0; j < this.steps[i].children.length; j ++) {
+                            if(this.steps[i].children[j].title == childName) {
+                                this.steps[i].children[j].status = true
+                            }   
+                        }
+
+                        // for(let i = 0; i < this.steps.length; i ++ ) {
+                            
+                            if(!this.steps[i].active) {
+                                console.log(this.steps[i])
+                                this.steps[i].children = []
+                            }
+
+                            if(this.steps[i].children && this.steps[i].children.length) {
+                                for(let j = 0; j < this.steps[i].children.length; j ++) {
+                                    this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
+                                    if(this.steps[i].children[j].status === true){
+                                        location.hash= this.steps[i].children[j].path
+                                        
+                                    }
+                                }
+                            }
+                            
+                        // }
+                    }else{
+                        this.steps[i].active = true
+                    }
+                    
+                }
+                
+            }
+
+        },
+ 
         handleCommit(path) {
             
         },
         handleClose(){
             this.hasErrorTips = false
-        },
-
-        initType() {
-            if(this.type === 'tracking') {
-                
-            }else if(this.type === 'excuting'){
-                
-            }
         }
     },
     mounted() {
+        sessionStorage.setItem('params', JSON.stringify(this.proInfo))
+        this.exproInfo = store.state.proInfo
+        this.exparamsUrl = this.paramsUrl
+        store.dispatch('commitChangePath',this.exparamsUrl)
         this.handleToRoute()
-        this.initType()
-        
     },
     destroyed(){
        
     },
     beforeRouteUpdate(to, from, next) {
-        
+        console.log(to)
+    },
+
+    watch:{
+         GethasUpdate(params) {
+            console.log(params)
+            if(params) {
+                this.handleToRoute()
+                store.dispatch('commitChangeUpdate',false)
+            }
+        }
+    },
+
+    computed:{
+       GethasUpdate () {
+           return store.state.hasUpdate
+       }
     }
 }
 </script>
@@ -256,6 +372,11 @@ export default {
                             margin-right: 5px;
                             line-height: 15px;
                         }
+                    }
+
+                    .noHeight{
+                        height: 0;
+                        overflow: hidden;
                     }
                 }
                 .et-steps-ul>li:hover .et-tips{

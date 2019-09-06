@@ -7,7 +7,9 @@
             :page-sizes="[10, 20, 30, 40]"
             :page-size="100"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="400">
+            :total="extotal"
+            :hide-on-single-page=false
+            >
             </el-pagination>
         </div>
     <div v-else></div>
@@ -17,21 +19,30 @@
 export default {
     props:[
         'hasPage',
-        'handlePageUp'
+        'handlePageUp',
+        'total'
     ],
     data() {
         return {
-            currentPage4: 4,
+            currentPage4: 1,
+            extotal:this.total
         }
     },
 
     methods:{
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            this.$emit('handlePageRows', val)
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
             this.$emit('handlePageUp', val)
+        }
+    },
+    mounted(){
+        
+    },
+    watch:{
+        total(params){
+            this.extotal = params
         }
     }
 }

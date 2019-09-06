@@ -49,25 +49,25 @@
 
 
 
-            <el-row class="st-checkHandle" v-if="currentstep === 'excutingstep4'">
+            <!-- <el-row class="st-checkHandle" v-if="currentstep === 'excutingstep4'">
                 <el-button type="primary" :loading="loading" @click="handleFinishNode()">提交审核</el-button>
-            </el-row>
+            </el-row> -->
 
-            <el-row class="st-checkHandle" v-else-if="currentstep === 'excutingstep12'">
+            <!-- <el-row class="st-checkHandle" v-else-if="currentstep === 'excutingstep12'">
                 <el-button type="primary" :loading="loading" @click="handleFinishNode()">项目结题</el-button>
                 <div class="st-checkHandle-tips">
                     <i class="el-icon-info"></i>
                     结题后项目完结，不能编辑、上传资料。
                 </div>
-            </el-row>
+            </el-row> -->
 
-            <el-row class="st-checkHandle" v-else>
+            <!-- <el-row class="st-checkHandle" v-else>
                 <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
                 <div class="st-checkHandle-tips">
                     <i class="el-icon-info"></i>
                     完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
                 </div>
-            </el-row>
+            </el-row> -->
             
 
             
@@ -79,28 +79,21 @@
             :show-close=false
             width="60%"
             >
-            <div v-if="hasnonode">
-                <p class="st-steps-title pub-family st-none-title"><i></i>本节点无审批流程</p>
+            <p class="st-steps-title pub-family">阶段进行中</p>
+            <div class="st-steps-name">
+                <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.spName?i.spName:''}}</p>
             </div>
-            <div v-else>
-                <p class="st-steps-title pub-family">阶段进行中</p>
-                <div class="st-steps-name">
-                    <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in roleArr" :key="ind">{{i.name}}</p>
-                </div>
-                <el-steps :active="steps" 
-                    align-center
-                    process-status='wait'
-                
-                >
-                    <el-step title="曲丽丽" description="待提交"></el-step>
-                    <el-step title="周茂" description="审批"></el-step>
-                    <el-step title="李清" description="审批"></el-step>
-                    <el-step title="林丽莎" description="审批"></el-step>
-                </el-steps>   
-            </div>
+            <el-steps :active="steps" 
+                align-center
+                process-status='wait'
             
+            >
+                <el-step  v-for="(i, ind) in hasNodeInfo" :key="ind" :title="i.userName?i.userName:'' + ' ' + i.time?i.time:''" :description="i.state?i.state:''"></el-step>
+            </el-steps>  
+            <div class="st-steps-name st-steps-bot-name">
+                <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.remark?i.remark:''}}</p>
+            </div> 
         </el-dialog>
-
     </div>
 
 </template>
@@ -155,11 +148,17 @@ export default {
                     name:'采购工作小组组长'
                 }
             ],
-            steps:1
+            steps:1,
+            sessionGet:{},
+            hasNode:false,
+            hasNodeInfo:[],
+            steps:0
 
         }
     },
     mounted() {
+        this.sessionGet = store.state.proInfo
+        
         
     },
     created() {
@@ -169,7 +168,7 @@ export default {
         
 
         handleLookSteps() {
-            this.dialogVisible = true;
+            this.handleHasNode();
         },
 
         handleFinishNode() {
@@ -181,6 +180,81 @@ export default {
                     path:'step2'
                 })
             }
+            
+        },
+
+        handleHasNode(){
+            // console.log(this.sessionGet)
+            let params = {
+                id:this.sessionGet.id,
+                nodeId:this.sessionGet.projectNode
+            }
+            this.$http.post('/api/project/getExamineList', params)
+            .then((res) => {
+                // res = {
+                //     "code": "00000",
+                //     "data": [
+                //         {
+                //             "spName":"主管部门",//审批名称
+                //             "time":"2019-01-12",//时间
+                //             "remark": '小菜审批',
+                //             "state": 1,//状态0：待审核，1：审核通过；2：审核被驳回，3：重新提交待审核
+                //             "userName": "谢奎" //审核人姓名
+                //         },
+                //         {   
+                //             "spName":"主管部门",
+                //             "time":"2019-01-12",
+                //             "remark": '小菜审批',
+                //             "state": 1,
+                //             "userName": "谢奎" 
+                //         },
+                //         {
+                //             "spName":"主管部门",
+                //             "time":"2019-01-12",
+                //             "remark": '小菜审批',
+                //             "state": 2,
+                //             "userName": "谢奎" 
+                //         },
+                //         {
+                //             "spName":"主管部门"
+                //         },
+                //         {
+                //             "spName":"主管部门"
+                //         }
+                //     ],
+                //     "message": "操作成功"
+                // }
+                if(res.code == '00000'){
+                    this.hasNode = true
+                    if(res.data && res.data.length) {
+                        for(let i = 0; i < res.data.length; i ++) {
+                            if(res.data[i].state == 0) {
+                                res.data[i].state = '待审核'
+                            }else if(res.data[i].state == 1) {
+                                res.data[i].state = '审核通过'
+                                this.steps = i + 1
+                            }else if(res.data[i].state == 2) {
+                                res.data[i].state = '审核被驳回'
+                            }else if(res.data[i].state == 3) {
+                                res.data[i].state = '重新提交待审核'
+                            }
+                        }
+                    }
+                    
+                    this.hasNodeInfo = res.data
+                    this.dialogVisible = true
+
+                }else{
+                    this.hasNode = false
+                    this.dialogVisible = false
+                    this.$message.info('本节点无审批流程')
+                    
+                }
+            })
+            .catch((err) => {
+                this.dialogVisible = false
+                this.$message.error(err.message)
+            })
             
         }
     },
@@ -195,7 +269,7 @@ export default {
     watch:{
         "$route.name"(newname, oldname){
             this.currentstep = newname
-            console.log(this.currentstep)
+            // console.log(this.currentstep)
         }
     }
 }
@@ -225,26 +299,7 @@ export default {
     }
     
 
-    .st-checkHandle{
-        text-align: center;
-        margin: 30px 20px 20px;
-        button{
-            width: 300px;
-            height: 40px;
-            background: #3B7CFF;
-            border-radius: 6px;
-        }
-        .st-checkHandle-tips{
-            font-size: 14px;
-            color: #666;
-            margin-top: 20px;
-            i{
-                font-size: 16px;
-                border-radius: 50%;
-                color: #3B7CFF;
-            }
-        }
-    }
+    
 
     @import url('../Common/less/commNode.less');
     .st-dialog .st-none-title{
@@ -257,6 +312,18 @@ export default {
             background: #AEB9CF;
             margin: 0 20px;
         }
+    }
+
+    // change marginTop
+    .st-dialog{
+        & /deep/ .el-step__description{
+            margin-top:0; 
+        }
+    }
+    
+
+    .st-steps-bot-name p{
+        font-size: 12px!important;
     }
 
 

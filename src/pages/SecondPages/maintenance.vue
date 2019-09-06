@@ -1,6 +1,6 @@
 <template>
     <!-- 执行计划维护 -->
-    <Maintenance v-if="hasEdit" @hasMainPage='hasMainPage' :hasDisabled='hasDisabled' />
+    <Maintenance v-if="hasEdit" @hasMainPage='hasMainPage' :hasDisabled='hasDisabled' :changeMsg='changeMsg' :hasLook='hasLook'  />
 
     <div id="detail" v-else>
         <HeaderSearch 
@@ -13,6 +13,7 @@
             :select4 = 'select4' 
             :searchTex = 'searchTex'
             @handleSearchRes = 'handleSearchRes'
+            :type='type'
         />
 
         <el-divider></el-divider>
@@ -34,9 +35,9 @@
             <el-checkbox class="de-show-none" v-model="checked" @change="checkSpecified">显示未指定负责人的项目</el-checkbox>
         </div>
 
-        <TableCommon @handleChangeEdit = 'handleChangeEdit' :tableData='tableData' :tablekind='tablekind' />
+        <TableCommon :type="type" @handleChangeEdit = 'handleChangeEdit'  @handleSelectOprate='handleSelectOprate' @handleReload='handleReload' @handleLook='handleLook' :tableData='tableData' :tablekind='tablekind' />
 
-        <CommPage :hasPage='hasPage' @handlePageUp='handlePageUp' />
+        <CommPage :hasPage='hasPage' :total="total"  @handlePageUp='handlePageUp' @handlePageRows='handlePageRows'/>
 
         <el-dialog
         :class="'ma-dialog'"
@@ -50,11 +51,11 @@
         <div class="ma-dia-content">
             <div>
                 <span>项目编号:</span>
-                <span>ssss</span>
+                <span>{{projectNo}}</span>
             </div>
             <div>
                 <span>项目名称:</span>
-                <span>ssss</span>
+                <span>{{projectName}}</span>
             </div>
             <div>
                 <span><i>*</i> 项目负责人:</span>
@@ -97,51 +98,8 @@ export default {
     data() {
         return {
             options1: [],
-            options2: [     // 项目类型
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '软件项目'
-                }, {
-                    value: '2',
-                    label: '硬件项目'
-                }, {
-                    value: '3',
-                    label: '集成项目'
-                }, {
-                    value: '4',
-                    label: '服务项目'
-                }, {
-                    value: '5',
-                    label: '工程项目'
-                }
-            ],
-            options3: [     // 经费来源
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '改善办学条件'
-                }, {
-                    value: '2',
-                    label: '一流大学'
-                }, {
-                    value: '3',
-                    label: '校级专项'
-                }, {
-                    value: '4',
-                    label: '课题经费'
-                }, {
-                    value: '5',
-                    label: '银行投资经费'
-                }, {
-                    value: '6',
-                    label: '其他'
-                }
-            ],
+            options2: [{}],// 项目类型
+            options3: [{}],// 经费来源
             select1: '',
             select2: '',
             select3: '',
@@ -153,43 +111,38 @@ export default {
             hasDisabled:false,
             exchangeMan:false,
             hasClose:true,
-            leadMan:[
-                {
-                    value:'1',
-                    label:'谢奎'
-                }
-            ],
-            manVal:'',
+            leadMan:[ {}],
+            manVal:[],
             tablekind:[
                 {
                     prop:'num',
                     label:'项目编号',
-                    width:'120'
+                    width:'100'
                 },
                 {
                     prop:'name',
                     label:'项目',
-                    width:'300'
+                    width:'280'
                 },
                 {
                     prop:'money',
                     label:'预算金额',
-                    width:''
+                    width:'100'
                 },
                 {
                     prop:'resource',
                     label:'经费来源',
-                    width:''
+                    width:'100'
                 },
                 {
                     prop:'men',
                     label:'负责人',
-                    width:''
+                    width:'200'
                 },
                 {
                     prop:'kind',
                     label:'类型',
-                    width:''
+                    width:'130'
                 },
                 {
                     prop:'time',
@@ -197,42 +150,107 @@ export default {
                     width:''
                 }
             ],
-            tableData:[
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
-                },
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18'
-                }
-            ]
+            tableData:[{ }],
+            page:1,
+            rows:10,
+            total:0,
+            year:'',
+            tex:'',
+            projectType:'',
+            projectSource:'',
+            isLeader:'',
+            selectRows:[],
+            projectId:'',
+            projectNo:'',
+            projectName:'',
+            type:"first",
+            changeMsg:{},
+            hasLook:false
+
         }
     },
     methods:{
         handleSearchRes(params) {
-            // console.log(params)
+             this.year=params.sel1;
+             this.projectType=params.sel2;
+             this.projectSource=params.sel3;
+             this.tex=params.tex;
+             this.init();
         },
-
+        handleReload(params){
+            if(params){
+                this.init();
+            }
+             
+        },
+        init(){
+            var projectType=this.projectType;
+            if(projectType=="全部"){
+                projectType=""
+            }
+            var projectSource=this.projectSource;
+            if(projectSource=="全部"){
+                projectSource=""
+            }
+            var params={page:this.page,rows:this.rows,projectType:projectType,year:this.year,fundsSources:projectSource,searchText:this.tex,isLeader:this.isLeader};
+            console.log(params)
+            this.$http.post("/api/project/getProjectList",params).then(res =>{
+                // console.log(res)
+                if(res.success){
+                    this.total=res.total;
+                    this.tableData=[];
+                    var datalsit=res.rows;
+                    for(var i=0;i<datalsit.length;i++){
+                        var obj={};
+                        obj.num=datalsit[i].no;
+                        obj.name=datalsit[i].name;
+                        obj.money=datalsit[i].ysje;
+                        obj.resource=datalsit[i].sourcesFundName;
+                        obj.men=datalsit[i].leaderNames;
+                        obj.kind=datalsit[i].projectTypeName;
+                        obj.time=datalsit[i].createTime;
+                        obj.id=datalsit[i].id;
+                        obj.projectNode=datalsit[i].projectNode;
+                        obj.sourcesFundingType=datalsit[i].sourcesFundingType;
+                        obj.projectCategory=datalsit[i].projectCategory;
+                        obj.projectState=datalsit[i].projectState;
+                        obj.startTime=datalsit[i].startTime;
+                        obj.endTime=datalsit[i].endTime;
+                        obj.remark=datalsit[i].remark;
+                        obj.projectType=datalsit[i].projectType;
+                        obj.isOldProject=datalsit[i].isOldProject;
+                        obj.projectTypeNames=datalsit[i].projectTypeNames;
+                        obj.projectCategoryNames=datalsit[i].projectCategoryNames;
+                         obj.projectStateName=datalsit[i].projectStateName;
+                         obj.projectNodeName=datalsit[i].projectNodeName;
+                        this.tableData.push(obj); 
+                    }
+                    
+                }
+            })
+        },
         checkSpecified() {
-            // console.log('in')
+         if(this.checked==true){
+             this.isLeader="1";
+             this.init();
+         }else{
+             this.isLeader="";
+             this.init();
+         }
         },
 
         handleChangeEdit(id, disabled) {
+            this.changeMsg=id;
             this.hasEdit = true
             this.hasDisabled = disabled
+            this.hasLook=false;
         },
-
+        handleLook(params){
+            this.changeMsg=params;
+            this.hasEdit = true;
+            this.hasDisabled = true;
+            this.hasLook=true;
+        },
         hasMainPage(params) {
             this.hasEdit = params;
         },
@@ -242,14 +260,45 @@ export default {
         },
 
         handleAssign() {
-            this.exchangeMan = true
+            if(this.selectRows.length!=1){
+              this.$message("请选择一行进行指定");
+            }else{               
+                var rowmsg=this.selectRows;
+                var mens=rowmsg[0].men;
+                if(mens){
+                    var men=mens.split(",");
+                    this.manVal=men;
+                }
+               
+                this.projectNo=rowmsg[0].num;
+                this.projectName=rowmsg[0].name;
+                this.projectId=rowmsg[0].id; 
+                this.exchangeMan = true
+            }
         },
 
         handleMaBtn(type) {
             if(type == 'cancel') {
+                this.manVal='';
                 this.exchangeMan = false
             }else if(type == 'sure') {
-                this.exchangeMan = false
+                if(this.manVal.length>0){
+                    var params={projectId:this.projectId,leaderId:JSON.stringify(this.manVal)}
+                    this.$http.post("/api/project/updateProjectLeader",params).then(res =>{
+                        console.log(res)
+                        if(res.code=="00000"){
+                            this.manVal=[];
+                            this.init();
+                            this.exchangeMan = false
+                        }else{
+                            this.$message(res.message);
+                        }
+                    })
+                   
+                }else{
+                    this.$message("请选中指定的负责人");
+                }
+
             }
         },
 
@@ -264,7 +313,62 @@ export default {
         },
 
         handlePageUp(params) {
-
+         this.page=params;
+         this.init();
+        },
+        handlePageRows(params){
+         this.rows=params;
+         this.init();
+        },
+        getFundsSource(){
+            this.$http.post('/api/project/getFundsSource')
+            .then((res) => {
+                if(res.code === '00000'){
+                    if(res.data.length){
+                        this.options3 = [{"value":"全部","lable":"0"}]
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].name
+                            obj.value = res.data[i].id
+                            this.options3.push(obj)
+                        }
+                    }
+                }
+            })
+        },
+        getProjectType(){
+            this.$http.post('/api/project/getProjectType')
+            .then((res) => {
+                if(res.code === '00000'){
+                    if(res.data.length){
+                        this.options2 = [{"value":"全部","lable":"0"}];
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].name
+                            obj.value = res.data[i].id
+                            this.options2.push(obj)
+                        }
+                    }
+                }
+            })
+        },
+        getUser(){
+            var params={};
+            this.$http.post("/api/user/getAllUser",params).then(res =>{
+                if(res.success){
+                    var msgList=res.rows;
+                    this.leadMan=[];
+                    for(var i=0;i<msgList.length;i++){
+                        var obj={};
+                        obj.value=msgList[i].id;
+                        obj.label=msgList[i].userName;
+                        this.leadMan.push(obj);
+                    }
+                }
+            })
+        },
+        handleSelectOprate(params){
+          this.selectRows=params;
         }
 
         
@@ -272,10 +376,10 @@ export default {
 
     mounted() {
         this.getPastYear(20)
-        let obj = {
-            username:'',
-            password:''
-        }
+        this.getFundsSource();
+        this.getProjectType();
+        this.getUser();
+
     }
     
 }

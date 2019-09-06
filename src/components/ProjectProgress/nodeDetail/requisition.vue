@@ -12,10 +12,11 @@
                     <div> <span>操作</span></div>
                 </div>
                 <div class="st-edit-item st-oparate">
-                    <div class="st-oparate-col">2019SD001西安交通大学采购申请单</div>
+                    <div class="st-oparate-col">采购申请表</div>
                     <div class="st-oparate-col">
                         <span @click="handleFillApplication('open')">填写申请单</span>
-                        <span v-print="'#printFill'">打印</span>
+                        <span @click="handleSub">提交审核</span>
+                        <!-- <span @click="handlePrint">打印</span> -->
                     </div>
                 </div>
                 
@@ -32,31 +33,26 @@
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
-                <div class="st-edit-item">
+                <div class="st-edit-item"  v-for="(i, ind) in zlList" :key="ind" @click="handleUploadChange('1', ind, i.mb.id)">
                     <div class="st-icon-file-title">
                         <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 采购需求说明书</span>
+                        <span class="st-file-title"><i class="st-tips-required">*</i> {{i.mb.name}}</span>
                     </div>
                     <div class="st-icon-file-name">
-                        <CommUpload :hasTips='hasTips' />
-                    </div>
-                </div>
-                <div class="st-edit-item">
-                    <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 签字版采购申请表</span>
-                    </div>
-                    <div class="st-icon-file-name">
-                        <CommUpload :hasTips='hasTips' />
-                    </div>
-                </div>
-                <div class="st-edit-item">
-                    <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 磋商文件</span>
-                    </div>
-                    <div class="st-icon-file-name">
-                        <CommUpload :hasTips='hasTips' />
+                        <el-upload
+                            class="upload-demo"
+                            :action= getuploadUrl1
+                            :before-upload="handleBefore"
+                            :http-request="customRequest"
+                            :limit="1"
+                            :file-list="fileList"
+                            accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            >
+                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
+                        </el-upload>
+
+                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" class="pub-css" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
+
                     </div>
                 </div>
             </div>
@@ -74,13 +70,26 @@
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
-                <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind">
+                <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind" @click="handleUploadChange('0', ind)">
                     <div class="st-icon-file-title">
                         <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"> </span>
+                        <span class="st-file-title">其他资料 </span>
                     </div>
                     <div class="st-icon-file-name">
-                        <CommUpload :hasTips='hasTips' />
+                        <el-upload
+                            class="upload-demo"
+                            :action= getuploadUrl1
+                            :before-upload="handleBefore"
+                            :http-request="customRequest"
+                            :limit="1"
+                            :file-list="fileList"
+                            accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            >
+                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
+                        </el-upload>
+
+                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" class="pub-css" @click="handleFileDel(i.id)"></i> </p>
+
                     </div>
                 </div>
             </div>
@@ -100,22 +109,27 @@
                 <div class="st-edit-item" v-for="(i, ind) in shpiFiles" :key="ind">
                     <div class="st-icon-file-title">
                         <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title">{{i.name}} </span>
-                    </div>
-                    <div class="st-icon-file-title">
-                        <span class="st-file-title">{{i.time}} </span>
-                    </div>
-                    <div class="st-icon-file-title">
-                        <span class="st-file-title">{{i.man}} </span>
+                        <span class="st-file-title">{{i.attachName}} </span>
+                        <span class="st-file-title">{{i.createTime}} </span>
+                        <span class="st-file-title">{{i.createUserName}} </span>
                     </div>
                 </div>
             </div>
         </div>
 
+        <el-row class="st-checkHandle">
+            <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+            <div class="st-checkHandle-tips">
+                <i class="el-icon-info"></i>
+                完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
+            </div>
+        </el-row>
+
 
         <FillAppalication 
         v-show="dialogVisibleFill"
         @handleFillApplication='handleFillApplication'
+        @hasSubmit='hasSubmit'
         :fillStatus='dialogVisibleFill'
         :hasLoad='hasLoad'
         />
@@ -125,6 +139,7 @@
 <script>
 import FillAppalication from '@/components/Common/fillAppalication'
 import CommUpload from '@/components/Common/commUpload'
+import { store } from "@/store"
 export default {
     components:{
         FillAppalication,
@@ -142,12 +157,26 @@ export default {
                     time:'2019-10-01 12:00',
                     man:'谢奎'
                 }
-            ]
+            ],
+            hasSub:false,
+            getuploadUrl1:'',
+            sessionGet:{},
+            zlList:[],
+            uploadType:'',
+            uploadNo:'',
+            spareI:'',
+            fileList:[],
+            loading:false,
+            proNode:7,
+            proNodeId:'6a3c8fb95ebe4a4696cd13e2051473b4'
         }
     },
 
     methods:{
         handleFillApplication(type) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
             if(type === 'close') {
                 this.dialogVisibleFill = false
                 this.hasLoad = false
@@ -159,13 +188,295 @@ export default {
         },
 
         handleAddmenu(type) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
             if(type === 'info') {
                 
             }else if(type === 'other') {
                 this.otherArr.push({})
             }
             
+        },
+
+        getProjectMsgById(id){
+            let params = {
+                id:id
+            }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+                if(res.code === '00000') {
+                    this.sessionGet = res.data
+                    store.dispatch('commitChangeProInfo',res.data)
+                    this.getNodeAppendix();
+                }else{
+                    
+                }
+            })
+        },
+
+        hasSubmit(params) {
+            this.hasSub = params
+        },
+
+        handleSub() {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            let params = {
+                pid:this.proInfo.id
+            }
+
+            this.$http.post("/api/project/tjspcgsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:'提交成功'
+                    })
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
+        },
+
+        handlePrint() {
+            // let params = {
+            //     id:this.proInfo.id
+            // }
+            // this.$http.post("/api/project/dycgsq", params)
+            // .then((res) => {
+            //     if(res.code == "00000") {
+            //         window.open(res.data)
+            //     }else{
+            //         this.$message({
+            //             type:'error',
+            //             message:res.message
+            //         })
+            //     }
+            // })
+            // .catch((err) => {
+            //     this.$message({
+            //         type:'error',
+            //         message:err.message
+            //     })
+            // })
+        },
+
+
+        handleBefore(file) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            this.files = file
+            
+            if(this.uploadType == "1") {
+                if(this.zlList[this.uploadNo - 1].zl.length) {
+                    this.$message.warning(`如需更换文件请先删除后操作`);
+                    return false
+                }
+            }else if(this.uploadType == "0") {
+
+                if(this.qtList.length && this.qtList[this.uploadNo - 1].attachName) {
+                    this.$message.warning(`如需更换文件请先删除后操作`);
+                    return false
+                }
+            }
+            
+        },
+
+
+        customRequest() {
+            const formData = new FormData();
+            
+            formData.append('pid',this.sessionGet.id);
+            formData.append('files',this.files);
+            formData.append('nodeId',this.sessionGet.projectNode);
+            if(this.uploadType == "1") {
+                formData.append('type',this.uploadType);
+                formData.append('no',this.uploadNo);
+                formData.append('spareI',this.spareI);
+            }else if(this.uploadType == "0") {
+                formData.append('type',this.uploadType);
+                formData.append('no',"");
+                formData.append('spareI',"");
+            }
+            
+            // console.log(formData)
+            this.fileList = []
+            this.$http.post("/api/project/uploadNodeAppendixXqlz", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:res.message
+                    })
+                    
+                    this.getNodeAppendix()
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:err.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
+        },
+        
+
+        handleUploadChange(type, ind, id) {
+            if(type == "1") {
+                this.uploadType = type
+                this.uploadNo = ind + 1
+                this.spareI = id
+            }else if(type == "0") {
+                this.uploadType = type
+                this.uploadNo = ind + 1
+            }
+            
+        },
+        
+
+        handleFileDel(id) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            let params = {
+                appendixId:id
+            }
+            this.fileList = []
+            this.$http.post("/api/project/deletedNodeAppendixCgsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:"success",
+                        message:res.message
+                    }) 
+                    
+                    this.getNodeAppendix()
+
+                }else{
+                   this.$message({
+                        type:"error",
+                        message:res.message
+                    }) 
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
+            })
+        },
+
+        getNodeAppendix() {
+            // console.log(this.sessionGet)
+            let params = {
+                pid:this.sessionGet.id,
+                nodeId:this.sessionGet.projectNode
+            }
+            if(this.sessionGet.status > this.proNode) {
+                params.nodeId = this.proNodeId
+            }
+
+            this.$http.post("/api/project/getNodeAppendix", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    if(res.data && res.data.zlList) {
+                        for(let i = 0; i < res.data.zlList.length; i ++) {
+                            res.data.zlList[i]['isRequest'] = true
+                        }
+                        this.zlList = res.data.zlList
+                        // console.log(this.zlList)
+                    }
+                    if(res.data && res.data.qtList) {
+                        this.qtList = res.data.qtList
+                        this.otherArr = res.data.qtList
+                        // console.log(this.otherArr)
+                    }
+                    if(res.data && res.data.spList) {
+                        this.shpiFiles = res.data.spList
+                        // console.log(this.otherArr)
+                    }
+                    
+
+                }else{
+                    
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
+            })
+        },
+        
+
+        handleFinishNode() {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            let params = {
+                id:this.sessionGet.id
+            }
+            this.loading = true
+            this.$http.post("/api/project/closeNodeCgsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    store.dispatch('commitChangeUpdate',true)
+                    this.$router.push({
+                        path:'step5' + store.state.exactPath
+                    })
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+
+                this.loading = false
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+
+                this.loading = false
+            })
         }
+    },
+
+    mounted() {
+        this.sessionGet = store.state.proInfo
+        this.getProjectMsgById(this.sessionGet.id)
+        
+    },
+
+    computed:{
+        proInfo() {
+            return store.state.proInfo
+        }
+    },
+
+    watch:{
+        
     }
 }
 </script>
@@ -266,8 +577,8 @@ export default {
             span{
                 cursor: pointer;
             }
-            span:nth-child(1){
-                margin-right: 40px;
+            span:nth-child(2){
+                margin:0 20px;
             }
         }
     }
@@ -315,7 +626,7 @@ export default {
                     align-items: center;
                     justify-content: space-between;
                     .upload-demo{
-                        width: 100%;
+                        width: 40px;
                     }
                     & /deep/ .el-upload-list{
                         width: 80%;
@@ -335,7 +646,64 @@ export default {
                         background-position: -10px -365px;
                         margin-top: 10px;
                     }
+
+                    .upload-demo{
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        & /deep/ .el-upload-list{
+                            opacity: 0;
+                            width: 0;
+                            height: 0;
+                            display: none;
+                        }
+                    }
+                    .file-name{
+                        float: left;
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between;
+                        i{
+                            margin: 0 10px 0 0;
+                            display: inline-block;
+                            width: 20px;
+                            height: 20px;
+                            background-position: -377px -168px;
+                            margin:0 10px;
+                            cursor: pointer;
+                            opacity: .2;
+                            transition: all .3s ease;
+                        }
+                    }
+                    .file-name:hover{
+                        i{
+                            opacity: 1;
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    
+
+    .st-checkHandle{
+        text-align: center;
+        margin: 30px 20px 20px;
+        button{
+            width: 300px;
+            height: 40px;
+            background: #3B7CFF;
+            border-radius: 6px;
+        }
+        .st-checkHandle-tips{
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            i{
+                font-size: 16px;
+                border-radius: 50%;
+                color: #3B7CFF;
             }
         }
     }

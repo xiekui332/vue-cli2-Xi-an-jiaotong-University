@@ -14,7 +14,12 @@ export default [
     {
         path:'/approve/done',
         name:'done',     // 已办审批
-        component:() => import('@/pages/SecondPages/alreadydone')
+        component:() => import('@/pages/SecondPages/examinetodo')
+    },
+    {
+        path:'/approve/end',
+        name:'end',     // 已办审批
+        component:() => import('@/pages/SecondPages/examinetodo')
     }
     
 ]

@@ -57,8 +57,8 @@ export default {
     data() {
         return {
             count:1,
-            menu:this.navArray,
-            activeName:''
+            menu:[],
+            activeName:'0'
         }
     },
     methods:{
@@ -77,8 +77,22 @@ export default {
 
     watch:{
         activeName(params) {
+           //  console.log(params)
+        },
+        navArray(params){
             // console.log(params)
+            this.menu = params
         }
+    },
+    directives:{
+        trigger:{
+            inserted(el,binging){
+                el.click()
+            }
+        }
+    },
+    updated(){
+        
     }
 }
 </script>

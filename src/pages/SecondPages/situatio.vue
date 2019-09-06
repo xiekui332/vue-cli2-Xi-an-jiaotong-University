@@ -224,10 +224,15 @@ export default {
         handleChangeEdit(params) {
             this.hasExcutingDetail = true
             console.log(params)
+        },
+
+        init() {
+            
         }
     },
     mounted() {
         this.getPastYear(20)
+        this.init()
     },
     watch: {
         '$route'(to, from) {

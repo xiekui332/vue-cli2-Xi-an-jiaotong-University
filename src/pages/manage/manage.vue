@@ -29,7 +29,7 @@ export default {
         }
     },
     mounted() {
-
+        
     }
 }
 </script>
@@ -51,7 +51,7 @@ export default {
 }
 .ag-item{
     width: 340px;
-    background: pink;
+    background: #f1f1f1;
     height: 200px;
     box-shadow: 0 9px 35px 4px rgba(0,0,0,0.03);
     border-radius: 4px;

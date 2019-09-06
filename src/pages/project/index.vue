@@ -4,54 +4,56 @@
 
 <script>
 import LeftMenu from '@/components/Common/LeftMenu'
+import { getUrlParams,getSession } from '../../utils/util';
 export default {
     components:{
         LeftMenu
     },
     data() {
         return {
-            navArray:[
-                {
-                    item:'项目管理',
-                    children:[
-                        {
-                            title:'执行计划维护',
-                            path:'/proj/first'
-                        },
-                        {
-                            title:'执行中项目',
-                            path:'/proj/excuting'
-                        },
-                        {
-                            title:'尾款跟踪',
-                            path:'/proj/tracking'
-                        },
-                        {
-                            title:'全部项目',
-                            path:'/proj/all'
-                        }
-                    ],
-                    isChildren:false
-                },
-                {
-                    item:'项目统计',
-                    children:[
-                        {
-                            title:'项目情况总览',
-                            path:'/proj/situatio'
-                        }
-                    ]
-                }
-
-            ]
-            
+            navArray:[{}]       
         }
     },
     methods:{
-        
+        getPower2(){ //获取用户系统管理下的2级权限
+            var pid=getUrlParams("pid");
+            // console.log(pid)
+            var param={powerId:pid}
+            this.$http.post("/api/user/getUserPowerLevelTwo",param
+                ).then((res) =>{
+                    if(res.code!="10001"){
+                        var list=[];
+                        var dataMsg=res.data;
+                        for(var i=0;i<dataMsg.length;i++){
+                            var l={};
+                            l["item"]=dataMsg[i].name;
+                            if(dataMsg[i].url){
+                               l["path"]=dataMsg[i].url;
+                            }
+                            var ls=dataMsg[i].list;
+                            if(ls){
+                               var Clist=[];                                   
+                               for(var j=0;j<ls.length;j++){
+                                  var cl={};
+                                   cl["title"]=ls[j].name;
+                                   cl["path"]=ls[j].url;
+                                   Clist[j]=cl;
+                               }
+                                 l["children"]= Clist;
+                            }else{      
+                                 l["children"]=[];
+                            }
+                            l["isChildren"]="false";
+                            list[i]=l; 
+                        }
+                        this.navArray=list;
+                        this.$forceUpdate()                                      
+                    }    
+            })
+        }          
     },
     mounted() {
-        
+        this.getPower2();
     },
     watch:{
         

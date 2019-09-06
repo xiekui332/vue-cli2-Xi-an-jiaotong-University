@@ -12,50 +12,18 @@ export default {
     data() {
         return {
             navArray:[
-                {
-                    item:'模板管理',
-                    children:[
-                        {
-                            title:'资料模板上传',
-                            path:'/system/upload'
-                        }
-                    ],
-                    isChildren:false
-                },
-                {
-                    item:'用户管理',
-                    children:[],
-                    isChildren:false,
-                    path:'/system/user'
-                },
-                {
-                    item:'角色管理',
-                    children:[],
-                    isChildren:false,
-                    path:'/system/role'
-                },
-                {
-                    item:'日志与消息',
-                    children:[],
-                    isChildren:false,
-                    path:'/system/log'
-                }
             ]
         }
     },
-    mounted:function(){
-        this.getPower2();
+    mounted (){
+         this.getPower2();
     },
     methods:{
         getPower2(){ //获取用户系统管理下的2级权限
-            var userId =getSession("token");
-            if(userId!=null){
-                userId= JSON.parse(getSession("user")).id;
-            }
-            var param={id:userId,powerId:"a27a5ddcd70c4b258879a87ad1b00950"}
+            var pid=getUrlParams("pid");
+            var param={powerId:pid}
             this.$http.post("/api/user/getUserPowerLevelTwo",param
                 ).then((res) =>{
-                    console.log(res)
                     if(res.code!="10001"){
                         var list=[];
                         var dataMsg=res.data;
@@ -67,11 +35,11 @@ export default {
                             }
                             var ls=dataMsg[i].list;
                             if(ls){
-                                 var Clist=[];
+                               var Clist=[];                                   
                                for(var j=0;j<ls.length;j++){
                                   var cl={};
-                                   cl["item"]=dataMsg[j].name;
-                                   cl["path"]=dataMsg[j].url;
+                                   cl["title"]=ls[j].name;
+                                   cl["path"]=ls[j].url;
                                    Clist[j]=cl;
                                }
                                  l["children"]= Clist;
@@ -79,19 +47,16 @@ export default {
                                  l["children"]=[];
                             }
                             l["isChildren"]="false";
-                          
-
                             list[i]=l; 
                         }
-                        console.log(list);
-                       this.nav=list;
-                    }
-     
-            }) 
-          
+                        this.navArray=list;
+                        this.$forceUpdate()                                      
+                    }    
+            })          
         }
+    },
+    watch:{
 
-        
     }
 }
 </script>

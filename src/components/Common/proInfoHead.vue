@@ -2,55 +2,59 @@
     <div id="com-proInfoHead">
         <div class="et-detail">
             <div class="et-left">
-                <p class="et-title">西安交通大学网信中心2019年度XXXXXXX项目</p>
+                <p class="et-title">{{exTwoproInfo.name?exTwoproInfo.name:'暂无'}}</p>
                 <div class="et-col-wrapper">
                     <div class="et-col-item">
                         <p>
                             <span>项目编号：</span>
-                            <span>GS2019001</span>
+                            <span>{{exTwoproInfo.no?exTwoproInfo.no:'暂无'}}</span>
                         </p>
                         <p>
                             <span>预算金额：</span>
-                            <span>500万</span>
+                            <span>{{exTwoproInfo.ysje?exTwoproInfo.ysje:'暂无'}}万</span>
                         </p>
                         <p>
                             <span>立项时间：</span>
-                            <span>2019-01-01</span>
+                            <span>{{exTwoproInfo.createTime?exTwoproInfo.createTime:'暂无'}}</span>
                         </p>
                     </div>
                     <div class="et-col-item">
                         <p>
                             <span>项目负责人：</span>
-                            <span>文华</span>
+                            <el-tooltip class="item" effect="dark" :content="exTwoproInfo.leaderNames?exTwoproInfo.leaderNames:'暂无'" placement="top">
+                                <span class="com-leaderNames">{{exTwoproInfo.leaderNames?exTwoproInfo.leaderNames:'暂无'}}</span>
+                            </el-tooltip>
                         </p>
                         <p>
                             <span>项目类型：</span>
-                            <span>货物 | 集成项目</span>
+                            <span>{{exTwoproInfo.projectTypeName?exTwoproInfo.projectTypeName:'暂无'}}</span>
                         </p>
                         <p>
                             <span>计划周期：</span>
-                            <span>2019-01-01~2019-06-18</span>
+                            <span>{{exTwoproInfo.startTime?exTwoproInfo.startTime:'暂无'}} ~ {{exTwoproInfo.endTime?exTwoproInfo.endTime:'暂无'}}</span>
                         </p>
                     </div>
                     <div class="et-col-item">
                         <p>
                             <span>经费来源：</span>
-                            <span>改善办学条件</span>
+                            <span>{{exTwoproInfo.sourcesFundName?exTwoproInfo.sourcesFundName:'暂无'}}</span>
                         </p>
                         <p>
                             <span>供应商：</span>
-                            <span>XXXXXXXXXXX公司</span>
+                            <span>{{exTwoproInfo.supplier?exTwoproInfo.supplier:'暂无'}}</span>
                         </p>
                         <p>
                             <span>项目说明：</span>
-                            <span>请于2个工作日内上传XXX确认书</span>
+                            <el-tooltip class="item" effect="dark" :content="exTwoproInfo.remark?exTwoproInfo.remark:'暂无'" placement="top">
+                                <span class="com-remark">{{exTwoproInfo.remark?exTwoproInfo.remark:'暂无'}}</span>
+                            </el-tooltip>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="et-right">
-                <p class="et-flag">立项/立项准备</p>
-                <p class="et-money-num">¥<span>0.00</span>万</p>
+                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}}</p>
+                <p class="et-money-num">¥<span>{{exTwoproInfo.zbje?exTwoproInfo.zbje:'0.00'}}</span>万</p>
                 <p class="et-money-txt">中标金额</p>
             </div>
         </div>
@@ -58,10 +62,27 @@
 </template>
 
 <script>
+import { store } from "@/store"
 export default {
+    props:[
+        ''
+    ],
     data() {
         return {
+            
+        }
+    },
+    watch:{
+        
+    },
 
+    mounted() {
+        // console.log(store.state.proInfo)
+    },
+
+    computed:{
+        exTwoproInfo() {
+            return store.state.proInfo
         }
     }
 }
@@ -77,6 +98,9 @@ export default {
         display: flex;
         padding: 0 30px 0 40px;
         margin-bottom: 20px;
+        .et-left{
+            width: 80%;
+        }
         .et-title{
             font-size: 28px;
             color: #404040;
@@ -86,7 +110,19 @@ export default {
         .et-col-wrapper{
             display: flex;
             .et-col-item {
+                max-width: 450px;
                 margin-right: 3%;
+                .com-leaderNames{
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .com-remark{
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    max-width: 200px;
+                }
             }
             .et-col-item >p {
                 line-height: 36px;

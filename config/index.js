@@ -13,7 +13,7 @@ module.exports = {
     proxyTable: {
       '/api': {    // 代理Api接口
         changeOrigin: true, //开启代理
-        target: 'http://192.168.31.176:8081/',    //数据转发到哪里
+        target: 'http://192.168.31.173:8081',    //数据转发到哪里
         pathRewrite: {
             '^/api': '/api',//这里重写路径/api就代理到服务器根路径
         }

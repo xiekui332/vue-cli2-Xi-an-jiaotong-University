@@ -4,7 +4,8 @@
         :options4='options4'
         :options5='options5'
         :options7='options7'
-        @handleSearch = 'handleSearchRes'
+        @handleSearchRes = 'handleSearchRes'
+        @handleChangeStatus='handleChangeStatus'
         :type='type'
         />
         
@@ -26,9 +27,9 @@
             </div>
         </div>
 
-        <TableCommon @handleChangeEdit = 'handleChangeEdit' :tableData='tableData' :tablekind='tablekind' :type='type' />
+        <TableCommon @handleChangeEdit = 'handleChangeEdit'  @handleSelectOprate='handleSelectOprate' @handleChangeoprate='handleChangeoprate' :tableData='tableData' :tablekind='tablekind' :type='type' />
 
-        <CommPage :hasPage='hasPage' @handlePageUp='handlePageUp' />
+        <CommPage :hasPage='hasPage' :total="total"  @handlePageUp='handlePageUp' @handlePageRows='handlePageRows'/>
 
         <el-dialog
         :class="'ma-dialog'"
@@ -44,12 +45,13 @@
             <div class="ma-item-wrapper">
                 <div class="ma-item">
                     <span class="ma-title">项目状态：</span>
-                    <el-select v-model="statusVal" placeholder="请选择" class="ma-dia-sel">
+                    <el-select v-model="statusVal" placeholder="请选择" class="ma-dia-sel" >
                         <el-option
-                        v-for="item in options4"
-                        :key="item.value"
+                        v-for="(item,index) in options8"
+                        :key="index"
                         :label="item.label"
-                        :value="item.value">
+                        :value="item.value" 
+                        @click.native="changeStatus(index)">
                         </el-option>
                     </el-select>
                 </div>
@@ -57,7 +59,7 @@
                     <span class="ma-title">项目节点：</span>
                     <el-select v-model="nodeVal" placeholder="请选择" class="ma-dia-sel">
                         <el-option
-                        v-for="item in nodeOptions"
+                        v-for="item in options9"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -70,7 +72,8 @@
                 </div>
                 <div class="ma-item ma-item-baseline">
                     <span class="ma-title">模板文件：</span>
-                    <CommUpload @handleUpload="handleUpload" />
+                    <CommUpload  :isClear='isClear' @handleUpload="handleUpload"
+                 />
                 </div>
             </div>
             
@@ -90,6 +93,7 @@ import HeaderSearch from '@/components/HeaderSearch'
 import TableCommon from '@/components/Common/TableCommon'
 import CommPage from '@/components/CommPage'
 import CommUpload from '@/components/Common/commUpload'
+import { getUrlParams, regexFile, baseUrl} from '../../utils/util';
 export default {
     components:{
         HeaderSearch,
@@ -99,45 +103,10 @@ export default {
     },
     data() {
         return {
-            options4: [     // 项目状态
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '项目立项'
-                }, {
-                    value: '2',
-                    label: '项目采购'
-                }, {
-                    value: '3',
-                    label: '项目执行'
-                }, {
-                    value: '4',
-                    label: '项目验收'
-                }, {
-                    value: '5',
-                    label: '项目维保'
-                }
-            ],
-            options5: [     // 项目节点
-                {
-                    value: '0',
-                    label: '全部'
-                },{
-                    value: '1',
-                    label: '需求论证'
-                },{
-                    value: '2',
-                    label: '采购申请'
-                },{
-                    value: '3',
-                    label: '采购会'
-                },{
-                    value: '4',
-                    label: '合同签订'
-                }
-            ],
+            options4: [{}],//项目状态
+            options5: [{}],// 项目节点
+            options8: [{}],//新建项目状态
+            options9: [{}],// 新建项目节点
             options7:[
                 {
                     value:'0',
@@ -150,9 +119,13 @@ export default {
             ],
             type:'upload',
             tablekind:[
+                {prop:'no',
+                 label:'序号',
+                 width:'50'
+                },
                 {
                     prop:'name',
-                    label:'项目',
+                    label:'模板名称',
                     width:'300'
                 },
                 {
@@ -181,70 +154,283 @@ export default {
                     width:''
                 }
             ],
-            tableData:[
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18',
-                    node:'采购申请',
-                    operateMan:'谢奎',
-                    hasSign:'是',
-                    status:'项目采购'
-                },
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18',
-                    node:'采购申请',
-                    operateMan:'谢奎',
-                    hasSign:'是',
-                    status:'项目采购'
-                }
-            ],
+            tableData:[{} ],
+            statusList1:[],
             hasPage:true,
             newtemplate:false,
             val1:'',
             statusVal:'',
             nodeVal:'',
             nodeOptions:[],
-            hasClose:true
+            hasClose:true,
+            page:'1',
+            rows:'10',
+            statusId:'',
+            nodeId:'',
+            jfId:'',
+            searchName:'',
+            isRelease:'',
+            total:0,
+            hasPageNum:10,
+            selectOprate:[],
+            fileName:'',
+            fileUrl:'',
+            fileType:'',
+            isClear:false
         }
     },
-    methods:{
-        handleSearchRes(params) {
-            // console.log(params)
+    methods:{      
+        handleSearchRes(params) {//按条件查询
+            this.isRelease=params.isRelease;
+            this.statusId=params.state;
+            this.nodeId=params.node;
+            this.jfid=params.jfid;
+            this.searchName=params.tex;
+            this.tableData = []; 
+            this.total =0;
+            this.init();
         },
         handleBuilt() {
             this.newtemplate = true
         },
-        handleAssign() {
+        handleSelectOprate(param){
+          this.selectOprate=param;
+        },
+        handleAssign() {//批量发布
+            var list=this.selectOprate;  
+            var li=[];
+            for(var i=0;i<list.length;i++){
+                if(list[i].hasSign=="否"){
+                   li.push(list[i])
+                }
+            }
+            if(li.length<1){
+                return this.$message('请选中要撤销的模板');
+            }        
+            var param={list:JSON.stringify(li)};
+            this.$http.post("/api/template/update/plfb",param).then(res =>{
+                  if(res.code=="00000"){
+                      this.$message('批量发布成功！');
+                      //刷新列表数据
+                      this.init();
+                  }else{
+                      this.$message(res.message);
+                  }
+            })
+        },
+        handleCancel() {//批量撤销
+            var list=this.selectOprate;  
+            var li=[];
+            for(var i=0;i<list.length;i++){
+                if(list[i].hasSign=="是"){
+                   li.push(list[i])
+                }
+            }
+            if(li.length<1){
+                return this.$message('请选中要撤销的模板');
+            }        
+            var param={list:JSON.stringify(li)};
+            this.$http.post("/api/template/update/plcx",param).then(res =>{
+                  if(res.code=="00000"){
+                      this.$message('批量撤销成功！');
+                      //刷新列表数据
+                      this.init();
+                  }else{
+                      this.$message(res.message);
+                  }
+            })
             
         },
-        handleCancel() {
-            
+        handleChangeEdit(params, disabled){ //点击项目-文件下载，图片直接打开
+            let data = {
+                fileUrl:params.url,
+                fileName:params.spareI
+            }           
+            // let aLink = document.createElement('a');
+            // aLink.target = '_blank'
+            // aLink.href = baseUrl + '/api/system/project/downTemplate?fileUrl=' + params.url + '&fileName=' + params.spareI;
+            // aLink.click();            
+            if(params.spareIi){
+                let spareIi = params.spareIi.substring(1)
+                // console.log(spareIi)
+                if(regexFile.test(spareIi)){
+                    window.open(params.url)
+                }else{
+                    let aLink = document.createElement('a');
+                    aLink.target = '_blank'
+                    aLink.href = params.url;
+                    aLink.click();
+                }
+            }           
         },
-        
-        handleChangeEdit(id, disabled) {
-            this.hasEdit = true
-            this.hasDisabled = disabled
+        handleChangeoprate(params) {//撤销，发布
+            var isRelease=params.hasSign;
+            if(isRelease=="是"){//撤销
+               isRelease=1;
+            }else{//发布
+               isRelease=0;
+            }
+            var id=params.id;
+            this.$http.post("/api/template/update/file",{id:id,isRelease:isRelease}).then(res =>{
+                if(res.code=="00000"){
+                    this.$message('操作成功！');
+                     this.init();
+                }
+            })
         },
-
-        handlePageUp(params) {
+        init(){//获取模板列表
+         var param={page:this.page,
+                    rows:this.rows,
+                    statusId:this.statusId,
+                    nodeId:this.nodeId,
+                    name:this.searchName,
+                    isRelease:this.isRelease};
+         this.$http.post("/api/template/getTemplateList",param).then(res =>{
+             if(res.success==true){
+                this.tableData = [];
+                var list=res.rows;
+                this.total = res.total
+                for(var a=0;a<list.length;a++){
+                    var msg={};
+                    msg['no']=list[a].RNUM;
+                    msg['num']=list[a].id;
+                    msg['name']=list[a].name;
+                    msg['time']=list[a].createTime;
+                    msg['node']=list[a].nodeName;
+                    msg['operateMan']=list[a].createUserName;
+                    msg['id']=list[a].id;
+                    
+                    msg['spareIi']=list[a].spareIi;
+                    msg['url']=list[a].url;
+                    msg['spareI']=list[a].spareI;
+                    if(list[a].isRelease==1){
+                          msg['hasSign']="否";
+                    }else{
+                          msg['hasSign']="是";
+                    }                  
+                    msg['status']=list[a].statusName;
+                    this.tableData.push(msg);
+                }
+             }
+         })
+        },
+        handleUpload(params) {//上传模板
+            this.fileName=params.fileName;
+            this.fileUrl=params.fileUrl;
+            this.fileType=params.fileType;
+        },
+        handlePageUp(params){//分页
+          this.page=params;
+          this.init();
+        },
+        handlePageRows(params) {//修改行数
+            this.rows = params
+            this.init();
+        },
+        handleMaBtn(msg){//新建模板
+            var stateId=this.statusVal;
+            if(!stateId){
+                return this.$alert('请选择项目状态！', '提示', {
+                confirmButtonText: '确定',
+                type: 'warning'
+                })
+            }
+            var nodeId=this.nodeVal;
+            if(!nodeId){
+                return this.$alert('请选择项目节点！', '提示', {
+                confirmButtonText: '确定',
+                type: 'warning'
+                })
+            }
+           var name= this.val1;
+           if(!name){      
+                this.$alert('模板名称不能为空', '提示', {
+                confirmButtonText: '确定',
+                type: 'warning'
+                })
+                return false;
+           }
+           var isRelease=1;
+            if(msg=="save"){//保存
+              isRelease=1;
+            }else{//保存并发布
+              isRelease=0
+            }
+            var fileName=this.fileName;
+            var fileUrl=this.fileUrl;
+            var fileType=this.fileType;
+            var param={name:name,nodeId:nodeId,statusId:stateId,isRelease:isRelease,fileUrl:fileUrl,fileName:fileName,fileType:fileType}
+            this.$http.post("/api/template/upload/file",param).then(res =>{
+                console.log(res)
+                if(res.code=="00000"){
+                    this.$message('添加成功！');
+                    this.val1='';
+                    this.nodeVal='';
+                    this.statusVal='';
+                    this.newtemplate = false;
+                    this.isClear=true
+                    this.init();
+                }else{
+                      this.$message(res.message);
+                }
+            })
 
         },
-
-        handleUpload(params) {
-
+        getPid(){
+          var pid=getUrlParams("pid");       
+        },
+        rechangeState(){//获取状态
+            this.$http.post("/api/template/getStatusAndNodes",{}).then(res =>{
+                if(res.code=="00000"){
+                    this.statusList1=res.data;
+                    this.options4 = [{'value':"0",'label':"全部"}]
+                    this.options8=[];
+                    var data=res.data;
+                    for(var a=0;a<data.length;a++){
+                        var msg={};
+                        msg['value']=data[a].id;
+                        msg['label']=data[a].name;
+                        this.options4.push(msg);
+                        this.options8.push(msg);
+                    }    
+                }
+            })
+        },
+        handleChangeStatus(param){
+           if(param==0){
+                this.options5=[{'value':"0",'label':"全部"}]
+           }else{
+                var list=this.statusList1;
+                for(var i=0;i<list.length;i++){
+                    if(list[i].id==param){
+                        var nodeList=list[i].list;
+                        this.options5=[{'value':"0",'label':"全部"}]
+                            for(var j=0;j<nodeList.length;j++){
+                                    var msg={};
+                                    msg['value']=nodeList[j].id;
+                                    msg['label']=nodeList[j].name;
+                                    this.options5.push(msg);
+                            }
+                            
+                    }
+                }
+           }
+        },
+        changeStatus(index){//获取节点
+            var list=this.statusList1[index].list;
+            var l=[];
+            for(var i=0;i<list.length;i++){
+                var msg={};
+                msg['value']=list[i].id;
+                msg['label']=list[i].name;
+                l.push(msg);
+            }
+             this.options9=l;
         }
-    }
+    },
+    mounted (){
+        this.rechangeState();
+    },
 }
 </script>
 

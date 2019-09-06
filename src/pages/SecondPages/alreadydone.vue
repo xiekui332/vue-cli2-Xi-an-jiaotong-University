@@ -6,7 +6,7 @@
         :options3='options3'
         :options6='options6'
         :searchTex='searchTex'
-        @handleSearch = 'handleSearchRes'
+        @handleSearchRes = 'handleSearchRes'
         />
 
         <el-divider></el-divider>
@@ -103,12 +103,12 @@ export default {
                 {
                     prop:'premoney',
                     label:'预算金额',
-                    width:''
+                    width:'80'
                 },
                 {
                     prop:'money',
                     label:'中标金额',
-                    width:''
+                    width:'80'
                 },
                 {
                     prop:'status',

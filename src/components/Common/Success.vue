@@ -7,12 +7,13 @@
             <div v-if="status">
                 <p class="su-title">提交成功</p>
                 <p class="su-tips">你所提交的信息已提交审批，请及时跟进审核状态。</p>
-                <p class="su-tips">如有问题，请联系审核人员或联系8266-XXXX。</p>
+                <p class="su-tips">如有问题，请联系审核人员</p>
+                <!-- 或联系8266-XXXX。 -->
             </div>
-            <div v-else>
+            <!-- <div v-else>
                 <p class="su-title">提交失败</p>
-                <p class="su-tips">失败原因：大于等于100万的项目必须上传三份询价单。</p>
-            </div>
+                <p class="su-tips"></p>
+            </div> -->
             <el-row class="su-btn-sure" v-if="status">
                 <el-button type="primary" round @click="handleClose">确定</el-button>
             </el-row>

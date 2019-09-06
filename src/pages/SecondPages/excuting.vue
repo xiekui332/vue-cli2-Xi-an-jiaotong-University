@@ -1,6 +1,6 @@
 <template>
     <!-- 执行中项目查看 -->
-    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' :proInfo="proInfo" :paramsUrl="paramsUrl" />
     <div id="detail" v-else>
         <HeaderSearch 
             :options1='options1' 
@@ -13,36 +13,41 @@
             :select3 = 'select3' 
             :select4 = 'select4' 
             :searchTex = 'searchTex'
-            @handleSearch = 'handleSearchRes'
+            @handleSearchRes = 'handleSearchRes'
+            @handleChangeStatus='handleChangeStatus'
+            :type='type'
         />
 
         <div class="de-tips">
             <i class="pub-css de-icon"></i>
-            <p class="de-tips-txt">项目总计 <span>4</span> 项   立项阶段X项  采购阶段X项  执行阶段X项   验收阶段X项   维保阶段X项</p>
+            <p class="de-tips-txt">项目总计 <span>{{allCount.a}}</span> 项   立项阶段 {{ allCount.b }} 项  采购阶段 {{ allCount.c }} 项  执行阶段 {{ allCount.d }} 项   验收阶段 {{ allCount.e }} 项   维保阶段 {{ allCount.f }} 项</p>
         </div>
 
         <ul class="de-items">
-            <li class="de-item" v-for="(i, ind) in 10" :key="ind">
+            <li class="de-item" v-for="(i, ind) in pageList" :key="ind">
+                <!-- <div class="de-item-order">
+                    {{ind + 1}}
+                </div> -->
                 <div class="de-item-name">
-                    <p class="de-item-name-title">西安交通大学网信中心XXX项目</p>
-                    <p class="de-item-name-time"><span>GS2019003</span> | <span>2019.06.01</span> ~ <span>2019.12.12</span></p>
+                    <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
+                    <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.createTime?i.createTime:'暂无'}}</span></p>
                 </div>
                 <div class="de-item-num">
                     <span>中标</span>
-                    <span><span>20.00</span>万</span>
+                    <span><span>{{i.zbje?i.zbje:'0.00'}}</span>万</span>
                 </div>
                 <div class="de-item-percent">
                     <p>
-                        <span>68%</span>
-                        <span>采购 | 需求论证</span>
+                        <span>{{isNaN(i.yfje/i.zbje)?0.00:(i.yfje/i.zbje).toFixed(2)*100}}%</span>
+                        <span>{{i.projectStateName?i.projectStateName:'暂无'}} | {{i.projectNodeName?i.projectNodeName:'暂无'}}</span>
                     </p>
-                    <el-progress :percentage="68" :format="format"></el-progress>
+                    <el-progress :percentage="isNaN(i.yfje/i.zbje)?0:(i.yfje/i.zbje).toFixed(2)*100" :format="format"></el-progress>
                 </div>
-                <div class="de-item-btn" @click="handleLook">
+                <div class="de-item-btn" @click="handleLook(i.id)">
                     查看
                 </div>
 
-                <div class="pub-css de-back"></div>
+                <!-- <div class="pub-css de-back"></div> -->
             </li>
         </ul>
     </div>
@@ -51,6 +56,8 @@
 <script>
 import HeaderSearch from '@/components/HeaderSearch'
 import ExcutingDetail from '@/components/ExcutingDetail'
+import { splitUrl } from '../../utils/util.js'
+import { store } from '@/store'
 export default {
     // 注册组件
     components:{
@@ -61,88 +68,15 @@ export default {
         return {
             options1: [],
             options2: [     // 项目类型
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '软件项目'
-                }, {
-                    value: '2',
-                    label: '硬件项目'
-                }, {
-                    value: '3',
-                    label: '集成项目'
-                }, {
-                    value: '4',
-                    label: '服务项目'
-                }, {
-                    value: '5',
-                    label: '工程项目'
-                }
+                {}
             ],
             options3: [     // 经费来源
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '改善办学条件'
-                }, {
-                    value: '2',
-                    label: '一流大学'
-                }, {
-                    value: '3',
-                    label: '校级专项'
-                }, {
-                    value: '4',
-                    label: '课题经费'
-                }, {
-                    value: '5',
-                    label: '银行投资经费'
-                }, {
-                    value: '6',
-                    label: '其他'
-                }
+                {}
             ],
             options4: [     // 项目状态
-                {
-                    value: '0',
-                    label: '全部'
-                }, {
-                    value: '1',
-                    label: '项目立项'
-                }, {
-                    value: '2',
-                    label: '项目采购'
-                }, {
-                    value: '3',
-                    label: '项目执行'
-                }, {
-                    value: '4',
-                    label: '项目验收'
-                }, {
-                    value: '5',
-                    label: '项目维保'
-                }
-            ],
+                {}],
             options5: [     // 项目节点
-                {
-                    value: '0',
-                    label: '全部'
-                },{
-                    value: '1',
-                    label: '需求论证'
-                },{
-                    value: '2',
-                    label: '采购申请'
-                },{
-                    value: '3',
-                    label: '采购会'
-                },{
-                    value: '4',
-                    label: '合同签订'
-                }
+                {}
             ],
             select1: '',
             select2: '',
@@ -151,7 +85,12 @@ export default {
             searchTex:'',
             hasExcutingDetail:false,
             type:'excuting',
-            parentRoute:'/proj'
+            parentRoute:'/proj',
+            statusList1:[],
+            pageList:[],
+            allCount:{},
+            proInfo:{},
+            paramsUrl:''
         }
     },
     methods:{
@@ -160,12 +99,48 @@ export default {
         },
 
         handleSearchRes(params) {
-            // console.log(params)
+            this.$http.post("/api/project/getProjectZXZList", params)
+            .then((res) => {
+                this.pageList = []
+                if(res.code == "00000") {
+                    this.pageList = res.data
+                }else{
+                    this.$message({
+                        message: res.message,
+                        type: 'error'
+                    })
+                }
+            })
+            
+            let obj = {}
+            obj.year = params.year
+            obj.yeprojectTypear = params.projectType
+            obj.fundsSources = params.fundsSources
+            obj.searchText = params.searchText
+            this.getProjectStateCount(obj)
+
         },
 
-        handleLook() {
-            this.hasExcutingDetail = true;
+        handleLook(id) {
+            this.getProjectMsgById(id)
         },
+
+        getProjectMsgById(id){
+            let params = {
+                id:id
+            }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+                if(res.code === '00000') {
+                    this.proInfo = res.data
+                    store.dispatch('commitChangeProInfo',res.data)
+                    this.hasExcutingDetail = true;
+                }else{
+                    this.$message.error(res.message);
+                }
+            })
+        },
+
         
         getPastYear(n) {
             for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
@@ -175,10 +150,132 @@ export default {
                     label:i + ' 年'
                 })
             }
+        },
+
+        getFundsSource(){
+            let params = {}
+            this.$http.post('/api/project/getFundsSource')
+            .then((res) => {
+                if(res.code === '00000'){
+                    if(res.data.length){
+                        this.options3 = []
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].name
+                            obj.value = res.data[i].id
+                            this.options3.push(obj)
+                        }
+                    }
+                }else{
+                    this.$message({
+                        message: res.message,
+                        type: 'error'
+                    })
+                }
+            })
+        },
+
+        getStatusAndNodes() {
+            this.$http.post("/api/template/getStatusAndNodes", {})
+            .then((res) => {
+                if(res.code == '00000') {
+                    this.statusList1 = res.data
+                    this.options4 = [{'value':"0",'label':"全部"}]
+                    if(this.statusList1.length) {
+                        for(var a=0;a<this.statusList1.length;a++){
+                            var msg={};
+                            msg['value']=this.statusList1[a].id;
+                            msg['label']=this.statusList1[a].name;
+                            this.options4.push(msg);
+                        } 
+                    }
+                }else{
+                    this.$message({
+                        message: res.message,
+                        type: 'error'
+                    })
+                }
+            })
+        },
+        
+        handleChangeStatus(param){
+           if(param==0){
+                this.options5=[{'value':"0",'label':"全部"}]
+           }else{
+                var list=this.statusList1;
+                for(var i=0;i<list.length;i++){
+                    if(list[i].id==param){
+                        var nodeList=list[i].list;
+                        this.options5=[{'value':"0",'label':"全部"}]
+                            for(var j=0;j<nodeList.length;j++){
+                                    var msg={};
+                                    msg['value']=nodeList[j].id;
+                                    msg['label']=nodeList[j].name;
+                                    this.options5.push(msg);
+                            }
+                            
+                    }
+                }
+           }
+        },
+
+        getProjectType(){
+            this.$http.post('/api/project/getProjectType')
+            .then((res) => {
+                if(res.code === '00000'){
+                    if(res.data.length){
+                        this.options2 = [{"value":"全部","lable":"0"}];
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].name
+                            obj.value = res.data[i].id
+                            this.options2.push(obj)
+                        }
+                    }
+                }else{
+                    this.$message({
+                        message: res.message,
+                        type: 'error'
+                    })
+                }
+            })
+        },
+
+        getProjectStateCount(params) {
+            this.$http.post("/api/project/getProjectStateCount", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    let n = 0
+                    for(let i = 0; i < res.data.length; i ++ ) {
+                        n += res.data[i]
+                    }
+                    this.allCount.a = n
+                    this.allCount.b = res.data[0]
+                    this.allCount.c = res.data[1]
+                    this.allCount.d = res.data[2]
+                    this.allCount.e = res.data[3]
+                    this.allCount.f = res.data[4]
+                }else{
+                    this.$message({
+                        message: res.message,
+                        type: 'error'
+                    })
+                }
+            })
+        },
+
+        init() {
+            
         }
     },
     mounted() {
         this.getPastYear(20)
+        this.getFundsSource()
+        this.getStatusAndNodes()
+        this.getProjectType()
+        this.init()
+        this.paramsUrl = splitUrl('?')
+        // console.log(splitUrl('?'))
     },
     watch:{
         '$route'(to, from) {
@@ -245,6 +342,12 @@ export default {
             >div{
                 height: 100%;
                 float: left;
+            }
+            .de-item-order{
+                font-size: 14px;
+                color: #7887A7;
+                line-height: 88px;
+                margin: 0 0 0 15px;
             }
             .de-item-name{
                 width: 380px;

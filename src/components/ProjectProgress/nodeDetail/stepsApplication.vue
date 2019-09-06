@@ -19,25 +19,27 @@
                 <div class="st-edit-item st-oparate" v-for="(i, ind) in infoArr" :key="ind">
                     <div class="st-oparate-col">
                         <el-date-picker
-                        v-model="i.timeVal1"
+                        v-model="i.timeVal"
                         type="date"
                         placeholder="选择日期"
                         :disabled='i.isEdit'
+                        value-format="yyyy-MM-dd"
                         >
                         </el-date-picker>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.percentVal1" placeholder="请输入内容" type='number' :disabled='i.isEdit'></el-input>
+                        <el-input v-model="i.percentVal" placeholder="请输入内容" type='number' :disabled='i.isEdit' @change="handlePer(ind)"></el-input>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.moneyVal1" placeholder="请输入内容" type='number' :disabled='i.isEdit'></el-input>
+                        <el-input v-model="i.moneyVal" placeholder="请输入内容" type='number' :disabled='true'></el-input>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.remarksVal1" placeholder="请输入备注(选填)" :disabled='i.isEdit' maxlength='20'></el-input>
+                        <el-input v-model="i.remarksVal" placeholder="请输入备注(选填)" :disabled='i.isEdit' maxlength='20'></el-input>
                     </div>
                     <div class="st-oparate-col st-oparate-btn">
-                        <i class="pub-css st-icon-edit" @click="handleEdit(ind)"></i>
-                        <i class="pub-css st-icon-del" @click="handleDel(ind)"></i>
+                        <i class="pub-css" @click="handleItem('edit', ind)">编辑</i>
+                        <i class="pub-css" @click="handleItem('del', ind)">删除</i>
+                        <i class="pub-css" @click="handleItem('mit', ind)">提交</i>
                     </div>
                 </div>
             </div>
@@ -53,84 +55,31 @@
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
-                <div class="st-edit-item">
+                <div class="st-edit-item" v-for="(i, ind) in zlList" :key="ind" @click="handleUploadChange('1', ind, i.mb.id)">
                     <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 立项申请书(模板)</span>
+                        <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>
+                        <span class="st-file-title"><i class="st-tips-required">*</i> {{i.mb.name}}</span>
                     </div>
                     <div class="st-icon-file-name">
+
                         <el-upload
                             class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :action= getuploadUrl1
                             :on-preview="handlePreview"
                             :on-remove="handleRemove"
                             :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
+                            :on-success="handleSuccess"
+                            :before-upload="handleBefore"
+                            :http-request="customRequest"
+                            :limit="1"
+                            :file-list="fileList"
                             :on-exceed="handleExceed"
-                            :file-list="fileListL">
+                            accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
-                    </div>
-                </div>
-                <div class="st-edit-item">
-                    <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 调研报告</span>
-                    </div>
-                    <div class="st-icon-file-name">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileListD">
-                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                        </el-upload>
-                    </div>
-                </div>
-                <div class="st-edit-item">
-                    <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> 询价单(3份)</span>
-                    </div>
-                    <div class="st-icon-file-name">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileListX">
-                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                        </el-upload>
-                    </div>
-                </div>
-                <div class="st-edit-item">
-                    <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"> 调研函</span>
-                    </div>
-                    <div class="st-icon-file-name">
-                        <el-upload
-                            class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :on-preview="handlePreview"
-                            :on-remove="handleRemove"
-                            :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
-                            :on-exceed="handleExceed"
-                            :file-list="fileListY">
-                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
-                        </el-upload>
+
+                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" class="pub-css" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
                     </div>
                 </div>
             </div>
@@ -147,34 +96,48 @@
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
-                <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind">
+                <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind" @click="handleUploadChange('0', ind)">
                     <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>
-                        <span class="st-file-title"> 2019采购合同</span>
+                        <i class=" st-icon-file"></i>
+                        <span class="st-file-title"> 其他资料</span>
                     </div>
                     <div class="st-icon-file-name">
                         <el-upload
                             class="upload-demo"
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :action= getuploadUrl1
                             :on-preview="handlePreview"
                             :on-remove="handleRemove"
                             :before-remove="beforeRemove"
-                            multiple
-                            :limit="3"
+                            :on-success="handleSuccess"
+                            :before-upload="handleBefore"
+                            :http-request="customRequest"
+                            :limit="1"
+                            :file-list="fileList"
                             :on-exceed="handleExceed"
-                            :file-list="fileListQ">
-                            <el-button size="small" type="primary">
-                                <i class="pub-css st-upload-icon"></i>
-                            </el-button>
+                            accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            >
+                            <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
+
+                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" class="pub-css" @click="handleFileDel(i.id)"></i> </p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <el-row class="st-checkHandle">
+            <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+            <div class="st-checkHandle-tips">
+                <i class="el-icon-info"></i>
+                完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
+            </div>
+        </el-row>
     </div>
 </template>
 
 <script>
+import { uploadUrl1 } from '../../../utils/util.js'
+import { store } from '@/store'
 export default {
     components:{
         
@@ -183,67 +146,157 @@ export default {
         return {
             infoArr:[
                 {
-                    id:1,
-                    timeVal1:'',
-                    moneyVal1:'',
-                    remarksVal1:'',
+                    timeVal:'',
+                    moneyVal:'',
+                    remarksVal:'',
+                    percentVal:'',
                     isEdit:true
                 }
             ],
-            otherArr:[{}],
-            fileListL:[],
+            otherArr:[],
+            fileList:[],
             fileListD:[],
             fileListX:[],
             fileListY:[],
             fileListQ:[],
-            type:''
+            type:'',
+            sessionGet:{},
+            zlList:[],
+            qtList:[],
+            isClear:false,
+            fileName:'',
+            fileType:'',
+            fileUrl:'',
+            getuploadUrl1:'',
+            uploadType:'',
+            uploadNo:'',
+            spareI:'',
+            uploadParams:{},
+            files:[],
+            loading:false,
+            proNode:4,
+            proNodeId:'716aa0fd239a4aa1b9469592122782c9'
         }
-    },
-
-    mounted() {
-        
     },
 
     methods:{
         handleAddmenu(type) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
             if(type === 'info') {
                 let obj = {}
                 let len = this.infoArr.length
-                if(!len) {
-                    obj = {
-                            id:1,
-                            timeVal1:'',
-                            moneyVal1:'',
-                            remarksVal1:'',
-                            isEdit:true
-                    }
-                    this.infoArr.push(obj)
-                    
-                }else{
-                    let number = this.infoArr[this.infoArr.length - 1].id
-                
-                    if(number > 10){
-                        return
-                    }
-                    obj.id = number + 1
-                    obj['timeVal' + (Number(number) + 1)] = ''
-                    obj['moneyVal' + (Number(number) + 1)] = ''
-                    obj['remarksVal' + (Number(number) + 1)] = ''
-                    obj.isEdit = true
-                    this.infoArr.push(obj)
+                if(len > 5){
+                    return
                 }
+                obj = {
+                    timeVal:'',
+                    moneyVal:'',
+                    remarksVal:'',
+                    percentVal:'',
+                    isEdit:true
+                }
+                this.infoArr.push(obj)
             }else if(type === 'other') {
                 this.otherArr.push({})
             }
             
         },
 
-        handleEdit(ind) {
-            this.infoArr[ind].isEdit = false
-        },
-        
-        handleDel(ind){
-            this.infoArr.splice(ind, 1)
+        handleItem(type, ind) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            if(type == "edit") {
+                this.infoArr[ind].isEdit = false
+            }else if(type == 'del') {
+                // console.log(this.infoArr[ind])
+                let params = {
+                    pid:this.sessionGet.id,
+                    id:this.infoArr[ind].id
+                }
+
+                this.$http.post("/api/project/deletePayMentRecode", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        this.$message({
+                            type:"success",
+                            message:res.message
+                        })
+                        this.getPayMentRecodeList()
+                    }else{
+                        this.$message({
+                            type:"error",
+                            message:res.message
+                        })
+                    }
+                })
+
+            }else if(type == 'mit') {
+                
+                if(this.infoArr[ind].id) {
+                    let params = {
+                        pid:this.sessionGet.id,
+                        id:this.infoArr[ind].id,
+                        expectTime:this.infoArr[ind].timeVal,
+                        remark:this.infoArr[ind].remarksVal,
+                        ratio:this.infoArr[ind].percentVal
+                    }
+                    this.$http.post("/api/project/updatePayMentRecode", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.$message({
+                                type:"success",
+                                message:res.message
+                            })
+                            this.getPayMentRecodeList()
+                        }else{
+                            this.$message({
+                                type:"error",
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:"error",
+                            message:err.message
+                        })
+                    })
+
+                }else{
+                    let params = {
+                        pid:this.sessionGet.id,
+                        expectTime:this.infoArr[ind].timeVal,
+                        remark:this.infoArr[ind].remarksVal,
+                        ratio:this.infoArr[ind].percentVal
+                    }
+                    this.$http.post("/api/project/addPayMentRecode", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.$message({
+                                type:"success",
+                                message:res.message
+                            })
+                            this.getPayMentRecodeList()
+                        }else{
+                            this.$message({
+                                type:"error",
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:"error",
+                            message:err.message
+                        })
+                    })
+                }
+
+                
+            }
         },
 
         handleRemove(file, fileList) {
@@ -253,11 +306,279 @@ export default {
             console.log(file);
         },
         handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
         },
         beforeRemove(file, fileList) {
-            return this.$confirm(`确定移除 ${ file.name }？`);
+            // return this.$confirm(`确定移除 ${ file.name }？`);
         },
+        
+        handleSuccess(res,file,fileList) {
+            console.log(res);
+        },
+
+        getPayMentRecodeList() {
+            let params = {
+                projectId:this.sessionGet.id
+            }
+            this.$http.post("/api/project/getPayMentRecodeList", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    if(res.data) {
+                        let arr = []
+                        for(let i = 0;i < res.data.length; i ++) {
+                            let obj = {}
+                            obj.timeVal = res.data[i].expectTime
+                            obj.moneyVal = res.data[i].payMoney
+                            obj.remarksVal = res.data[i].remark
+                            obj.percentVal = res.data[i].payRatio
+                            obj.id = res.data[i].id
+                            obj.pid = res.data[i].pid
+                            obj.isEdit = true
+                            arr.push(obj)
+                        }
+                        this.infoArr = arr
+                    }
+                    
+                }else{
+                    let arr = [{
+                        timeVal:'',
+                        moneyVal:'',
+                        remarksVal:'',
+                        percentVal:'',
+                        isEdit:true
+                    }]
+                    this.infoArr = arr
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
+            })
+        },
+
+        getNodeAppendix() {
+            // console.log(this.sessionGet)
+            let params = {
+                pid:this.sessionGet.id,
+                nodeId:this.sessionGet.projectNode
+            }
+            if(this.sessionGet.status > this.proNode) {
+                params.nodeId = this.proNodeId
+            }
+
+            this.$http.post("/api/project/getNodeAppendix", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    if(res.data && res.data.zlList) {
+                        for(let i = 0; i < res.data.zlList.length; i ++) {
+                            let pop = res.data.zlList[i].mb.spareI.indexOf('.')
+                        }
+                        this.zlList = res.data.zlList
+                        // console.log(this.zlList)
+                    }
+                    if(res.data && res.data.qtList) {
+                        this.qtList = res.data.qtList
+                        this.otherArr = res.data.qtList
+                        // console.log(this.otherArr)
+                    }
+
+                }else{
+                    
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
+            })
+        },
+
+        handlePer(ind) {
+            this.infoArr[ind].moneyVal = this.sessionGet.ysje * this.infoArr[ind].percentVal * 0.01
+        },
+
+        handleUpload(params){
+            this.fileName=params.fileName;
+            this.fileUrl=params.fileUrl;
+            this.fileType=params.fileType;
+        },
+
+        handleDownLoad(i) {
+            window.open(i.url)
+        },
+
+        handleBefore(file) {
+            this.files = file
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            if(this.uploadType == "1") {
+                if(this.zlList[this.uploadNo - 1].zl.length) {
+                    this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
+                    return false
+                }
+            }else if(this.uploadType == "0") {
+
+                if(this.qtList.length && this.qtList[this.uploadNo - 1].attachName) {
+                    this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
+                    return false
+                }
+            }
+            
+        },
+
+        handleUploadChange(type, ind, id) {
+            if(type == "1") {
+                this.uploadType = type
+                this.uploadNo = ind + 1
+                this.spareI = id
+            }else if(type == "0") {
+                this.uploadType = type
+                this.uploadNo = ind + 1
+            }
+            
+        },
+
+        customRequest() {
+            const formData = new FormData();
+            
+            formData.append('pid',this.sessionGet.id);
+            formData.append('files',this.files);
+            formData.append('nodeId',this.sessionGet.projectNode);
+            if(this.uploadType == "1") {
+                formData.append('type',this.uploadType);
+                formData.append('no',this.uploadNo);
+                formData.append('spareI',this.spareI);
+            }else if(this.uploadType == "0") {
+                formData.append('type',this.uploadType);
+                formData.append('no',"");
+                formData.append('spareI',"");
+            }
+            
+            // console.log(formData)
+            this.fileList = []
+            this.$http.post("/api/project/uploadNodeAppendixLxsq", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:res.message
+                    })
+                    this.getNodeAppendix()
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:err.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
+        },
+
+        handleFileDel(id) {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            let params = {
+                appendixId:id
+            }
+
+            this.fileList = []
+            this.$http.post("/api/project/deletedNodeAppendixLxsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:"success",
+                        message:res.message
+                    }) 
+
+                    this.getNodeAppendix()
+
+                }else{
+                   this.$message({
+                        type:"error",
+                        message:res.message
+                    }) 
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
+            })
+        },
+
+        handleFinishNode() {
+            if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            let params = {
+                id:this.sessionGet.id
+            }
+            this.loading = true
+            this.$http.post("/api/project/closeNodeLxsq", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$router.push({
+                        path:'step2' + store.state.exactPath
+                    })
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+
+                this.loading = false
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+
+                this.loading = false
+            })
+        },
+
+
+        getProjectMsgById(id){
+            let params = {
+                id:id
+            }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+                if(res.code === '00000') {
+                    this.sessionGet = res.data
+                    store.dispatch('commitChangeProInfo',res.data)
+                    this.getNodeAppendix();
+                }else{
+                    
+                }
+            })
+        }
+    },
+
+    mounted() {
+        this.sessionGet = store.state.proInfo
+        console.log(this.sessionGet)
+        this.getPayMentRecodeList();
+        this.getProjectMsgById(this.sessionGet.id)
+        
+    },
+
+    created() {
+        this.getuploadUrl1 = uploadUrl1
+        // console.log(this.getuploadUrl1)
     }
 }
 </script>
@@ -361,7 +682,7 @@ export default {
                         width: 20px;
                         height: 20px;
                         background-position: -377px -168px;
-                        margin-left: 44px;
+                        margin:0 10px;
                         cursor: pointer;
                     }
                     & /deep/ .el-input__prefix{
@@ -373,6 +694,17 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    i{
+                        font-size: 13px;
+                        color: #39475B;
+                        cursor: pointer;
+                    }
+                    i:hover{
+                        color:#3B7CFF;
+                    }
+                    i:nth-child(2) {
+                        margin:0 10px;
+                    }
                 }
             }
         }
@@ -417,9 +749,9 @@ export default {
                 .st-icon-file-name{
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
+                    justify-content: flex-start;
                     .upload-demo{
-                        width: 100%;
+                        width: 40px;
                     }
                     & /deep/ .el-upload-list{
                         width: 80%;
@@ -444,6 +776,34 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    & /deep/ .el-upload-list{
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                        display: none;
+                    }
+                }
+                .file-name{
+                    float: left;
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    i{
+                        margin: 0 10px 0 0;
+                        display: inline-block;
+                        width: 20px;
+                        height: 20px;
+                        background-position: -377px -168px;
+                        margin:0 10px;
+                        cursor: pointer;
+                        opacity: .2;
+                        transition: all .3s ease;
+                    }
+                }
+                .file-name:hover{
+                    i{
+                        opacity: 1;
+                    }
                 }
             }
         }
@@ -451,6 +811,27 @@ export default {
     .st-others{
         .st-edit-content{
             
+        }
+    }
+
+    .st-checkHandle{
+        text-align: center;
+        margin: 30px 20px 20px;
+        button{
+            width: 300px;
+            height: 40px;
+            background: #3B7CFF;
+            border-radius: 6px;
+        }
+        .st-checkHandle-tips{
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            i{
+                font-size: 16px;
+                border-radius: 50%;
+                color: #3B7CFF;
+            }
         }
     }
 }

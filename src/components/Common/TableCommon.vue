@@ -8,8 +8,17 @@
             :stripe='true'
             :cell-class-name="cell"
             @selection-change="handleSelectionChange"
-            @cell-click='handleLookDetail'>
+            @cell-click='handleLookDetail'
+            
+            >
             <el-table-column
+                v-if="extype == 'todo'"
+                type="index"
+                label="序号"
+                width="55">
+            </el-table-column>
+            <el-table-column
+                v-else
                 type="selection"
                 width="55">
             </el-table-column>
@@ -23,32 +32,37 @@
             </el-table-column>
             <el-table-column
                 prop=""
-                label="操作"
+                :label="colName"
                 show-overflow-tooltip
-                v-if="extype !== 'situatio'"
+                v-if="extype !== 'situatio'&&extype !=='role'"
                 >
-                
-                <div class="ma-icon" v-if="extype === 'tracking'" @click="trackingDetail('tracking')">
-                    详情
-                </div>
-                <div class="ma-icon ma-todo" v-else-if="extype === 'todo'" @click="trackingDetail('todo')">
-                    审批
-                </div>
-                <div class="ma-icon ma-todo" v-else-if="extype === 'upload'" @click="trackingDetail('upload')">
-                    撤销
-                </div>
-                <div class="ma-icon ma-todo" v-else-if="extype === 'role'" @click="trackingDetail('upload')">
-                    数据权限
-                </div>
-                <div class="ma-btn-wrapper" v-else>
-                    <div class="pub-css ma-edit ma-icon" @click="handleOpa('edit')"><a href="javascript:;" title='编辑'></a></div>
-                    <div class="pub-css ma-del ma-icon" @click="handleOpa('del')"><a href="javascript:;" title='删除'></a></div>
-                    <div class="ma-icon" @click="handleOpa('stop')">
-                        <a href="javascript:;" title='终止\中止'>
-                            <img src="../../assets/img/stop.png" class="ma-stop" alt="img" />
-                        </a>
+                <template slot-scope="scope">
+                    
+                    <div class="ma-icon" v-if="extype === 'tracking'" @click="trackingDetail('tracking')">
+                        详情
                     </div>
-                </div>
+                    <div class="ma-icon ma-todo" v-else-if="extype === 'todo'" @click="trackingDetail('todo')">
+                        审批
+                    </div>
+                    <div class="ma-icon ma-todo" v-else-if="extype === 'upload'">
+                        <div v-if="scope.row.hasSign == '是'" @click="trackingDetail('upload', scope.row)">撤销</div>
+                        <div v-if="scope.row.hasSign == '否'" @click="trackingDetail('upload', scope.row)">发布</div>
+                    </div>
+                    <div class="ma-icon ma-todo" v-else-if="extype === 'role'">
+                        <div v-if="scope.row.isAssign == '0'" >数据权限</div>
+                        <div v-if="scope.row.isAssign == '1'"></div>
+                      
+                    </div>
+                    <div class="ma-btn-wrapper" v-else>
+                        <div class="pub-css ma-edit ma-icon" @click="handleOpa('edit',scope.row)"><a href="javascript:;" title='编辑'></a></div>
+                        <div class="pub-css ma-del ma-icon" @click="handleOpa('del',scope.row)"><a href="javascript:;" title='删除'></a></div>
+                        <div class="ma-icon" @click="handleOpa('stop',scope.row)">
+                            <a href="javascript:;" title='终止\中止'>
+                                <img src="../../assets/img/stop.png" class="ma-stop" alt="img" />
+                            </a>
+                        </div>
+                    </div>
+                </template>   
             </el-table-column>
         </el-table>
 
@@ -64,22 +78,21 @@
         >
             <el-divider></el-divider>
             <div class="ta-reason" v-if="!hasStop">
-                <p>确认删除</p>
-                <p>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+                <p>{{projectName}}</p>
             </div>
 
             <div v-else class="ta-stop-wrapper">
                 <p>
                     <span>项目编码：</span>
-                    <span>you know</span>
+                    <span>{{projectNo}}</span>
                 </p>
                 <p>
                     <span>项目名称：</span>
-                    <span>you know</span>
+                    <span>{{projectName}}</span>
                 </p>
                 <p>
                     <span>项目负责人：</span>
-                    <span>you know</span>
+                    <span>{{leaderName}}</span>
                 </p>
                 <div>
                     <span><i>*</i> 原因说明：</span>
@@ -97,7 +110,7 @@
             </div>
 
             <el-row class="ta-btn-wrapper">
-                <el-button type="primary" round @click="handleBtn('sure')">确定</el-button>
+                <el-button type="primary" round @click="handleBtn('sure','isTrue')">确定</el-button>
                 <el-button type="primary" round @click="handleBtn('cancel')">取消</el-button>
             </el-row>
         </el-dialog>
@@ -112,11 +125,16 @@ export default {
         'handleChangeEdit',
         'tableData',
         'tablekind',
-        'type'
+        'type',
+        'handleSearchType',
+        'handleChangeoprate', //模板撤销，发布
+        'handleSelectOprate', //选中
+        'handleReload',
+        'handleLook' //查看
     ],
     data() {
         return {
-            extableData:this.tableData,
+            extableData:[],
             hasNewClass:false,
             hasClose:false,
             hasdialog:false,
@@ -124,10 +142,18 @@ export default {
             marTop:'15vh',
             hasStop:false,
             textarea:'',
-            dialogTitle:'确认删除',
+            dialogTitle:'',
             handleType:'',
             extablekind:this.tablekind,
-            extype:this.type
+            extype:this.type,
+            exhandleSearchType:this.handleSearchType,
+            colName:'操作',
+            projectName:'',
+            isTrue:'',
+            projectId:'',
+            leaderName:'',
+            projectNo:''
+
         }
     },
     methods:{
@@ -139,14 +165,23 @@ export default {
             if(type === 'edit') {
                 this.$emit('handleChangeEdit', id, false)
             }else if(type === 'del') {
-                this.handlehasdialog(true, true, true, false, '25%', '确认删除', 'del')
+               if(id.projectNode){
+                  this.isTrue=false;
+               }else{
+                  this.isTrue=true;
+               }
+                this.projectId=id.id;
+                this.handlehasdialog(true, true, true, false, '25%', '确认删除',id.name, 'del')
             }else if(type === 'stop') {
-                this.handlehasdialog(true, true, true, true, '30%', '终止确认', 'stop')
+                this.projectId=id.id;
+                this.leaderName=id.men;
+                this.projectNo=id.num
+                this.handlehasdialog(true, true, true, true, '30%', '终止确认',id.name, 'stop')
             }
             
         },
 
-        handlehasdialog(hasdialog, hasClose, hasNewClass, hasStop, dialogWid, dialogTitle, handleType) {
+        handlehasdialog(hasdialog, hasClose, hasNewClass, hasStop, dialogWid, dialogTitle,projectName,handleType) {
             this.hasdialog = hasdialog
             this.hasClose = hasClose
             this.hasNewClass = hasNewClass
@@ -154,6 +189,8 @@ export default {
             this.dialogWid = dialogWid
             this.dialogTitle = dialogTitle
             this.handleType = handleType
+            this.projectName=projectName
+
         },
 
         toggleSelection(rows) {
@@ -168,6 +205,7 @@ export default {
 
         handleSelectionChange(val) {
             this.multipleSelection = val;
+             this.$emit('handleSelectOprate', val);
         },
 
         cell({row, column, rowIndex, columnIndex}) {
@@ -187,7 +225,7 @@ export default {
                     return 'todo-style'
                 }
             }else if(this.type === 'upload') {
-                if( columnIndex == 1){
+                if( columnIndex == 2){
                     return 'project-style upload-style'
                 }
                 else if(columnIndex == 7) {
@@ -206,13 +244,49 @@ export default {
             
         },
 
-        handleBtn(type) {
-            if(type === 'sure') {
-                this.hasdialog = false
-                this.handleErroe()
-            }else if(type === 'cancel') {
-                this.hasdialog = false
-            }
+        handleBtn(type,istrue) {
+             if(!this.hasStop){//删除
+                if(type === 'sure') {
+                    this.hasdialog = false
+                    if(istrue==true){ //执行中项目也就是有节点的项目不能删除
+                       this.handleErroe()
+                    }else{
+                        var params={projectId:this.projectId}
+                        this.$http.post("/api/project/deleteProjectById",params).then(res =>{
+                            console.log(res)
+                            if(res.code=="00000"){
+                                this.$message("删除成功");
+                                this.$emit('handleReload',true);
+                            }
+                        })
+                    }
+                }else if(type === 'cancel') {
+                    this.isTrue='';
+                    this.projectName='';
+                    this.projectId='';
+                    this.hasdialog = false
+                }
+             
+             }else{ //终止
+                if(type === 'sure') {
+                    this.hasdialog = false;
+                    var params={projectId:this.projectId,stopRemark:this.textarea};
+                    this.$http.post("/api/project/updateProjectStop",params).then(res =>{
+                       if(res.code=="00000"){
+                            this.$message("操作完成")
+                            this.$emit('handleReload',true);
+                       }
+                    })
+                }else if(type === 'cancel') {
+                    this.projectNo='';
+                    this.leaderName='';
+                    this.projectName='';
+                    this.projectId='';
+                    this.hasdialog = false
+                }
+             
+             }
+
         },
 
         handleErroe() {
@@ -225,22 +299,24 @@ export default {
             })
         },
 
-        handleLookDetail(row, column, cell ,event) {    
-            if(this.type === 'tracking') {
-
-            }else {
-                if(column.label === '项目') {
-                    this.$emit('handleChangeEdit', column.id, true)
-                }
+        handleLookDetail(row, column, cell ,event) {   
+            if(this.type === 'upload' && column.label === '模板名称') {
+                this.$emit('handleChangeEdit', row, true)
+            }
+            if(this.type === 'first' && column.label === '项目'){
+                 this.$emit('handleLook', row, true)
             }
             
         },
-
-        trackingDetail(type) {
+        trackingDetail(type, params) {
             if(type === 'tracking') {
                 this.$emit('handleTrackLook')
             }else if(type === 'todo') {
                 this.$emit('handleChangeEdit', 1)
+            }else if(type === 'upload') {
+                this.$emit('handleChangeoprate', params)
+            }else if(type ==='role'){
+                this.$emit('handleChangeoprate', params)
             }
             
         }
@@ -251,6 +327,11 @@ export default {
     created() {
         if(this.type === 'done') {
             this.extype = 'situatio'
+        }
+    },
+    watch:{
+        tableData(params){
+            this.extableData = params
         }
     }
 }

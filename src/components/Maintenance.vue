@@ -2,16 +2,16 @@
     <div id="root-wrapper">
         <p class="ro-title">执行计划维护</p>
         <div class="ro-item">
-            <span class="ro-title-b">项目编号：</span>
+            <span class="ro-title-b" v-if="isChange===true">项目编号：</span>
             <div class="ro-item-content">
-                <span class="ro-num">GS2019001</span>
-                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasDis">是否历史项目</el-checkbox>
+                <span class="ro-num" >{{projectNo}}</span>
+                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasLk">是否历史项目</el-checkbox>
             </div>
         </div>
         <div class="ro-item">
             <span class="ro-title-b">项目名称：</span>
             <div class="ro-item-content">
-                <el-input v-model="name" placeholder="请输入内容" :disabled="hasDis"></el-input>
+                <el-input v-model="name" placeholder="请输入内容（必填）" :disabled="hasLk" ></el-input>
             </div>
         </div>
         <div class="ro-item">
@@ -20,9 +20,10 @@
                 <el-date-picker
                     v-model="establishmenTime"
                     type="date"
-                    placeholder="选择日期"
+                    value-format="yyyy-MM-dd"
+                    placeholder="选择日期 （必选）"
                     :clearable='hasClear'
-                    :disabled="hasDis"
+                    :disabled="hasLk" 
                     >
                 </el-date-picker>
             </div>
@@ -36,9 +37,10 @@
                     placeholder="选择日期"
                     range-separator="~"
                     :clearable='hasClear'
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :disabled="hasDis"
+                    start-placeholder="开始日期（必选）"
+                    end-placeholder="结束日期（必选）"
+                    value-format="yyyy-MM-dd"
+                    :disabled="hasLk" 
                     >
                 </el-date-picker>
             </div>
@@ -46,7 +48,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目预算：</span>
             <div class="ro-item-content">
-                <el-input placeholder="请输入内容" class="ro-budget" v-model="budgetNum" :disabled="hasDis">
+                <el-input placeholder="请输入内容 （必填）" class="ro-budget" v-model="budgetNum" :disabled="hasLk" >
                     <template slot="append">万元</template>
                 </el-input>
             </div>
@@ -54,13 +56,14 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类别：</span>
             <div class="ro-item-content">
-                <el-select v-model="kind" placeholder="请选择" :disabled="hasDis" @change='handleSel()'>
+                <el-select v-model="kind" placeholder="请选择 （必选）"  @change='handleSel()' :disabled="hasLk" >
                     <el-option
-                    v-for="item in opt1"
-                    :key="item.value"
+                    v-for="(item,index) in opt1"
+                    :key="index"
                     :label="item.label"
                     :value="item.value"
-                    >
+                    @click.native="changeType(index)">
+                    
                     </el-option>
                 </el-select>
             </div>
@@ -68,7 +71,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类型：</span>
             <div class="ro-item-content">
-                <el-select v-model="types" placeholder="请选择" :disabled="hasDis">
+                <el-select v-model="types" placeholder="请选择 （必选）"  :disabled="hasLk" >
                     <el-option
                     v-for="item in opt2"
                     :key="item.value"
@@ -82,7 +85,7 @@
         <div class="ro-item">
             <span class="ro-title-b">经费来源：</span>
             <div class="ro-item-content">
-                <el-select v-model="moneySource" placeholder="请选择" :disabled="hasDis">
+                <el-select v-model="moneySource" placeholder="请选择 （必选）" :disabled="hasDis">
                     <el-option
                     v-for="item in opt3"
                     :key="item.value"
@@ -96,9 +99,9 @@
         <div class="ro-item">
             <span class="ro-title-b">项目负责人：</span>
             <div class="ro-item-content">
-                <el-select v-model="leading" placeholder="请选择" multiple :disabled="hasDis">
+                <el-select v-model="leading" multiple placeholder="请选择 " :disabled="hasLk" >
                     <el-option
-                    v-for="item in opt1"
+                    v-for="item in opt6"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -113,21 +116,21 @@
             <div class="ro-item-content">
                 <el-select v-model="proState" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in opt1"
-                    :key="item.value"
+                    v-for="(item,index) in opt4"
+                    :key="index"
                     :label="item.label"
                     :value="item.value"
-                    >
+                    @click.native="changeStatus(index)">
                     </el-option>
                 </el-select>
             </div>
         </div>
-        <div class="ro-item">
+        <div class="ro-item" :disabled="hasDis">
             <span class="ro-title-b">项目节点：</span>
             <div class="ro-item-content">
                 <el-select v-model="proNode" placeholder="请选择" :disabled="hasDis">
                     <el-option
-                    v-for="item in opt1"
+                    v-for="item in opt5"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -143,9 +146,9 @@
                     type="textarea"
                     :rows="2"
                     placeholder="请输入内容"
-                    v-model="proNote"
-                    :disabled="hasDis"
+                    v-model="textarea"
                     maxlength="200"
+                    :disabled="hasLk" 
                     >
                 </el-input>
             </div>
@@ -155,40 +158,50 @@
             <div class="ro-item-content">
                 <el-upload
                     class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :action= nodeUploadUrl
                     :on-preview="handlePreview"
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
+                    :on-success="handleSuccess"
                     multiple
                     :limit="3"
                     :on-exceed="handleExceed"
                     :file-list="fileList"
+                    :disabled="hasLk"
                     accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
-                    :disabled="hasDis"
                     >
-                    <el-button size="small" type="primary">支持扩展名：.rar .zip .doc .docx .pdf .jpg...</el-button>
+                    <el-button size="small" type="primary"  :disabled="hasLk" >支持扩展名：.rar .zip .doc .docx .pdf .jpg...</el-button>
                 </el-upload>
+            </div>
+        </div>
+        <div class="ro-item" v-if="hasDis">
+            <span class="ro-title-b">已传附件：</span>
+            <div >
+                <div v-for="(item,index) in oldAppdendixList" :key="index">{{item.attachName}}</div>
             </div>
         </div>
 
         <div class="ro-btn-wrapper">
-            <el-row>
-                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle" v-if="!hasDis">取消</el-button>
+            <el-row v-if="!hasLk">
+                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle" >取消</el-button>
             </el-row>
-            <el-row>
-                <el-button type="primary" round class="ro-btn ro-save" v-if="!hasDis">保存</el-button>
+            <el-row v-if="!hasLk">
+                <el-button type="primary" round class="ro-btn ro-save" @click="handleSave">保存</el-button>
             </el-row>
-            <el-row>
-                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle" v-if="hasDis">返回</el-button>
+            <el-row v-if="hasLk">
+                <el-button type="primary" round class="ro-btn ro-cancel" @click="handleCancle">返回</el-button>
             </el-row>
         </div>
     </div>
 </template>
 
 <script>
+import { nodeUploadUrl } from '../utils/util.js'
 export default {
     props:[
-        'hasDisabled'
+        'hasDisabled',
+        'changeMsg',
+        'hasLook'
     ],
     data() {
         return {
@@ -197,66 +210,48 @@ export default {
             establishmenTime:'',
             planningTime:'',
             hasClear:false,
-            budgetNum:'19.2',    // 项目预算
+            budgetNum:'',    // 项目预算
             kind:'',            // 项目类别
             types:'',           // 项目类型
             moneySource:'',     // 经费来源
             leading:'',         // 项目负责人
             proState:'',        // 项目状态
             proNode:'',         // 项目节点
-            proNote:'',         // 项目说明
-            opt1: [
-                {
-                    value: '1',
-                    label: '服务类'
-                }, 
-                {
-                    value: '2',
-                    label: '货物类'
-                }, 
-                {
-                    value: '3',
-                    label: '工程类'
-                }
-            ],
-            opt2: [],
-            opt3:[
-                {
-                    value:'1',
-                    label:'改善办学条件'
-                },
-                {
-                    value:'2',
-                    label:'一流大学'
-                },
-                {
-                    value:'3',
-                    label:'校级专项'
-                },
-                {
-                    value:'4',
-                    label:'课题经费'
-                },
-                {
-                    value:'5',
-                    label:'银行投资经费'
-                },
-                {
-                    value:'6',
-                    label:'其他'
-                }
-
-            ],
+            textarea:'',         // 项目说明
+            msgDetails:{},
+            projectNo:'',
+            opt1: [],//项目类别
+            opt2: [],//项目类型
+            opt3: [],//经费来源
+            opt4:[],//项目状态
+            opt5:[],//项目节点
+            opt6:[],//负责人
             fileList:[],
-            hasDis:this.hasDisabled
+            fileMsgList:[],
+            hasDis:this.hasDisabled,
+            hasLk:this.hasLook,
+            isChange:false,
+            projectId:"",
+            nodeUploadUrl:nodeUploadUrl,
+            statusList1:[],
+            typeList:[],
+            oldAppdendixList:[]
         }
     },
     methods:{
         checkHistory() {
-
+            console.log(1)
         },
         handleRemove(file, fileList) {
-            console.log(file, fileList);
+             var fileMsg=fileList;
+             this.fileMsgList=[];
+             for(var i=0;i<fileMsg.length;i++){
+                  var msg={};
+                  msg.fileName=fileMsg[i].response.data.fileName;
+                  msg.fileAddress=fileMsg[i].response.data.fileUrl;
+                  msg.fileType=fileMsg[i].response.data.fileType;
+                  this.fileMsgList.push(msg);
+             }
         },
         handlePreview(file) {
             console.log(file);
@@ -268,15 +263,268 @@ export default {
             return this.$confirm(`确定移除 ${ file.name }？`);
         },
         handleCancle() {
+            this.name='';
+            this.establishmenTime='';
+            this.planningTime='';
+            this.budgetNum='';
+            this.proNode='';
+            this.proState='';
+            this.kind='';
+            this.types='';
+            this.textarea='';
+            this.checked=false;
+            this.moneySource='';
+            this.fileList=[];
+            this.leading='';
             this.$emit('hasMainPage', false)
         },
         handleSel() {
             
+        },
+        handleSave(){
+          if(this.projectId){//编辑项目
+              var isOldProject=0;
+               if(this.checked==true){
+                   isOldProject=1;
+               }
+                var params={
+                  id:this.projectId, name:this.name,createTime:this.establishmenTime,
+                   startTime:startTime,endTime:endTime,ysje:this.budgetNum,
+                   category:this.kind,type:this.types,
+                  isOldProject:isOldProject,
+                  remark: this.textarea,
+                  fileList:JSON.stringify(this.fileMsgList),
+                  leaderNo:JSON.stringify(this.leading)};
+                this.$http.post("/api/project/updateProjectMsg",params).then(res =>{
+                    if(res.code=="00000"){
+                        this.$message("编辑成功！");
+                        this.handleCancle();
+                    }else{
+                          this.$message(res.message);
+                    }
+                })
+          }else{//新建项目
+               if(!this.name){
+                   return this.$message("项目名称不能为空");
+               }
+               if(!this.establishmenTime){
+                   return this.$message("立项时间不能为空");
+               }
+               var startTime=(this.planningTime)[0];
+               var endTime=(this.planningTime)[1];
+               if(startTime==null||endTime==null){
+                    return this.$message("项目周期不能为空");
+               }
+               if(!this.budgetNum){
+                   return this.$message("预算金额不能为空");
+               }
+                if(!this.kind){
+                   return this.$message("项目类别不能为空");
+               }
+               if(!this.types){
+                   return this.$message("项目类型不能为空");
+               }
+               if(!this.moneySource){
+                   return this.$message("经费来源不能为空");
+               }                          
+               var isOldProject=0;
+               if(this.checked==true){
+                   isOldProject=1;
+               }
+               if(isOldProject==1){
+                   if(this.proState==null){
+                      return this.$message("老项目的项目状态不能为空");
+                   }
+                   if(this.proNode==null){
+                      return this.$message("老项目的项目节点不能为空");
+                   }
+                   if(this.leading.length<1){
+                      return this.$message("老项目的项目负责人不能为空");
+                   }
+               }
+               var params={
+                   name:this.name,createTime:this.establishmenTime,
+                   startTime:startTime,endTime:endTime,ysje:this.budgetNum,
+                   category:this.kind,type:this.types,
+                   sourceFundingType:this.moneySource,
+                  isOldProject:isOldProject,nodeId:this.proNode,
+                  statusId: this.proState,
+                  remark: this.textarea,
+                  fileList:JSON.stringify(this.fileMsgList),
+                  leaderNo:JSON.stringify(this.leading)};
+                    this.$http.post("/api/project/addProjectMsg",params).then(res =>{
+                        if(res.code=="00000"){
+                            this.name='';
+                            this.establishmenTime='';
+                            this.planningTime='';
+                            this.budgetNum='';
+                            this.proNode='';
+                            this.proState='';
+                            this.kind='';
+                            this.types='';
+                            this.textarea='';
+                            this.checked=false;
+                            this.moneySource='';
+                            this.fileList=[];
+                            this.leading='';
+                            this.$message("新建成功！");
+                            this.handleCancle();
+                        }else{
+                            this.$message(res.message);
+                        }
+                    })
+          }
+
+        },
+        getAppendix(params){//项目附件
+            var params={projectId:params}
+            this.$http.post("/api/project/getProjectAppendixById",params).then(res =>{
+              if(res.code=="00000"){
+                  var msglsit=res.data;
+                  this.oldAppdendixList=[];
+                  for(var i=0;i<msglsit.length;i++){
+                      var msg={};
+                      msg.attachName=msglsit[i].attachName;
+                       this.oldAppdendixList.push(msg);
+                  }
+              }
+            })
+        },
+        handleSuccess(res,file,fileList){
+              if(res.code=="00000"){
+                  var msg={};
+                  msg.fileName=res.data.fileName;
+                  msg.fileAddress=res.data.fileUrl;
+                  msg.fileType=res.data.fileType;
+                  this.fileMsgList.push(msg);
+              }
+        },
+        rechangeState(){//获取状态
+            this.$http.post("/api/template/getStatusAndNodes",{}).then(res =>{
+                if(res.code=="00000"){
+                    this.statusList1=res.data;
+                    this.opt4=[];
+                    var data=res.data;
+                    for(var a=0;a<data.length;a++){
+                        var msg={};
+                        msg['value']=data[a].id;
+                        msg['label']=data[a].name;
+                        this.opt4.push(msg);
+                    }   
+                }
+            })
+        },
+        changeStatus(index){//获取节点
+            var list=this.statusList1[index].list;
+             this.opt5=[];
+            for(var i=0;i<list.length;i++){
+                var msg={};
+                msg['value']=list[i].id;
+                msg['label']=list[i].name;
+                this.opt5.push(msg);
+            }
+        },
+        getFundsSource(){//获取经费来源
+            this.$http.post('/api/project/getFundsSource')
+            .then((res) => {
+                if(res.code === '00000'){
+                    if(res.data.length){
+                        this.opt3=[];
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].name
+                            obj.value = res.data[i].id
+                            this.opt3.push(obj)
+                        }
+                    }
+                }
+            })
+        },
+        getprojectType(){//获取项目类别
+            this.$http.post('/api/project/getProjectTypeAll').then((res) => {
+                if(res.code === '00000'){
+                    this.typeList=res.data;
+                    if(res.data.length){
+                        this.opt1=[];
+                        for(let i = 0; i < res.data.length; i ++){
+                            let obj = {}
+                            obj.label = res.data[i].pType.name
+                            obj.value = res.data[i].pType.id
+                            this.opt1.push(obj)
+                        }
+                    }
+                }
+            })
+        },
+        changeType(param){//获取项目类型
+       
+            var list=this.typeList;
+            var msglist=list[param].cType
+            this.opt2=[];
+            for(var i=0;i<msglist.length;i++){
+                var msg={};
+                msg['value']=msglist[i].id;
+                msg['label']=msglist[i].name;
+                this.opt2.push(msg);
+            }   
+        },
+        getUser(){//项目负责人
+            var params={};
+            this.$http.post("/api/user/getAllUser",params).then(res =>{
+                if(res.success){
+                    var msgList=res.rows;
+                    this.opt6=[];
+                    for(var i=0;i<msgList.length;i++){
+                        var obj={};
+                        obj.value=msgList[i].id;
+                        obj.label=msgList[i].userName;
+                        this.opt6.push(obj);
+                    }
+                }
+            })
         }
+    },
+    mounted(){
+       this.msgDetails= this.changeMsg;
+       this.rechangeState();
+       this.getFundsSource();
+       this.getprojectType();
+       this.getUser();
+       
     },
     watch: {
         hasDisabled(params) {
             this.hasDis = params
+        },
+        msgDetails(params){
+            if(params){//编辑
+                this.isChange=true;
+                this.budgetNum=params.money;
+                this.kind=params.projectTypeNames;
+                this.types=params.projectCategoryNames;
+                this.moneySource=params.resource;
+                this.textarea=params.remark;
+                this.name=params.name;
+                this.projectNo=params.num;
+                if(params.isOldProject==1){
+                    this.checked=true;
+                }
+                this.establishmenTime=params.time;
+                this.planningTime=[params.startTime ,params.endTime];
+                var mens=params.men;
+                if(mens){
+                    var men=mens.split(",");
+                    this.leading=men;
+                }
+                this.proState=params.projectStateName;
+                this.proNode=params.projectNodeName;
+                this.hasDis=true;
+                this.projectId=params.id;
+                this.getAppendix(this.projectId)
+            }else{//新建
+               this.isChange=false;
+            }
+
         },
         kind(params) {
             if(params == 1) {
