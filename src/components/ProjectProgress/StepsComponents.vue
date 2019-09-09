@@ -168,6 +168,8 @@ export default {
         
 
         handleLookSteps() {
+            this.sessionGet = store.state.proInfo
+            // console.log(this.sessionGet)
             this.handleHasNode();
         },
 
@@ -259,11 +261,23 @@ export default {
         }
     },
     beforeRouteEnter(to,from,next) {
-        
         next((vm) => {
             // 此处的vm就是当前组件的实例
             vm.pageType = store.state.pageType
         })
+    },
+
+    beforeRouteUpdate(to, from, next) {
+        
+    },
+
+    beforeRouteLeave(to, from, next) {
+        if(store.state.hasRouteUpdate) {
+            next(true)
+        }else{
+            next(false)
+        }
+        
     },
     
     watch:{

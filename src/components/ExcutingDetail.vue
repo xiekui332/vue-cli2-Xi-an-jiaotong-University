@@ -38,8 +38,8 @@
                             </transition>
                             <div class="et-steps-line"></div>
                             <ul :class="i.active?'et-steps-ul-children hasHeight':'et-steps-ul-children noHeight'" >
-                                <li v-for="(i, ind) in i.children" :key="ind">
-                                    <router-link :to="i.path">{{ind + 1}} {{i.title}}</router-link>
+                                <li v-for="(j, ind) in i.children" :key="ind" @click="handleRouteUpdate(j.order)">
+                                    <router-link :to="j.path">{{ind + 1}} {{j.title}}</router-link>
                                 </li>
                             </ul>
                         </li>
@@ -79,12 +79,14 @@ export default {
                       {
                         title:'立项申请', 
                         path:this.parentRoute + '/' + this.type +'/step1',
-                        status:false
+                        status:false,
+                        order:4
                       },
                       {
                         title:'立项论证', 
                         path:this.parentRoute + '/' + this.type +'/step2',
-                        status:false
+                        status:false,
+                        order:5
                       },
                   ] 
                 },
@@ -96,22 +98,26 @@ export default {
                       {
                         title:'需求论证', 
                         path:this.parentRoute + '/' + this.type +'/step3',
-                        status:false
+                        status:false,
+                        order:6
                       },
                       {
                         title:'采购申请', 
                         path:this.parentRoute + '/' + this.type +'/step4',
-                        status:false
+                        status:false,
+                        order:7
                       },
                       {
                         title:'采购会', 
                         path:this.parentRoute + '/' + this.type +'/step5',
-                        status:false
+                        status:false,
+                        order:8
                       },
                       {
                         title:'签订合同', 
                         path:this.parentRoute + '/' + this.type +'/step6',
-                        status:false
+                        status:false,
+                        order:9
                       }
                   ]  
                 },
@@ -123,7 +129,8 @@ export default {
                         {
                             title:'执行资料', 
                             path:this.parentRoute + '/' + this.type +'/step7',
-                            status:false
+                            status:false,
+                            order:10
                         }
                     ]
                 },
@@ -134,17 +141,20 @@ export default {
                         {
                             title:'验收申请', 
                             path:this.parentRoute + '/' + this.type +'/step8',
-                            status:false
+                            status:false,
+                            order:11
                         },
                         {
                             title:'预验收', 
                             path:this.parentRoute + '/' + this.type +'/step9',
-                            status:false
+                            status:false,
+                            order:12
                         },
                         {
                             title:'验收复核', 
                             path:this.parentRoute + '/' + this.type +'/step10',
-                            status:false
+                            status:false,
+                            order:13
                         }
                     ]  
                 },
@@ -155,12 +165,14 @@ export default {
                         {
                             title:'维保结束申请', 
                             path:this.parentRoute + '/' + this.type +'/step11',
-                            status:false
+                            status:false,
+                            order:14
                         },
                         {
                             title:'技术指标验收', 
                             path:this.parentRoute + '/' + this.type +'/step12',
-                            status:false
+                            status:false,
+                            order:15
                         }
                     ]  
                 },
@@ -258,29 +270,28 @@ export default {
                             }   
                         }
 
-                        // for(let i = 0; i < this.steps.length; i ++ ) {
-                            
-                            if(!this.steps[i].active) {
-                                console.log(this.steps[i])
-                                this.steps[i].children = []
-                            }
+                        if(!this.steps[i].active) {
+                            // console.log(this.steps[i])
+                            this.steps[i].children = []
+                        }
 
-                            if(this.steps[i].children && this.steps[i].children.length) {
-                                for(let j = 0; j < this.steps[i].children.length; j ++) {
-                                    this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
-                                    if(this.steps[i].children[j].status === true){
-                                        location.hash= this.steps[i].children[j].path
-                                        
-                                    }
-                                }
-                            }
                             
-                        // }
                     }else{
                         this.steps[i].active = true
                     }
+
+                    if(this.steps[i].children && this.steps[i].children.length) {
+                        for(let j = 0; j < this.steps[i].children.length; j ++) {
+                            this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
+                            if(this.steps[i].children[j].status === true){
+                                location.hash= this.steps[i].children[j].path
+                                
+                            }
+                        }
+                    }
                     
                 }
+                
                 
             }
 
@@ -291,6 +302,10 @@ export default {
         },
         handleClose(){
             this.hasErrorTips = false
+        },
+
+        handleRouteUpdate(order) {
+            console.log(order)
         }
     },
     mounted() {
@@ -300,12 +315,12 @@ export default {
         store.dispatch('commitChangePath',this.exparamsUrl)
         this.handleToRoute()
     },
+
     destroyed(){
        
     },
-    beforeRouteUpdate(to, from, next) {
-        console.log(to)
-    },
+
+
 
     watch:{
          GethasUpdate(params) {

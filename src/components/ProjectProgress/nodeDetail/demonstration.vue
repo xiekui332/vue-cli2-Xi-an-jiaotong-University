@@ -120,7 +120,7 @@ export default {
             // console.log(this.sessionGet)
             let params = {
                 pid:this.sessionGet.id,
-                nodeId:this.sessionGet.projectNode
+                nodeId:store.state.proInfo.projectNode
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
@@ -328,7 +328,7 @@ export default {
     },
 
     mounted() {
-        this.sessionGet = JSON.parse(sessionStorage.getItem('params'))
+        this.sessionGet = store.state.proInfo
         // console.log(this.sessionGet)
         this.getProjectMsgById(this.sessionGet.id)
     },

@@ -241,7 +241,7 @@ export default {
                         id:this.infoArr[ind].id,
                         expectTime:this.infoArr[ind].timeVal,
                         remark:this.infoArr[ind].remarksVal,
-                        ratio:this.infoArr[ind].percentVal
+                        payRatio:this.infoArr[ind].percentVal
                     }
                     this.$http.post("/api/project/updatePayMentRecode", params)
                     .then((res) => {
@@ -270,7 +270,7 @@ export default {
                         pid:this.sessionGet.id,
                         expectTime:this.infoArr[ind].timeVal,
                         remark:this.infoArr[ind].remarksVal,
-                        ratio:this.infoArr[ind].percentVal
+                        payRatio:this.infoArr[ind].percentVal
                     }
                     this.$http.post("/api/project/addPayMentRecode", params)
                     .then((res) => {
@@ -362,7 +362,7 @@ export default {
             // console.log(this.sessionGet)
             let params = {
                 pid:this.sessionGet.id,
-                nodeId:this.sessionGet.projectNode
+                nodeId:store.state.proInfo.projectNode
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
@@ -518,9 +518,24 @@ export default {
         },
 
         handleFinishNode() {
+            // console.log(this.infoArr)
             if(this.sessionGet.status > this.proNode) {
                 return false
             }
+
+            let status = true
+            
+            for(let i = 0; i < this.infoArr.length; i ++) {
+                if(!this.infoArr[i].timeVal || !this.infoArr[i].percentVal || !this.infoArr[i].moneyVal) {
+                    status = false
+                }
+            }
+            
+            if(!status) {
+                this.$message.warning("请完成付款计划")
+                return 
+            }
+
             let params = {
                 id:this.sessionGet.id
             }

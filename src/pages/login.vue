@@ -58,8 +58,7 @@ export default {
 						setSession('userName', data.userName)
 						setSession('userid', data.id)
 						this.$router.push({
-							// path:'/stage',
-							name:"manage"
+							path:'/stage?pid=c63413dae6034485b7cb6275f78c0091'
 						})
 					}else{
 						this.pubmes(data.message);

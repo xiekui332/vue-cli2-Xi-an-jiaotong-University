@@ -11,7 +11,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目名称：</span>
             <div class="ro-item-content">
-                <el-input v-model="name" placeholder="请输入内容（必填）" :disabled="hasLk" ></el-input>
+                <el-input v-model="name" placeholder="请输入内容" :disabled="hasLk" ></el-input>
             </div>
         </div>
         <div class="ro-item">
@@ -21,7 +21,7 @@
                     v-model="establishmenTime"
                     type="date"
                     value-format="yyyy-MM-dd"
-                    placeholder="选择日期 （必选）"
+                    placeholder="选择日期"
                     :clearable='hasClear'
                     :disabled="hasLk" 
                     >
@@ -37,8 +37,8 @@
                     placeholder="选择日期"
                     range-separator="~"
                     :clearable='hasClear'
-                    start-placeholder="开始日期（必选）"
-                    end-placeholder="结束日期（必选）"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
                     value-format="yyyy-MM-dd"
                     :disabled="hasLk" 
                     >
@@ -48,7 +48,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目预算：</span>
             <div class="ro-item-content">
-                <el-input placeholder="请输入内容 （必填）" class="ro-budget" v-model="budgetNum" :disabled="hasLk" >
+                <el-input placeholder="请输入内容" class="ro-budget" v-model="budgetNum" :disabled="hasLk" >
                     <template slot="append">万元</template>
                 </el-input>
             </div>
@@ -56,7 +56,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类别：</span>
             <div class="ro-item-content">
-                <el-select v-model="kind" placeholder="请选择 （必选）"  @change='handleSel()' :disabled="hasLk" >
+                <el-select v-model="kind" placeholder="请选择"  @change='handleSel()' :disabled="hasLk" >
                     <el-option
                     v-for="(item,index) in opt1"
                     :key="index"
@@ -71,7 +71,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目类型：</span>
             <div class="ro-item-content">
-                <el-select v-model="types" placeholder="请选择 （必选）"  :disabled="hasLk" >
+                <el-select v-model="types" placeholder="请选择"  :disabled="hasLk" >
                     <el-option
                     v-for="item in opt2"
                     :key="item.value"
@@ -85,7 +85,7 @@
         <div class="ro-item">
             <span class="ro-title-b">经费来源：</span>
             <div class="ro-item-content">
-                <el-select v-model="moneySource" placeholder="请选择 （必选）" :disabled="hasDis">
+                <el-select v-model="moneySource" placeholder="请选择" :disabled="hasDis">
                     <el-option
                     v-for="item in opt3"
                     :key="item.value"
@@ -288,13 +288,20 @@ export default {
                    isOldProject=1;
                }
                 var params={
-                  id:this.projectId, name:this.name,createTime:this.establishmenTime,
-                   startTime:startTime,endTime:endTime,ysje:this.budgetNum,
-                   category:this.kind,type:this.types,
-                  isOldProject:isOldProject,
-                  remark: this.textarea,
-                  fileList:JSON.stringify(this.fileMsgList),
-                  leaderNo:JSON.stringify(this.leading)};
+                    id:this.projectId, name:this.name,createTime:this.establishmenTime,
+                    startTime:startTime,endTime:endTime,ysje:this.budgetNum,
+                    category:this.kind,type:this.types,
+                    isOldProject:isOldProject,
+                    remark: this.textarea,
+                    fileList:JSON.stringify(this.fileMsgList),
+                    leaderNo:JSON.stringify(this.leading)
+                  };
+
+                  if(!this.leading || !this.leading.length) {
+                      this.$message.warning("编辑项目时项目负责人不能为空")
+                      return
+                  }
+
                 this.$http.post("/api/project/updateProjectMsg",params).then(res =>{
                     if(res.code=="00000"){
                         this.$message("编辑成功！");

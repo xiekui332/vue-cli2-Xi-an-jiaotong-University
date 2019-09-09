@@ -85,6 +85,7 @@ export default {
             this.$http.post('/api/project/getProjectMsgById', params)
             .then((res) => {
                 if(res.code === '00000') {
+                    this.sessionGet = res.data
                     store.dispatch('commitChangeProInfo',res.data)
                     this.getNodeAppendix();
                 }else{
@@ -162,7 +163,7 @@ export default {
             // console.log(this.sessionGet)
             let params = {
                 pid:this.sessionGet.id,
-                nodeId:this.sessionGet.projectNode
+                nodeId:store.state.proInfo.projectNode
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
@@ -283,22 +284,15 @@ export default {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
         
-        // console.log(this.proInfo)
+        // console.log(this.sessionGet)
     },
 
     computed:{
-        proInfo() {
-            return store.state.proInfo
-        }
+        
     },
 
     watch:{
-        hasUpdate(params) {
-            console.log(params)
-            if(params) {
-                this.getProjectMsgById(this.proInfo.id)
-            }
-        }
+        
     }
 }
 </script>

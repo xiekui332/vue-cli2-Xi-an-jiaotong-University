@@ -560,7 +560,8 @@ export default {
     props:[
         'type',
         'proInfo',
-        'rowInfo'
+        'rowInfo',
+        'handleChangeDetail'
     ],
     components:{
         proInfoHead,
@@ -660,6 +661,7 @@ export default {
                         //     message:'<p style="font-size:14px;color:#666666;margin:0 0 10px 0;">已成功！</p> <p style="font-size:13px;color:#999999;">下一审批节点：XXXXXX，请及时跟进审核状态。如有问题，请联系审核人员或联系8266-XXXX。</p><p></p>',
                         //     showClose:true
                         // })
+                        this.$emit('handleChangeDetail', false)
                     }else{
                         this.$message(res.message)
                     }

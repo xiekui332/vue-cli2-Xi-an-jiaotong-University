@@ -7,7 +7,8 @@ export const store = new Vuex.Store({
         exactPath:'',
         pageType:null,
         proInfo:{},
-        hasUpdate:false
+        hasUpdate:false,
+        hasRouteUpdate:false
     },
     mutations:{
         changePath(state, path) {
@@ -23,12 +24,17 @@ export const store = new Vuex.Store({
         
         changeUpdate(state, data) {
             state.hasUpdate = data
+        },
+        
+        changeRouteUpdate(state, data) {
+            state.hasRouteUpdate = data
         }
     },
     actions:{
         commitChangePath:({commit}, path) => commit('changePath',path),
         commitChangeStatus:({commit}, pageStatus) => commit('changeStatus', pageStatus),
         commitChangeProInfo:({commit}, data) => commit('changeProInfo', data),
-        commitChangeUpdate:({commit}, data) => commit('changeUpdate', data)
+        commitChangeUpdate:({commit}, data) => commit('changeUpdate', data),
+        commitChangeRouteUpdate:({commit}, data) => commit('changeRouteUpdate', data)
     }
 })

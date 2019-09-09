@@ -284,7 +284,7 @@ export default {
         },
 
         handleChangeEdit(params) {
-            this.hasExcutingDetail = true
+            this.hasExcutingDetail = params
         },
 
         handlePageUp(params) {
@@ -421,7 +421,8 @@ export default {
         },
 
         handleChangeDetail(params) {
-            // this.hasExcutingDetail = true
+            // console.log(params)
+            this.hasExcutingDetail = true
         }
 
     },

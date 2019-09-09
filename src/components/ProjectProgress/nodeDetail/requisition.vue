@@ -313,7 +313,7 @@ export default {
             
             // console.log(formData)
             this.fileList = []
-            this.$http.post("/api/project/uploadNodeAppendixXqlz", formData)
+            this.$http.post("/api/project/uploadNodeAppendixCgsq", formData)
             .then((res) => {
                 if(res.code == "00000") {
                     this.$message({
@@ -538,7 +538,7 @@ export default {
             }
             .st-edit-item{
                 display: flex;
-                line-height: 50px;
+                // line-height: 50px;
                 >div{
                     height: auto;
                     min-height: 50px;

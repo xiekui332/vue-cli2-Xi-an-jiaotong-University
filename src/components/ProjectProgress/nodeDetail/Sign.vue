@@ -635,7 +635,7 @@ export default {
 
     mounted() {
         this.sessionGet = store.state.proInfo
-        console.log(this.sessionGet)
+        // console.log(this.sessionGet)
         this.init()
         this.getProjectMsgById(this.sessionGet.id)
         this.getSFPayMentRecodeList()

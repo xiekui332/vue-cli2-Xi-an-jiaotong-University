@@ -35,7 +35,9 @@ export const format = (num) => {
 
 export const regexFile = /\.(gif|jpg|jpeg|png|GIF|JPG|PNG|PDF|pdf)$/
 
-export const baseUrl = 'http://192.168.31.173:8081'
+// export const baseUrl = 'http://192.168.31.173:8081'
+export const baseUrl = 'http://192.168.31.209:8082'
+
 
 export const uploadUrl = baseUrl + '/api/system/project/uploadTemplate' //上传模板地址
 

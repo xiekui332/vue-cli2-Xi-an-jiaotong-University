@@ -58,7 +58,7 @@ export default {
         return {
             count:1,
             menu:[],
-            activeName:'0'
+            activeName:1
         }
     },
     methods:{
@@ -67,11 +67,26 @@ export default {
             this.$refs.client.style.height = window.innerHeight - 64 + 'px'
             this.$refs.container.style.height = window.innerHeight - 104 + 'px'
             
+        },
+
+        handlePush() {
+            // console.log(this.menu)
+            if(this.menu.length) {
+                let path = this.menu[0].children[0].path
+                this.$router.push({
+                    path:path
+                })
+            }
         }
     },
 
     mounted() {
-        this.init()
+        this.init();
+        
+        
+    },
+
+    created() { 
         
     },
 
@@ -82,6 +97,7 @@ export default {
         navArray(params){
             // console.log(params)
             this.menu = params
+            this.handlePush();
         }
     },
     directives:{
