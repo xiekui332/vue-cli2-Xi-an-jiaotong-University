@@ -25,11 +25,12 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" class="pub-css" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
+                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
                     </div>
                 </div>
             </div>
@@ -39,7 +40,7 @@
         <div class="st-item st-templates st-others">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" class="st-add" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" @click="handleAddmenu('other')">增行</a>
             </div>
 
             <div class="st-edit-content">
@@ -61,11 +62,12 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" class="pub-css" @click="handleFileDel(i.id)"></i> </p>
+                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.id)"></i> </p>
 
                     </div>
                 </div>
@@ -73,7 +75,7 @@
         </div>
 
         <el-row class="st-checkHandle">
-            <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+            <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
                 完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
@@ -104,7 +106,8 @@ export default {
             fileList:[],
             loading:false,
             proNode:5,
-            proNodeId:'18fe03018e3143e2ba1ad0b76b700c34'
+            proNodeId:'18fe03018e3143e2ba1ad0b76b700c34',
+            noDrop:false
         }
     },
 
@@ -124,6 +127,7 @@ export default {
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
+                this.noDrop = true
             }
 
             this.$http.post("/api/project/getNodeAppendix", params)
@@ -159,7 +163,7 @@ export default {
         },
 
         handleDownLoad(i) {
-            window.open(i.url)
+             window.open(i.mb.url)
         },
 
 
@@ -530,6 +534,14 @@ export default {
                 color: #3B7CFF;
             }
         }
+    }
+
+    
+    .pub-dis{
+        cursor: no-drop!important;
+    }
+    .pub-dis:hover{
+        color: #39475B!important;
     }
 }
 </style>

@@ -121,7 +121,7 @@ export default {
                 },
                 {
                     prop:'name',
-                    label:'项目',
+                    label:'项目名称',
                     width:'280'
                 },
                 {
@@ -193,9 +193,7 @@ export default {
                 projectSource=""
             }
             var params={page:this.page,rows:this.rows,projectType:projectType,year:this.year,fundsSources:projectSource,searchText:this.tex,isLeader:this.isLeader};
-            console.log(params)
             this.$http.post("/api/project/getProjectList",params).then(res =>{
-                // console.log(res)
                 if(res.success){
                     this.total=res.total;
                     this.tableData=[];
@@ -207,6 +205,7 @@ export default {
                         obj.money=datalsit[i].ysje;
                         obj.resource=datalsit[i].sourcesFundName;
                         obj.men=datalsit[i].leaderNames;
+                        obj.menId=datalsit[i].leaderId;
                         obj.kind=datalsit[i].projectTypeName;
                         obj.time=datalsit[i].createTime;
                         obj.id=datalsit[i].id;
@@ -264,10 +263,10 @@ export default {
               this.$message("请选择一行进行指定");
             }else{               
                 var rowmsg=this.selectRows;
-                var mens=rowmsg[0].men;
-                if(mens){
-                    var men=mens.split(",");
-                    this.manVal=men;
+                var menids=rowmsg[0].menId;
+                if(menids){
+                    var menId=menids.split(",");
+                    this.manVal=menId;          
                 }
                
                 this.projectNo=rowmsg[0].num;
@@ -279,13 +278,12 @@ export default {
 
         handleMaBtn(type) {
             if(type == 'cancel') {
-                this.manVal='';
+                this.manVal=[];
                 this.exchangeMan = false
             }else if(type == 'sure') {
                 if(this.manVal.length>0){
                     var params={projectId:this.projectId,leaderId:JSON.stringify(this.manVal)}
                     this.$http.post("/api/project/updateProjectLeader",params).then(res =>{
-                        console.log(res)
                         if(res.code=="00000"){
                             this.manVal=[];
                             this.init();
@@ -298,7 +296,6 @@ export default {
                 }else{
                     this.$message("请选中指定的负责人");
                 }
-
             }
         },
 
@@ -498,6 +495,12 @@ export default {
                 }
             }
         }
+    }
+
+    
+    // change font css color
+    & /deep/ .project-style .cell{
+        color: #3B7CFF!important;
     }
     
 }

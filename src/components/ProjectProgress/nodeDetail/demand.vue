@@ -25,11 +25,12 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" class="pub-css" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
+                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
 
                     </div>
                 </div>
@@ -38,7 +39,7 @@
         </div>
 
         <el-row class="st-checkHandle">
-            <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+            <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
                 完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
@@ -49,11 +50,10 @@
 </template>
 
 <script>
-import CommUpload from '@/components/Common/commUpload'
 import { store } from "@/store"
 export default {
     components:{
-        CommUpload
+        
     },
     data() {
         return {
@@ -69,7 +69,8 @@ export default {
             fileList:[],
             loading:false,
             proNode:6,
-            proNodeId:'e292bf980cde4f7a982bf71426489c8b'
+            proNodeId:'e292bf980cde4f7a982bf71426489c8b',
+            noDrop:false
         }
     },
 
@@ -167,6 +168,7 @@ export default {
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
+                this.noDrop = true
             }
 
             this.$http.post("/api/project/getNodeAppendix", params)
@@ -486,6 +488,14 @@ export default {
                 color: #3B7CFF;
             }
         }
+    }
+
+    
+    .pub-dis{
+        cursor: no-drop!important;
+    }
+    .pub-dis:hover{
+        color: #39475B!important;
     }
 }
 </style>

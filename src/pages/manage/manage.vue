@@ -7,7 +7,7 @@
                     <p class="text-color1">{{lists.lxCount?lists.lxCount:"--"}}</p>
                     <p class="pub-family">立项阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee()">查看</a>
+                <a href="javascript:;" @click="handleSee(1)">查看</a>
             </div>
             <div class="ag-item">
                 <img class="pro-img" src="../../assets/img/caigou.png" alt="图片">
@@ -15,7 +15,7 @@
                     <p class="text-color2">{{lists.cgCount?lists.cgCount:"--"}}</p>
                     <p class="pub-family">采购阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee()">查看</a>
+                <a href="javascript:;" @click="handleSee(2)">查看</a>
             </div>
             <div class="ag-item">
                 <img class="pro-img" src="../../assets/img/yanshou.png" alt="图片">
@@ -23,7 +23,7 @@
                     <p class="text-color3">{{lists.ysCount?lists.ysCount:"--"}}</p>
                     <p class="pub-family">验收阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee()">查看</a>
+                <a href="javascript:;" @click="handleSee(3)">查看</a>
             </div>
             <div class="ag-item">
                 <img class="pro-img" src="../../assets/img/weibao.png" alt="图片">
@@ -31,7 +31,7 @@
                     <p class="text-color4">{{lists.wbCount?lists.wbCount:"--"}}</p>
                     <p class="pub-family">维保阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee()">查看</a>
+                <a href="javascript:;" @click="handleSee(4)">查看</a>
             </div>
             <div class="ag-item">
                 <img class="pro-img" src="../../assets/img/daishenpi.png" alt="图片">
@@ -39,7 +39,7 @@
                     <p class="text-color5">{{lists.dspCount?lists.dspCount:"--"}}</p>
                     <p class="pub-family">待审批</p>
                 </div>
-                <a href="javascript:;" @click="handleSee()">查看</a>
+                <a href="javascript:;" @click="handleSee(5)">查看</a>
             </div>
         </div>
         <el-row class="ag-badge">
@@ -55,14 +55,14 @@
 export default {
     data() {
         return {
-            msgNum:12,
+            msgNum:0,
             lists:{}
         }
     },
     methods:{
         handleToapprove() {
             this.$router.push({
-                path:'/approve/todo'
+                path:'/approve/todo?pid=866c24ef6d4f425d84348998c4505a83'
             })
         },
 
@@ -90,14 +90,42 @@ export default {
             })
         },
 
-        handleSee() {
-            this.$router.push({
-                path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00&id=f2ed28e9b1f9426eb65ebd5a81e841a4"
+        handleSee(type) {
+            if(type == 5) {
+                this.$router.push({
+                    path:"/approve/todo?pid=866c24ef6d4f425d84348998c4505a83&id=a2ab072b1ea84170b9b0a498ad5514ae"
+                })
+            }else{
+                this.$router.push({
+                    path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00"
+                })
+            }
+            
+        },
+
+        getCount() {
+            this.$http.post("/api/project/getDSpProjectCount", {})
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.msgNum = res.data
+                }else{
+
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:"error",
+                    message:err.message
+                })
             })
         }
     }, 
     mounted() {
         this.init()
+        this.getCount()
+    },
+
+    created() {
         // define fontSize
         if (window.screen.availWidth <= 750) {
             document.documentElement.style.fontSize = (100 / 750 * window.screen.availWidth) + 'px';

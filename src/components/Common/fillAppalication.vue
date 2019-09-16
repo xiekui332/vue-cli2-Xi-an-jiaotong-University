@@ -36,7 +36,7 @@
                             </div>
                             <div class="fl-L">
                                 <p class="fl-L-title">
-                                    <span>货物安装是否涉及开挖室内地面或改变房屋结构：</span>
+                                    <span>货物安装是否涉及开挖室内地面或改变房屋结构<br/>（修改或增加门窗，增加或拆除墙体等）：</span>
                                     <span>若有，请提供规划与基建管理中心审批意见书</span>
                                 </p>
                                 <div class=" fl-L-radio">
@@ -142,7 +142,7 @@
                         </div>
 
                         <div class="fl-basis-block">
-                            <div class="fl-basis-title">调研情况：</div>
+                            <div class="fl-basis-title">调研情况（免招标项目请填写免招标理由）：</div>
                             <el-input
                                 type="textarea"
                                 :rows="4"
@@ -196,9 +196,9 @@
                 </div>
             </div>
 
-            <div v-else>
+            <!-- <div v-else>
                 <Success @handleDialog='handleDialog' :hasSuccessStatus='hasSuccessStatus' />
-            </div>
+            </div> -->
             
         </el-dialog>
 
@@ -349,7 +349,8 @@ export default {
                 // this.dialogWid = '40%'
                 // this.marTop = '20vh'
                 // this.hasNewClass = true
-                
+
+                // console.log(this.baseDate)
                 let cgList = this.listArr
                 let gysList = this.listArr2
 
@@ -418,6 +419,10 @@ export default {
                             this.marTop = '20vh'
                             this.hasNewClass = true
                             this.$emit('hasSubmit', true)
+                            this.$message({
+                                type:'success',
+                                message:res.message
+                            })
                         }else{
                             this.$message({
                                 type:'error',
@@ -525,9 +530,14 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.init()
+        this.baseName = this.sessionGet.no + this.sessionGet.name
     },
     computed: {
-        
+        timeDefault() {
+            let date = new Date();
+            let s1 = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate());
+            return s1;
+        }
     },
     watch:{
         fillStatus(params) {
@@ -537,6 +547,10 @@ export default {
             this.exchangeLoad = params
             this.handleLoadStatus(params)
         }
+    },
+    created() {
+        this.baseDate = this.timeDefault
+        // console.log(this.timeDefault)
     }
 }
 </script>

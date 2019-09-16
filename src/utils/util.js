@@ -1,7 +1,9 @@
 export const getUrlParams = (name) => {
     let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象 
-    let r=window.location.href.split("?")[1].match(reg);//匹配目标参数
-    if (r != null) return decodeURI(r[2]);
+    if(window.location.href.split("?")[1]){
+        let r=window.location.href.split("?")[1].match(reg);//匹配目标参数
+        if (r != null) return decodeURI(r[2]);
+    }
     return null; //返回参数值 
 }
 
@@ -35,8 +37,8 @@ export const format = (num) => {
 
 export const regexFile = /\.(gif|jpg|jpeg|png|GIF|JPG|PNG|PDF|pdf)$/
 
-// export const baseUrl = 'http://192.168.31.173:8081'
-export const baseUrl = 'http://192.168.31.209:8082'
+export const baseUrl = 'http://192.168.31.173:8081'
+//export const baseUrl = 'http://10.49.7.111'
 
 
 export const uploadUrl = baseUrl + '/api/system/project/uploadTemplate' //上传模板地址

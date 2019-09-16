@@ -38,7 +38,7 @@
         :close-on-click-modal=true 
         :close-on-press-escape=true
         @close='handleClose'
-        title='新建角色'
+        :title='setTitle'
         >
         <el-divider></el-divider>
         <div class="ma-dia-content">
@@ -100,13 +100,11 @@
 import HeaderSearch from '@/components/HeaderSearch'
 import TableCommon from '@/components/Common/TableCommon'
 import CommPage from '@/components/CommPage'
-import CommUpload from '@/components/Common/commUpload'
 export default {
     components:{
         HeaderSearch,
         TableCommon,
-        CommPage,
-        CommUpload
+        CommPage
     },
     data() {
         return {
@@ -186,7 +184,8 @@ export default {
             },
             count: 1,
             rolesList:[],
-            resourceCheckedKey:[]
+            resourceCheckedKey:[],
+            setTitle:"新建角色"
         }
     },
     methods:{
@@ -208,6 +207,7 @@ export default {
         },
         
         handleAssign() {//新建角色
+                this.setTitle = "新建角色"
                 this.newtemplate = true    
         },
         handleSave() {//新建保存和编辑提交
@@ -252,6 +252,7 @@ export default {
              }else{
                  this.isAss=false;
              }
+             this.setTitle = "编辑角色"
              this.newtemplate = true;
           }else{
                this.$message('请选择一条信息进行编辑');

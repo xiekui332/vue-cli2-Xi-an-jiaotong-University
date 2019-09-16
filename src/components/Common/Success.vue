@@ -3,7 +3,7 @@
         <div :class="status?'su-icon':'su-icon su-icon-error'">
             <img v-if="status" src="../../assets/svg/chenggong.svg" class="su-succ" alt="">
             <img v-else src="../../assets/svg/shibai.svg" class="su-succ" alt="">
-            <img src="../../assets/svg/guanbi.svg" class="su-close" alt="" @click="handleClose">
+            <!-- <img src="../../assets/svg/guanbi.svg" class="su-close" alt="" @click="handleClose"> -->
             <div v-if="status">
                 <p class="su-title">提交成功</p>
                 <p class="su-tips">你所提交的信息已提交审批，请及时跟进审核状态。</p>
@@ -62,7 +62,7 @@ export default {
 #success{
     .su-icon{
         background: #FFFFFF;
-        box-shadow: 0 2px 4px 0 #D0D0D0;
+        // box-shadow: 0 2px 4px 0 #D0D0D0;
         border-radius: 10px;
         position: relative;
         display: flex;

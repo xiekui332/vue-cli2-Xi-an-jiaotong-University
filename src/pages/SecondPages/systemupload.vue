@@ -72,8 +72,21 @@
                 </div>
                 <div class="ma-item ma-item-baseline">
                     <span class="ma-title">模板文件：</span>
-                    <CommUpload  :isClear='isClear' @handleUpload="handleUpload"
-                 />
+                    <el-upload
+                        class="upload-demo"
+                        :action= getuploadUrl1
+                        :before-upload="handleBefore"
+                        :http-request="customRequest"
+                        :on-remove="handleDel"
+                        :on-exceed="handleExc"
+                        :limit="1"
+                        :file-list="fileList"
+                        accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                        >
+                        <el-button size="small" type="primary">上传
+                            <i class="pub-css st-upload-icon"></i>
+                        </el-button>
+                    </el-upload>
                 </div>
             </div>
             
@@ -92,14 +105,12 @@
 import HeaderSearch from '@/components/HeaderSearch'
 import TableCommon from '@/components/Common/TableCommon'
 import CommPage from '@/components/CommPage'
-import CommUpload from '@/components/Common/commUpload'
 import { getUrlParams, regexFile, baseUrl} from '../../utils/util';
 export default {
     components:{
         HeaderSearch,
         TableCommon,
-        CommPage,
-        CommUpload
+        CommPage
     },
     data() {
         return {
@@ -176,7 +187,9 @@ export default {
             fileName:'',
             fileUrl:'',
             fileType:'',
-            isClear:false
+            isClear:false,
+            fileList:[],
+            getuploadUrl1:''
         }
     },
     methods:{      
@@ -205,7 +218,7 @@ export default {
                 }
             }
             if(li.length<1){
-                return this.$message('请选中要撤销的模板');
+                return this.$message('请选中要发布的模板');
             }        
             var param={list:JSON.stringify(li)};
             this.$http.post("/api/template/update/plfb",param).then(res =>{
@@ -315,9 +328,14 @@ export default {
          })
         },
         handleUpload(params) {//上传模板
+        console.log(params)
             this.fileName=params.fileName;
             this.fileUrl=params.fileUrl;
             this.fileType=params.fileType;
+            // if(!this.val1){
+            //    this.val1=this.fileName;
+            // }
+
         },
         handlePageUp(params){//分页
           this.page=params;
@@ -426,6 +444,62 @@ export default {
                 l.push(msg);
             }
              this.options9=l;
+        },
+
+        handleDel(file, fileList) {
+            this.fileName="";
+            this.fileUrl="";
+            this.fileType="";
+        },  
+        
+        handleExc(files, fileList) {
+            this.$message.warning(`如需更换文件请先删除后操作`);
+        },
+
+        // change upload
+        handleBefore(file) {
+            this.files = file
+            if(this.fileList.length) {
+                this.$message.warning(`如需更换文件请先删除后操作`);
+                return false
+            }
+            
+            
+        },
+
+        customRequest() {
+            const formData = new FormData();
+            
+            formData.append('file',this.files);
+            
+            
+            this.$http.post("/api/system/project/uploadTemplate", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:res.message
+                    })
+
+                    this.fileName=res.data.fileName;
+                    this.fileUrl=res.data.fileUrl;
+                    this.fileType=res.data.fileType;
+                    
+                }else{
+                    this.fileList = []
+                    this.$message({
+                        type:'error',
+                        message:err.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.fileList = []
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
         }
     },
     mounted (){

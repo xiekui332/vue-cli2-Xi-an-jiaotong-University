@@ -1,5 +1,5 @@
 <template>
-    <div id="demo">
+    <div id="demo" v-if="isLook===true" >
 		<div id="nav">
 			<img src="../assets/img/LOGO.png" alt="logo" class="lg-logo">
 
@@ -24,13 +24,14 @@
 </template>
 
 <script>
-import { setSession } from '../utils/util.js'
+import { setSession, getSession, getUrlParams } from '../utils/util.js'
 import { handleLogin } from '../utils/api.js'
 export default {
     data() {
         return {
             acount: '',
-			password:'' 
+			password:'',
+			isLook:false
         }
     },
     methods:{
@@ -41,7 +42,45 @@ export default {
                     
                 }
             });
-        },
+		},
+        togo(){
+		   var islogin=getUrlParams("islogin");
+		   var code=getUrlParams("code");
+		   var state=getUrlParams("state");
+		  if(islogin){
+			  this.isLook=true;
+		  }else{
+			var token=getSession("token");
+			if(!token){
+				if(code!=null&&state!=null){
+					var params={code:code,state:state};
+					this.$http.post("/api/user/backmsg",params).then(res =>{
+						if(res.code=="00000"){
+								setSession('token',true);
+								setSession('userName', res.data.userName)
+								setSession('userid', res.data.id)
+								this.$router.push({
+									path:'/stage?pid=c63413dae6034485b7cb6275f78c0091'
+								})
+						}else{
+							this.$http.post("/api/user/redirectUrl").then(res =>{
+								if(res.code=="00000"){
+									window.location.href=res.data;
+								}
+							})
+						}
+					})
+				}else{
+					this.$http.post("/api/user/redirectUrl").then(res =>{
+						console.log(res)
+						if(res.code=="00000"){
+							window.location.href=res.data;
+						}
+					})
+				}
+			}
+		  }
+		},
         login() {
             if(!this.acount || !this.password){
 				this.pubmes('工号或密码错误，请重新输入！', '提示', 'info');
@@ -53,6 +92,7 @@ export default {
 				}
 				handleLogin(param).then((res) => {
 					let data = res.data
+					// console.log(data)
 					if(res.code == "00000") {	
 						setSession('token',true);
 						setSession('userName', data.userName)
@@ -61,7 +101,7 @@ export default {
 							path:'/stage?pid=c63413dae6034485b7cb6275f78c0091'
 						})
 					}else{
-						this.pubmes(data.message);
+						this.pubmes(res.message);
 					}
 				})
 				.catch((err) => {
@@ -72,7 +112,7 @@ export default {
 	},
 	
 	mounted() {
-		
+		this.togo();
 	}
 }
 </script>

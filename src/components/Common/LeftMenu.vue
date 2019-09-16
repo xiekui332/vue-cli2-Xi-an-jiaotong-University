@@ -17,7 +17,7 @@
                             v-if="i.children.length"
                             >
                         </div>
-                        <router-link v-else tag="div" :to="i.path" class="nav-menu">
+                        <router-link v-else tag="div" :to="i.path" class="nav-menu" @click="handleSetStore">
                             <div class="nav-two-box">
                                 <div class="nav-icon pub-css"></div>
                                 <span class="nav-txt pub-family">{{i.item}}</span>
@@ -77,6 +77,10 @@ export default {
                     path:path
                 })
             }
+        },
+
+        handleSetStore() {
+            // store.dispatch('commitChangeRouteUpdate',true)
         }
     },
 

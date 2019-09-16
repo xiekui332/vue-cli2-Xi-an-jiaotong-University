@@ -38,9 +38,17 @@
                             </transition>
                             <div class="et-steps-line"></div>
                             <ul :class="i.active?'et-steps-ul-children hasHeight':'et-steps-ul-children noHeight'" >
-                                <li v-for="(j, ind) in i.children" :key="ind" @click="handleRouteUpdate(j.order)">
-                                    <router-link :to="j.path">{{ind + 1}} {{j.title}}</router-link>
+                                <li v-for="(j, ind) in i.children" :key="ind" @click.capture="handleRouteUpdate(j.order)">
+                                    <router-link v-if="Number(j.order) <= Number(sessionGet.status)" :to="j.path">{{ind + 1}} {{j.title}}</router-link>
+                                    <a href="javascript:;" class="et-default" v-else>
+                                        {{ind + 1}} {{j.title}}
+                                        <div class="et-child-tips">
+                                            <i>!</i>
+                                            未进入此阶段，无法查看
+                                        </div>
+                                    </a>
                                 </li>
+                                <!-- <span>22</span> -->
                             </ul>
                         </li>
                     </ul>
@@ -179,7 +187,8 @@ export default {
             ],
             hasErrorTips:false,
             exproInfo:{},
-            exparamsUrl:''
+            exparamsUrl:'',
+            sessionGet:{}
         }
     },
     methods:{
@@ -295,6 +304,8 @@ export default {
                 
             }
 
+            console.log(this.steps)
+
         },
  
         handleCommit(path) {
@@ -305,7 +316,15 @@ export default {
         },
 
         handleRouteUpdate(order) {
-            console.log(order)
+                console.log(order)
+                console.log(this.sessionGet.status)
+            if(this.sessionGet.status < order) {
+                store.dispatch('commitChangeRouteUpdate',false)
+                
+            }else{
+                store.dispatch('commitChangeRouteUpdate',true)
+            }
+            
         }
     },
     mounted() {
@@ -314,6 +333,7 @@ export default {
         this.exparamsUrl = this.paramsUrl
         store.dispatch('commitChangePath',this.exparamsUrl)
         this.handleToRoute()
+        // console.log(this.steps)
     },
 
     destroyed(){
@@ -326,6 +346,7 @@ export default {
          GethasUpdate(params) {
             console.log(params)
             if(params) {
+                store.dispatch('commitChangeRouteUpdate',true)
                 this.handleToRoute()
                 store.dispatch('commitChangeUpdate',false)
             }
@@ -399,7 +420,41 @@ export default {
                 }
                 .et-steps-ul .et-default{
                     cursor: default;
+                    .et-child-tips{
+                        position: absolute;
+                        top: 8px;
+                        left: 100px;
+                        background-color: #fdf6ec;
+                        font-size: 12px;
+                        line-height: 20px;
+                        color: #666;
+                        border-radius: 4px;
+                        padding: 2px 20px;
+                        white-space: nowrap;
+                        display: none;
+                        z-index: 2;
+                        opacity: 0;     
+                        transition: all .3s ease-in;                   
+                        i{
+                            display: inline-block;
+                            width: 15px;
+                            height: 15px;
+                            border-radius: 50%;
+                            color: #FFFFFF;
+                            background:#E6A23C;
+                            text-align: center;
+                            margin-right: 5px;
+                            line-height: 15px;
+                        }
+                    }
                 }
+                .et-steps-ul .et-default:hover{
+                    .et-child-tips{
+                        display: block;
+                        opacity: 1;   
+                    }
+                }
+                
                 .et-steps-ul li{
                     position: relative;
                     .et-steps-line{

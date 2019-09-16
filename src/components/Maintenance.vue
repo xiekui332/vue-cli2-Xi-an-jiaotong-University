@@ -20,10 +20,10 @@
                 <el-date-picker
                     v-model="establishmenTime"
                     type="date"
-                    value-format="yyyy-MM-dd"
                     placeholder="选择日期"
                     :clearable='hasClear'
                     :disabled="hasLk" 
+                    value-format="yyyy-MM-dd"
                     >
                 </el-date-picker>
             </div>
@@ -48,7 +48,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目预算：</span>
             <div class="ro-item-content">
-                <el-input placeholder="请输入内容" class="ro-budget" v-model="budgetNum" :disabled="hasLk" >
+                <el-input type="number" placeholder="请输入内容" class="ro-budget" @change="handleSetNum" v-model="budgetNum" :disabled="hasLk" >
                     <template slot="append">万元</template>
                 </el-input>
             </div>
@@ -114,7 +114,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目状态：</span>
             <div class="ro-item-content">
-                <el-select v-model="proState" placeholder="请选择" :disabled="hasDis">
+                <el-select v-model="proState" placeholder="请选择" :disabled="hasDis" @change="handleChangeType">
                     <el-option
                     v-for="(item,index) in opt4"
                     :key="index"
@@ -214,7 +214,7 @@ export default {
             kind:'',            // 项目类别
             types:'',           // 项目类型
             moneySource:'',     // 经费来源
-            leading:'',         // 项目负责人
+            leading:[],         // 项目负责人
             proState:'',        // 项目状态
             proNode:'',         // 项目节点
             textarea:'',         // 项目说明
@@ -235,7 +235,9 @@ export default {
             nodeUploadUrl:nodeUploadUrl,
             statusList1:[],
             typeList:[],
-            oldAppdendixList:[]
+            oldAppdendixList:[],
+            projectType:'',
+            projectCategory:''
         }
     },
     methods:{
@@ -279,7 +281,10 @@ export default {
             this.$emit('hasMainPage', false)
         },
         handleSel() {
-            
+            this.types="";
+        },
+        handleChangeType(){
+            this.proNode='';
         },
         handleSave(){
           if(this.projectId){//编辑项目
@@ -287,10 +292,18 @@ export default {
                if(this.checked==true){
                    isOldProject=1;
                }
+               var ptype="";
+               if(this.kind!=this.projectType){
+                  ptype=this.kind;
+               }
+               var pcate="";
+              if(this.types!=this.projectCategory){
+                  pcate=this.types;
+               }
                 var params={
                     id:this.projectId, name:this.name,createTime:this.establishmenTime,
                     startTime:startTime,endTime:endTime,ysje:this.budgetNum,
-                    category:this.kind,type:this.types,
+                    category:this.ptype,type:this.pcate,
                     isOldProject:isOldProject,
                     remark: this.textarea,
                     fileList:JSON.stringify(this.fileMsgList),
@@ -301,7 +314,6 @@ export default {
                       this.$message.warning("编辑项目时项目负责人不能为空")
                       return
                   }
-
                 this.$http.post("/api/project/updateProjectMsg",params).then(res =>{
                     if(res.code=="00000"){
                         this.$message("编辑成功！");
@@ -311,6 +323,7 @@ export default {
                     }
                 })
           }else{//新建项目
+                // console.log(this.establishmenTime)
                if(!this.name){
                    return this.$message("项目名称不能为空");
                }
@@ -347,6 +360,11 @@ export default {
                    }
                    if(this.leading.length<1){
                       return this.$message("老项目的项目负责人不能为空");
+                   }
+               }
+               if(this.proState){
+                   if(this.proNode==null){
+                        return this.$message("项目状态下节点不能为空");
                    }
                }
                var params={
@@ -489,6 +507,12 @@ export default {
                     }
                 }
             })
+        },
+
+        handleSetNum() {
+            // console.log(this.budgetNum)
+            // 先转成number类型
+            this.budgetNum = (Number(this.budgetNum)).toFixed(2)
         }
     },
     mounted(){
@@ -508,6 +532,8 @@ export default {
                 this.isChange=true;
                 this.budgetNum=params.money;
                 this.kind=params.projectTypeNames;
+                this.projectType=params.projectTypeNames;
+                this.projectCategory=params.projectCategoryNames;
                 this.types=params.projectCategoryNames;
                 this.moneySource=params.resource;
                 this.textarea=params.remark;
@@ -518,10 +544,10 @@ export default {
                 }
                 this.establishmenTime=params.time;
                 this.planningTime=[params.startTime ,params.endTime];
-                var mens=params.men;
+                var mens=params.menId;
                 if(mens){
-                    var men=mens.split(",");
-                    this.leading=men;
+                    var menIds=mens.split(",");
+                    this.leading=menIds;
                 }
                 this.proState=params.projectStateName;
                 this.proNode=params.projectNodeName;

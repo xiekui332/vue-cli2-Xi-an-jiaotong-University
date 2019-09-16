@@ -11,11 +11,11 @@
                     <div> <span>采购申请表</span></div>
                     <div> <span>操作</span></div>
                 </div>
-                <div class="st-edit-item st-oparate">
+                <div class="st-edit-item st-oparate" style="line-height:50px;">
                     <div class="st-oparate-col">采购申请表</div>
                     <div class="st-oparate-col">
-                        <span @click="handleFillApplication('open')">填写申请单</span>
-                        <span @click="handleSub">提交审核</span>
+                        <span :class="noDrop?'pub-dis':''" @click="handleFillApplication('open')">填写申请单</span>
+                        <span @click="handleSub" :class="noDrop?'pub-dis':''">提交审核</span>
                         <!-- <span @click="handlePrint">打印</span> -->
                     </div>
                 </div>
@@ -47,11 +47,12 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" class="pub-css" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
+                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
 
                     </div>
                 </div>
@@ -62,7 +63,7 @@
         <div class="st-item st-templates st-icon-none">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" class="st-add" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" @click="handleAddmenu('other')">增行</a>
             </div>
 
             <div class="st-edit-content">
@@ -84,11 +85,12 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" class="pub-css" @click="handleFileDel(i.id)"></i> </p>
+                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.id)"></i> </p>
 
                     </div>
                 </div>
@@ -118,7 +120,7 @@
         </div>
 
         <el-row class="st-checkHandle">
-            <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
+            <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
                 完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
@@ -133,17 +135,25 @@
         :fillStatus='dialogVisibleFill'
         :hasLoad='hasLoad'
         />
+
+        <el-dialog
+            class="st-dialog-fill"
+            :visible.sync='exchangeFill'
+            :show-close='true'
+            >
+            <Success @handleDialog='handleDialog' :hasSuccessStatus='hasSuccessStatus' />
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import FillAppalication from '@/components/Common/fillAppalication'
-import CommUpload from '@/components/Common/commUpload'
+import Success from '@/components/Common/Success'
 import { store } from "@/store"
 export default {
     components:{
         FillAppalication,
-        CommUpload
+        Success
     },
     data() {
         return {
@@ -168,7 +178,10 @@ export default {
             fileList:[],
             loading:false,
             proNode:7,
-            proNodeId:'6a3c8fb95ebe4a4696cd13e2051473b4'
+            proNodeId:'6a3c8fb95ebe4a4696cd13e2051473b4',
+            noDrop:false,
+            exchangeFill:false,
+            hasSuccessStatus:true
         }
     },
 
@@ -230,10 +243,12 @@ export default {
             this.$http.post("/api/project/tjspcgsq", params)
             .then((res) => {
                 if(res.code == "00000") {
-                    this.$message({
-                        type:'success',
-                        message:'提交成功'
-                    })
+                    // this.$message({
+                    //     type:'success',
+                    //     message:'提交成功'
+                    // })
+                    this.exchangeFill = true
+
                 }else{
                     this.$message({
                         type:'error',
@@ -392,6 +407,7 @@ export default {
             }
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
+                this.noDrop = true
             }
 
             this.$http.post("/api/project/getNodeAppendix", params)
@@ -460,13 +476,17 @@ export default {
 
                 this.loading = false
             })
+        },
+
+        handleDialog() {
+            this.exchangeFill = false
         }
     },
 
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
-        
+        // console.log(this.sessionGet)
     },
 
     computed:{
@@ -707,6 +727,22 @@ export default {
             }
         }
     }
+
+    
+    .pub-dis{
+        cursor: no-drop!important;
+    }
+    .pub-dis:hover{
+        color: #39475B!important;
+    }
+
+    
+
+    // & /deep/ .el-dialog{
+    //     background: rgba(0, 0, 0, 0);
+    //     border: none;
+    //     box-shadow: none;
+    // } 
 }
 </style>
 

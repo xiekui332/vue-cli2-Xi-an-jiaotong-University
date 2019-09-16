@@ -141,7 +141,7 @@ export default {
 
 
         handleDownLoad(i) {
-            window.open(i.url)
+             window.open(i.mb.url)
         },
 
 

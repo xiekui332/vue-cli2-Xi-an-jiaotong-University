@@ -9,7 +9,7 @@
         </div>
     </div>
     <div v-else class="to-wrapper">
-        <ApproveDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' :proInfo='proInfo' :rowInfo='rowInfo' @handleChangeDetail = "handleChangeDetail" />
+        <ApproveDetail v-if="hasExcutingDetail" :tableType="tableType" :type='type' :parentRoute='parentRoute' :proInfo='proInfo' :rowInfo='rowInfo' @handleChangeDetail = "handleChangeDetail" />
         <div id="to-wrapper" v-else>
             <HeaderSearch 
             :options1='options1'
@@ -201,7 +201,7 @@ export default {
                 },
                 {
                     prop:'name',
-                    label:'项目',
+                    label:'项目名称',
                     width:'300'
                 },
                 {
@@ -325,7 +325,8 @@ export default {
         handleLookDetail(row, column, cell ,event) { 
             this.rowInfo=row
             this.detailId = row.id
-            if(column.label == '项目名称'){               
+            if(column.label == '项目名称'){   
+                
                 this.getProjectMsgById()
             }
             
@@ -413,6 +414,7 @@ export default {
                 if(res.code === '00000') {
                     this.proInfo = res.data
                     store.dispatch('commitChangeProInfo',res.data)
+                    // console.log(this.tableType)   
                     this.hasExcutingDetail = true
                 }else{
                     this.$message.error(res.message);
@@ -421,8 +423,8 @@ export default {
         },
 
         handleChangeDetail(params) {
-            // console.log(params)
-            this.hasExcutingDetail = true
+            // console.log(params)  
+            this.hasExcutingDetail = params
         }
 
     },
@@ -474,6 +476,11 @@ export default {
     border-radius: 4px;
     padding: 20px;
     min-height: 100%;
+    
+    // change font css color
+    & /deep/ .project-style .cell{
+        color: #3B7CFF!important;
+    }
 }
 .to-nodata{
     display: flex;

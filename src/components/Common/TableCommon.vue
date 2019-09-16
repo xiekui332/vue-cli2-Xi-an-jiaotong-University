@@ -17,11 +17,26 @@
                 label="序号"
                 width="55">
             </el-table-column>
+
+            <!-- <div v-else-if="extype == 'first'">
+                <el-table-column
+                    type="index"
+                    label="序号"
+                    width="55">
+                </el-table-column>
+                <el-table-column
+                    type="selection"
+                    width="55">
+                </el-table-column>
+            </div> -->
+            
+
             <el-table-column
                 v-else
                 type="selection"
                 width="55">
             </el-table-column>
+            
             <el-table-column 
                 v-for="(i, ind) in extablekind"
                 :key="ind"

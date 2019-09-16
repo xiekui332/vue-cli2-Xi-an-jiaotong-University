@@ -1,7 +1,8 @@
 <template>
     <div id="st-wrapper">
         <div class="st-btn pub-family">
-            <p> <img src="../../assets/img/icon-trans.png" alt="">阶段进行中</p>
+            <p v-if="sessionGet.status == 1"> <img src="../../assets/img/icon-trans.png" alt="">阶段完成</p>
+            <p v-else> <img src="../../assets/img/icon-trans.png" alt="">阶段进行中</p>
             <el-row>
                 <el-button type="primary" round @click="handleLookSteps">审批进度</el-button>
             </el-row>
@@ -158,8 +159,7 @@ export default {
     },
     mounted() {
         this.sessionGet = store.state.proInfo
-        
-        
+        // console.log(this.sessionGet)
     },
     created() {
         
@@ -261,6 +261,7 @@ export default {
         }
     },
     beforeRouteEnter(to,from,next) {
+        // console.log(store.state.proInfo.status)
         next((vm) => {
             // 此处的vm就是当前组件的实例
             vm.pageType = store.state.pageType
@@ -272,12 +273,13 @@ export default {
     },
 
     beforeRouteLeave(to, from, next) {
-        if(store.state.hasRouteUpdate) {
-            next(true)
-        }else{
-            next(false)
-        }
-        
+        // console.log(store.state.hasRouteUpdate)
+        // if(store.state.hasRouteUpdate) {
+        //     next(true)
+        // }else{
+        //     next(false)
+        // }
+        next(true)
     },
     
     watch:{

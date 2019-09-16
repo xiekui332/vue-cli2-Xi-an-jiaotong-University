@@ -4,11 +4,11 @@ import {
     Message
 } from 'element-ui'
 import $router from '../router/index' 
-import { getSession } from './util'
+import { getSession,setSession } from './util'
 
 
 const service = axios.create({
-    baseURL: process.env.NODE_ENV === "development"?'':'http://192.168.31.176:8081/', // 请求URL前缀。和/config/index.js文件中api配置及后台保持同步更改。
+    baseURL: process.env.NODE_ENV === "development"?'':'http://192.168.31.173:8081/', // 请求URL前缀。和/config/index.js文件中api配置及后台保持同步更改。
     timeout: 10000, // 超时
     withCredentials: true // 表示跨域请求时是否需要使用凭证，即cookie等验证信息。参考：https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/withCredentials
     
@@ -33,13 +33,15 @@ service.interceptors.request.use(
         }
         return config;
     }, err => {
-        console.log('请求失败')
+        // console.log('请求失败')
+        this.$message.warning("请求超时")
         return Promise.reject(err)
     }
 )
 
 // 添加 response 拦截器
 service.interceptors.response.use(config => {
+    // console.log(config)
     if(config.status==200){
         return config.data;
     }
@@ -48,8 +50,15 @@ service.interceptors.response.use(config => {
     }
     return config;
 }, err => {
-    console.log('响应失败')
+    if(err.response.status==401){
+        alert("登录过期！")
+        setSession('token','');
+        setSession('userName','');
+        setSession('userid','');
+        return  $router.push({ path:'/'})
+    }
     return Promise.reject(err)
 })
+
 
 export default service

@@ -6,8 +6,8 @@
             :on-preview="handlePreview"
             :on-success="handleSuccess"
             :on-remove="handleRemove"
+            :before-upload="handleBefore"
             :before-remove="beforeRemove"
-            multiple
             :limit="1"
             :on-exceed="handleExceed"
             ref="upload"
@@ -51,6 +51,15 @@ export default {
         beforeRemove(file, fileList) {
            
         },
+        handleBefore(file, fileList) {
+            // console.log(file, fileList);
+            // console.log(file.size);
+            if(file.size > 5242880) {
+                this.$message.warning('请选择5M以下的文件上传')
+                return false
+            }
+        },
+
         handleExceed(files, fileList) {
             this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },

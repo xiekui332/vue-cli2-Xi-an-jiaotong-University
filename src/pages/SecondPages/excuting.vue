@@ -20,7 +20,7 @@
 
         <div class="de-tips">
             <i class="pub-css de-icon"></i>
-            <p class="de-tips-txt">项目总计 <span>{{allCount.a}}</span> 项   立项阶段 {{ allCount.b }} 项  采购阶段 {{ allCount.c }} 项  执行阶段 {{ allCount.d }} 项   验收阶段 {{ allCount.e }} 项   维保阶段 {{ allCount.f }} 项</p>
+            <p class="de-tips-txt">项目总计 <span>{{allCount.a?allCount.a:"0"}}</span> 项   项目立项 {{ allCount.b?allCount.b:'0' }} 项  项目采购 {{ allCount.c?allCount.c:'0' }} 项  项目执行 {{ allCount.d?allCount.d:'0' }} 项   项目验收 {{ allCount.e?allCount.e:'0' }} 项   项目维保 {{ allCount.f?allCount.f:'0' }} 项</p>
         </div>
 
         <ul class="de-items">
@@ -29,7 +29,9 @@
                     {{ind + 1}}
                 </div> -->
                 <div class="de-item-name">
-                    <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
+                    <el-tooltip class="item" effect="dark" :content="i.name?i.name:'暂无'" placement="top">
+                        <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
+                    </el-tooltip>
                     <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.createTime?i.createTime:'暂无'}}</span></p>
                 </div>
                 <div class="de-item-num">
