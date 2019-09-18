@@ -29,7 +29,7 @@
                 </el-row>
 
                 <el-row class="de-btn de-reset-btn">
-                    <el-button type="primary" round>Excel批量导入</el-button>
+                    <el-button type="primary" round @click="handleExcel">Excel批量导入</el-button>
                 </el-row>
             </div>
             <el-checkbox class="de-show-none" v-model="checked" @change="checkSpecified">显示未指定负责人的项目</el-checkbox>
@@ -59,7 +59,7 @@
             </div>
             <div>
                 <span><i>*</i> 项目负责人:</span>
-                <el-select v-model="manVal" placeholder="请选择" multiple class="ma-dia-sel">
+                <el-select v-model="manVal" placeholder="请选择" multiple class="ma-dia-sel" filterable remote reserve-keyword :remote-method="(queryString)=>{remoteMethod(queryString,leadMan); }">
                     <el-option
                     v-for="item in leadMan"
                     :key="item.value"
@@ -114,6 +114,11 @@ export default {
             leadMan:[ {}],
             manVal:[],
             tablekind:[
+                 {
+                    prop:'RNUM',
+                    label:'序号',
+                    width:'80'
+                },
                 {
                     prop:'num',
                     label:'项目编号',
@@ -183,6 +188,30 @@ export default {
             }
              
         },
+        remoteMethod(queryString,lists){
+            var newList=[];
+            for(var i=0;i<lists.length;i++){
+               if(lists[i].label.indexOf(queryString)!=-1){
+                 newList.push(lists[i]);
+               }   
+            }
+            var newList2=[];
+            var thimanval=this.manVal;
+            if(thimanval.length>0){
+                for(var i=0;i<thimanval.length;i++){
+                  if(newList.length>0){
+                      for(var j=0;j<newList.length;j++){
+                          if(newList[j].value.indexOf(thimanval[i])==-1){
+                             newList2.push(newList[j]);
+                          }
+                      }
+                  }
+                }
+                this.leadMan=newList2;
+            }else{
+               this.leadMan=newList; 
+            }
+        },
         init(){
             var projectType=this.projectType;
             if(projectType=="全部"){
@@ -200,6 +229,7 @@ export default {
                     var datalsit=res.rows;
                     for(var i=0;i<datalsit.length;i++){
                         var obj={};
+                        obj.RNUM=datalsit[i].RNUM;
                         obj.num=datalsit[i].no;
                         obj.name=datalsit[i].name;
                         obj.money=datalsit[i].ysje;
@@ -300,13 +330,15 @@ export default {
         },
 
         getPastYear(n) {
-            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
-                // unshift 插入到数组开头
-                this.options1.unshift({
-                    value:i,
-                    label:i + ' 年'
-                })
-            }
+            this.$http.get("/api/system/get/systemTime").then(res =>{
+                for(let last = res.message, i = last - n; i <= last; i ++ ) {
+                    // unshift 插入到数组开头
+                    this.options1.unshift({
+                        value:i,
+                        label:i + ' 年'
+                    })
+                }
+            });
         },
 
         handlePageUp(params) {
@@ -366,6 +398,10 @@ export default {
         },
         handleSelectOprate(params){
           this.selectRows=params;
+        },
+
+        handleExcel() {
+            
         }
 
         

@@ -45,13 +45,12 @@ service.interceptors.response.use(config => {
     if(config.status==200){
         return config.data;
     }
-    if(config.status==401){
-      return  $router.push({ path:'/'})
-    }
+    
     return config;
 }, err => {
     if(err.response.status==401){
-        alert("登录过期！")
+        // alert("登录过期！")
+
         setSession('token','');
         setSession('userName','');
         setSession('userid','');

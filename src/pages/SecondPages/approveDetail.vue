@@ -11,8 +11,6 @@
                                 <div class="sh-node-item-head">
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
                                         <i class="sh-node-icon pub-css sh-node-finish"></i>
-                                        <!-- <span class="pub-family">立项准备</span> -->
-
                                         <el-dropdown trigger="click">
                                             <span class="pub-family el-dropdown-link">
                                                 立项准备<i class="el-icon-arrow-down el-icon--right"></i>
@@ -136,8 +134,6 @@
                                 <div class="sh-node-item-head">
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
                                         <i class="sh-node-icon">2</i>
-                                        <!-- <span class="pub-family">项目采购</span> -->
-
                                         <el-dropdown trigger="click">
                                             <span class="pub-family el-dropdown-link">
                                                 项目采购<i class="el-icon-arrow-down el-icon--right"></i>
@@ -153,7 +149,7 @@
                                     </div>
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
                                         <div @click="handleLook('rotate')">
-                                            <!-- <img src="../../assets/img/more-L.png" :class="activeName == 2?'pj-transform':''" ref="transform" alt=""> -->
+                                        
                                         </div>
                                     </div>
                                 </div>
@@ -165,7 +161,7 @@
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
                                             <el-table
-                                            :data="xmcgList"
+                                            :data="xqlzList"
                                             style="width: 100%">
                                             <el-table-column
                                                 prop="attachName"  
@@ -189,12 +185,12 @@
                             <div class="sh-file-box">
                                 <div class="sh-file-item">                          
                                     <div class="sh-file-list" @click="handleCgLook()">   
-                                        <span>采购申请表：</span>
-                                        <span>{{cgname}}</span>     
+                                        <span class="sh-title-blue">采购申请表：</span>
+                                        <span class="sh-title-blue">{{cgname}}</span>     
                                     </div>
                                     <div class="sh-file-list">
                                             <el-table
-                                            :data="xmcgList"
+                                            :data="cgsqList"
                                             style="width: 100%">
                                             <el-table-column
                                                 prop="attachName"  
@@ -214,7 +210,7 @@
                                     </div> 
                                     <div class="sh-file-list">
                                                 <el-table
-                                                :data="xmcgList2"
+                                                :data="cgsqList1"
                                                 style="width: 100%">
                                                 <el-table-column
                                                     prop="attachName"  
@@ -234,7 +230,7 @@
                                     </div>   
                                     <div class="sh-file-list">
                                                 <el-table
-                                                :data="xmcgList3"
+                                                :data="cgsqList2"
                                                 style="width: 100%">
                                                 <el-table-column
                                                     prop="attachName"  
@@ -259,7 +255,7 @@
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
                                             <el-table
-                                            :data="xmcgList"
+                                            :data="cghList"
                                             style="width: 100%">
                                             <el-table-column
                                                 prop="attachName"  
@@ -313,7 +309,7 @@
                                                 </el-table-column>
                                                 </el-table>                                  
                                     </div>                               
-                                    <div class="pl-info">
+                                    <div class="pl-info pl-sign">
                                         <p class="pl-info-title pub-family">&nbsp;&nbsp;&nbsp;&nbsp;信息填写(合同信息)</p>
                                         <div class="pl-item-wrapper">
                                             <div class="pl-input">
@@ -369,7 +365,7 @@
                                     </div>                    
                                     <div class="sh-file-list">
                                             <el-table
-                                            :data="xmcgList"
+                                            :data="qdhtList"
                                             style="width: 100%">
                                             <el-table-column
                                                 prop="attachName"  
@@ -519,185 +515,188 @@
             </div> 
         </el-dialog>
 
-        <el-dialog
-            :class="'ma-dialog'"
-            :visible.sync='newtemplate'
-            :show-close='true'
-            :close-on-click-modal=true 
-            :close-on-press-escape=true
-            @close='handleClose'
-            title="院处采购申请单"
-            >
-            <el-divider></el-divider>
-                <div class="ma-dia-content">
-                    <div class="ma-item-wrapper">
-                    <div>
-                        <div id="printFill">
-                            <div class="fl-item fl-item-basic">
-                                <p class="pub-family fl-item-basic-title">基本信息</p>
-                                <div class="fl-item-basic-block">
-                                    <div class="fl-L">
-                                        <span class="fl-L-title">采购申请编号：</span>
-                                        <span>{{purchaseNo}}</span>
-                                    </div>
-                                    <div class="fl-L">
-                                        <span>填报日期：</span>
-                                        <span>{{createTime}}</span>
-                                    </div>
-                                    <div class="fl-L">
-                                        <span class="fl-L-title">采购名称：</span>
-                                        <span  >{{cgname}}</span>
-                                    </div>
-                                    <div class="fl-L" style="display:flex;">
-                                        <div class="fl-L-title" style="display:grid;" >
-                                            <span>货物安装是否涉及开挖室内地面或改变房屋结构：</span>
-                                            <span style="font-size:12px;">若有，请提供规划与基建管理中心审批意见书</span>
+        <div id="fl-wrapper">
+            <el-dialog
+                :class="'ma-dialog'"
+                :visible.sync='newtemplate'
+                :show-close='true'
+                :close-on-click-modal=true 
+                :close-on-press-escape=true
+                @close='handleClose'
+                width='60%'
+                title="院处采购申请单"
+                >
+                <el-divider></el-divider>
+                    <div class="ma-dia-content">
+                        <div class="ma-item-wrapper">
+                        <div>
+                            <div id="printFill">
+                                <div class="fl-item fl-item-basic">
+                                    <p class="pub-family fl-item-basic-title">基本信息</p>
+                                    <div class="fl-item-basic-block">
+                                        <div class="fl-L">
+                                            <span class="fl-L-title">采购申请编号：</span>
+                                            <span>{{purchaseNo}}</span>
                                         </div>
-                                        <div class=" fl-L-radio" style="margin-left：20px;">
-                                            <el-radio disabled v-model="isChangeStructure" label="是">是</el-radio>
-                                            <el-radio disabled v-model="isChangeStructure" label="否">否</el-radio>                                   
+                                        <div class="fl-L">
+                                            <span>填报日期：</span>
+                                            <span>{{createTime}}</span>
                                         </div>
-                                        
+                                        <div class="fl-L">
+                                            <span class="fl-L-title">采购名称：</span>
+                                            <span  >{{cgname}}</span>
+                                        </div>
+                                        <div class="fl-L" style="display:flex;">
+                                            <div class="fl-L-title" style="display:grid;" >
+                                                <span>货物安装是否涉及开挖室内地面或改变房屋结构：</span>
+                                                <span style="font-size:12px;">若有，请提供规划与基建管理中心审批意见书</span>
+                                            </div>
+                                            <div class=" fl-L-radio" style="margin-left：20px;">
+                                                <el-radio disabled v-model="isChangeStructure" label="是">是</el-radio>
+                                                <el-radio disabled v-model="isChangeStructure" label="否">否</el-radio>                                   
+                                            </div>
+                                            
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <el-divider></el-divider>
-                            
-                            <div class="fl-item fl-item-make">   
-                                <div class="fl-item-head">
-                                    <span class="pub-family">采购清单</span>
+                                <el-divider></el-divider>
+                                
+                                <div class="fl-item fl-item-make">   
+                                    <div class="fl-item-head">
+                                        <span class="pub-family">采购清单</span>
+                                    </div>
+
+                                    <div class="fl-item-con">
+                                        <el-table
+                                        :data="cgxqList"
+                                        style="width: 100%">
+                                            <el-table-column
+                                                prop="name"  
+                                                label="采购内容"
+                                                width="180">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="cgNumber"
+                                                label="数量"
+                                                width="80">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="company"
+                                                label="单位"
+                                                width="180">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="planMoney"
+                                                label="计划金额（万元）">
+                                            </el-table-column>
+                                        </el-table>  
+                                    </div>
                                 </div>
 
-                                <div class="fl-item-con">
+                                <el-divider></el-divider>
+
+                                <div class="fl-item fl-item-supllier">
+                                    <div class="fl-item-head">
+                                        <span class="pub-family">供应商信息</span>
+                                    </div>
+                                    <div class="fl-item-con">
                                     <el-table
-                                    :data="cgxqList"
-                                    style="width: 100%">
+                                        :data="supperList"
+                                        style="width: 100%">
                                         <el-table-column
                                             prop="name"  
-                                            label="采购内容"
-                                            width="180">
+                                            label="推荐供应商/代理商"
+                                            width="150">
                                         </el-table-column>
                                         <el-table-column
-                                            prop="cgNumber"
-                                            label="数量"
-                                            width="80">
+                                            prop="address"
+                                            label="品牌/国别"
+                                            width="140">
                                         </el-table-column>
                                         <el-table-column
-                                            prop="company"
-                                            label="单位"
-                                            width="180">
+                                            prop="legalPerson"
+                                            label="联系人"
+                                            width="120">
                                         </el-table-column>
                                         <el-table-column
-                                            prop="planMoney"
-                                            label="计划金额（万元）">
+                                            prop="phone "
+                                            label="手机号码"
+                                            width="140">
                                         </el-table-column>
-                                    </el-table>  
-                                </div>
-                            </div>
-
-                            <el-divider></el-divider>
-
-                            <div class="fl-item fl-item-supllier">
-                                <div class="fl-item-head">
-                                    <span class="pub-family">供应商信息</span>
-                                </div>
-                                <div class="fl-item-con">
-                                <el-table
-                                    :data="supperList"
-                                    style="width: 100%">
-                                    <el-table-column
-                                        prop="name"  
-                                        label="推荐供应商/代理商"
-                                        width="150">
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="address"
-                                        label="品牌/国别"
-                                        width="140">
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="legalPerson"
-                                        label="联系人"
-                                        width="120">
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="phone "
-                                        label="手机号码"
-                                        width="140">
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="email"
-                                        label="E-mail">
-                                    </el-table-column>
-                                </el-table> 
-                                </div>
-                            </div>
-
-                            <el-divider></el-divider>
-
-                            <div class="fl-item fl-item-basis">
-                                <div class="fl-item-head">
-                                    <span class="pub-family">采购依据</span>
+                                        <el-table-column
+                                            prop="email"
+                                            label="E-mail">
+                                        </el-table-column>
+                                    </el-table> 
+                                    </div>
                                 </div>
 
-                                <div class="fl-basis-block">
-                                    <div class="fl-basis-title">调研情况：</div>
-                                    <el-input
-                                        type="textarea"
-                                        :rows="4"
-                                        maxlength="1000字"
-                                        v-model="cgtxt1">
-                                    </el-input>
+                                <el-divider></el-divider>
+
+                                <div class="fl-item fl-item-basis">
+                                    <div class="fl-item-head">
+                                        <span class="pub-family">采购依据</span>
+                                    </div>
+
+                                    <div class="fl-basis-block">
+                                        <div class="fl-basis-title">调研情况：</div>
+                                        <el-input
+                                            type="textarea"
+                                            :rows="4"
+                                            maxlength="1000字"
+                                            v-model="cgtxt1">
+                                        </el-input>
+                                    </div>
+
+                                    <div class="fl-basis-block">
+                                        <div class="fl-basis-title">技术指标：</div>
+                                        <el-input
+                                            type="textarea"
+                                            :rows="4"
+                                            maxlength="10000字"
+                                            v-model="cgtxt2">
+                                        </el-input>
+                                    </div>
                                 </div>
 
-                                <div class="fl-basis-block">
-                                    <div class="fl-basis-title">技术指标：</div>
-                                    <el-input
-                                        type="textarea"
-                                        :rows="4"
-                                        maxlength="10000字"
-                                        v-model="cgtxt2">
-                                    </el-input>
+                                <el-divider></el-divider>
+
+                                <div class="fl-item">
+                                    <p class="fl-matters-head">如您申请采购的是进口科教用品，请阅读并确认以下事宜：</p>
+                                    <p class="fl-matters-list">1. 项目单位应保证进口科教用品来源合法。</p>
+                                    <p class="fl-matters-list">2. 进口科教用品免税有严格的规定，并不是所有科教用品都可以免税，项目单位应预留资金以备不能免税时缴纳进口</p>
+                                    <p class="fl-matters-list">关税及增值税。进口过程的汇率风险及产生的一切费用由项目单位承担。</p>
+                                    <p class="fl-matters-list">3. 外贸合同一经签订即具有法律效力，项目单位不得以免税未批准或经费不充足为由撤销外贸合同，否则责任自负，</p>
+                                    <p class="fl-matters-list">但项目单位与供货商事先有约定的除外。</p>
+                                    <p class="fl-matters-list">4. 进口科教用品采购周期较长，请项目单位事先做好充分准备并积极配合采购与招标管理办公室工作，以免耽误您的</p>
+                                    <p class="fl-matters-list">使用时间。项目单位可凭合同号查询进口业务的进展情况。</p>
+                                    <p class="fl-matters-list">5. 在海关监管的五年期间内，使用单位不得将进口免税科教用品擅自转让、移作他用或者进行其他处置（如出租、调</p>
+                                    <p class="fl-matters-list">换、改装等）。进口免税科教用品须放置于免税申报时的使用地点，只能用于申报时所列的特定用途。如擅自改变特定</p>
+                                    <p class="fl-matters-list">用途、放置地点的，将视情节依法追究责任人的责任乃至法律责任。</p>
                                 </div>
-                            </div>
 
-                            <el-divider></el-divider>
+                                <el-divider></el-divider>
 
-                            <div class="fl-item">
-                                <p class="fl-matters-head">如您申请采购的是进口科教用品，请阅读并确认以下事宜：</p>
-                                <p class="fl-matters-list">1. 项目单位应保证进口科教用品来源合法。</p>
-                                <p class="fl-matters-list">2. 进口科教用品免税有严格的规定，并不是所有科教用品都可以免税，项目单位应预留资金以备不能免税时缴纳进口</p>
-                                <p class="fl-matters-list">关税及增值税。进口过程的汇率风险及产生的一切费用由项目单位承担。</p>
-                                <p class="fl-matters-list">3. 外贸合同一经签订即具有法律效力，项目单位不得以免税未批准或经费不充足为由撤销外贸合同，否则责任自负，</p>
-                                <p class="fl-matters-list">但项目单位与供货商事先有约定的除外。</p>
-                                <p class="fl-matters-list">4. 进口科教用品采购周期较长，请项目单位事先做好充分准备并积极配合采购与招标管理办公室工作，以免耽误您的</p>
-                                <p class="fl-matters-list">使用时间。项目单位可凭合同号查询进口业务的进展情况。</p>
-                                <p class="fl-matters-list">5. 在海关监管的五年期间内，使用单位不得将进口免税科教用品擅自转让、移作他用或者进行其他处置（如出租、调</p>
-                                <p class="fl-matters-list">换、改装等）。进口免税科教用品须放置于免税申报时的使用地点，只能用于申报时所列的特定用途。如擅自改变特定</p>
-                                <p class="fl-matters-list">用途、放置地点的，将视情节依法追究责任人的责任乃至法律责任。</p>
-                            </div>
-
-                            <el-divider></el-divider>
-
-                            <div class="fl-item fl-item-agreement">
-                                <div class="fl-item-head">
-                                    <span class="pub-family">项目负责人意见</span>
+                                <div class="fl-item fl-item-agreement">
+                                    <div class="fl-item-head">
+                                        <span class="pub-family">项目负责人意见</span>
+                                    </div>
+                                    <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实</p>
+                                    <el-checkbox class="fl-check" v-model="isAgree">同意购置</el-checkbox>
                                 </div>
-                                <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实</p>
-                                <el-checkbox class="fl-check" v-model="isAgree">同意购置</el-checkbox>
                             </div>
                         </div>
+                        </div>
+                        
+                        <div style="text-align: center;margin-top: 30px;">
+                            <el-row class="ma-btn-block" >
+                                <el-button type="" round @click="handleClose()">关闭</el-button>
+                            </el-row>
+                        </div>
                     </div>
-                    </div>
-                    
-                    <div style="text-align: center;margin-top: 30px;">
-                        <el-row class="ma-btn-block" >
-                            <el-button type="" round @click="handleClose()">关闭</el-button>
-                        </el-row>
-                    </div>
-                </div>
-        </el-dialog>
+            </el-dialog>
+        </div>
     </div>
 </template>
 
@@ -744,9 +743,12 @@ export default {
             yfkList:[],
             lxzbList:[],
             lxzbList2:[],
-            xmcgList:[],
-            xmcgList2:[],
-            xmcgList3:[],
+            cgsqList:[],
+            cgsqList1:[],
+            cgsqList2:[],
+            xqlzList:[],
+            cghList:[],
+            qdhtList:[],
             xmzxList:[],
             cgmsg:{},
             cgname:'',
@@ -767,10 +769,7 @@ export default {
             fileType:'',
             fileUrl:'',
             extableType:'',
-
             lxlzList:[],
-            xqlzList:[],
-
             getuploadUrl1:'',
             fileList:[]
         }
@@ -898,7 +897,6 @@ export default {
             let params = { id:this.exproInfo.id}
             this.$http.post('/api/project/getSpProjectDetails', params).then(res=>{
                 if(res.code=="00000"){
-                     console.log(res)
                     var dataList=res.data;
                     //立项-预付款
                     var yfkMsg=(dataList[0].list)[0].yfkList;
@@ -951,35 +949,53 @@ export default {
 
                     //项目采购
                     var xmcgMsg=(dataList[1].list);
-                    this.xmcgList=[];
-                    this.xmcgList2=[];
-                    this.xmcgList3=[];
-                    for(var i=0;i<xmcgMsg.length;i++){
-                       var zllist=xmcgMsg[i].zlList;
-                       for(var j=0;j<zllist.length; j++){
-                            var obj={};
-                            obj.createTime=zllist[j].createTime
-                            obj.createUserName=zllist[j].createUserName;
-                            obj.attachName=zllist[j].attachName;
-                           this.xmcgList.push(obj);
-                       }
-                       var qtList=xmcgMsg[i].qtList;
-                       for(var j=0;j<qtList.length; j++){
-                            var obj={};
-                            obj.createTime=qtList[j].createTime
-                            obj.createUserName=qtList[j].createUserName;
-                            obj.attachName=qtList[j].attachName;
-                           this.xmcgList2.push(obj);
-                       }
-                       var spList=xmcgMsg[i].spList;
-                       for(var j=0;j<spList.length; j++){
-                            var obj={};
-                            obj.createTime=spList[j].createTime
-                            obj.createUserName=spList[j].createUserName;
-                            obj.attachName=spList[j].attachName;
-                           this.xmcgList3.push(obj);
-                       }
+                    this.xqlzList=[];
+                    //需求论证
+                    var xqlzzllist=xmcgMsg[0].zlList;
+                    if(xqlzzllist.length>0){
+                      for(var j=0;j<xqlzzllist.length; j++){
+                        var obj={};
+                        obj.createTime=xqlzzllist[j].createTime
+                        obj.createUserName=xqlzzllist[j].createUserName;
+                        obj.attachName=xqlzzllist[j].attachName;
+                        this.xqlzList.push(obj);
+                      }
                     }
+                    //采购申请
+                    var cgsqzllist=xmcgMsg[1].zlList;
+                    var cgsqqtlist=xmcgMsg[1].qtList;
+                    var cgsqsplist=xmcgMsg[1].spList;
+                    this.cgsqList=[];
+                    this.cgsqList1=[];
+                    this.cgsqList2=[];
+                    if(cgsqzllist.length>0){
+                        for(var j=0;j<cgsqzllist.length;j++){
+                            var obj={};
+                            obj.createTime=cgsqzllist[j].createTime
+                            obj.createUserName=cgsqzllist[j].createUserName;
+                            obj.attachName=cgsqzllist[j].attachName;
+                            this.cgsqList.push(obj); 
+                        }
+                    }
+                    if(cgsqqtlist.length>0){
+                        for(var j=0;j<cgsqqtlist.length;j++){
+                            var obj={};
+                            obj.createTime=cgsqqtlist[j].createTime
+                            obj.createUserName=cgsqqtlist[j].createUserName;
+                            obj.attachName=cgsqqtlist[j].attachName;
+                            this.cgsqList1.push(obj); 
+                        }
+                    }
+                    if(cgsqsplist.length>0){
+                        for(var j=0;j<cgsqsplist.length;j++){
+                            var obj={};
+                            obj.createTime=cgsqsplist[j].createTime
+                            obj.createUserName=cgsqsplist[j].createUserName;
+                            obj.attachName=cgsqsplist[j].attachName;
+                            this.cgsqList2.push(obj); 
+                        }
+                    }
+                    //采购详情
                     var cgmsg=(dataList[1].list)[1].cgMsg;
                     if(cgmsg){
                         this.cgname=cgmsg.purchaseName;
@@ -998,6 +1014,7 @@ export default {
                             this.isAgree=true;
                         }
                     }
+                    //采购列表
                     var cglists=(dataList[1].list)[1].cgList;
                     if(cglists && cglists.length>0){
                         this.cgxqList=[];
@@ -1010,6 +1027,7 @@ export default {
                             this.cgxqList.push(obj);
                         }
                     }
+                    //供应商列表
                     var splist=(dataList[1].list)[1].gysList;
                     if(splist && splist.length>0){
                         this.supperList=[];
@@ -1023,7 +1041,23 @@ export default {
                             this.supperList.push(obj);
                         }
                     }
-                    var cgfklist= (dataList[1].list)[3].fkList;     
+                    //采购会-附件
+                    this.cghList=[];
+                    var cghzllist=(dataList[1].list)[2].zlList;
+                    if(cghzllist.length>0){
+                        for(var j=0;j<cghzllist.length;j++){
+                            var obj={};
+                            obj.createTime=cghzllist[j].createTime
+                            obj.createUserName=cghzllist[j].createUserName;
+                            obj.attachName=cghzllist[j].attachName;
+                            this.cghList.push(obj); 
+                        }
+                    }
+                    //采购合同
+                    var cgfklist= (dataList[1].list)[3].fkList;
+                    this.cgfkList=[];
+                    this.qdhtList=[];
+                    var qdhtzllist=(dataList[1].list)[3].zlList; 
                     if(cgfklist && cgfklist.length>0){
                         this.cgfkList=[];
                         for(var j=0;j<cgfklist.length;j++){
@@ -1062,6 +1096,16 @@ export default {
                         this.gys=htmsg.supplier;
 
                     }
+                    //签订合同-资料列表
+                    if(qdhtzllist.length>0){
+                        for(var j=0;j<qdhtzllist.length;j++){
+                            var obj={};
+                            obj.createTime=qdhtzllist[j].createTime
+                            obj.createUserName=qdhtzllist[j].createUserName;
+                            obj.attachName=qdhtzllist[j].attachName;
+                            this.qdhtList.push(obj); 
+                        }
+                    }
                     //项目执行
                     var xmzxMsg=(dataList[2].list);
                     if(xmzxMsg.length>0){
@@ -1096,8 +1140,6 @@ export default {
             }else if(nodeName == "zxbox") {
                 elCollection = this.$refs.zxbox.getElementsByClassName('sh-file-box')
             }
-            
-            console.log(elCollection)
             for(let i = 0; i < elCollection.length; i ++) {
                 elCollection[i].style.display = "none"
             }
@@ -1292,6 +1334,11 @@ export default {
                             font-size: 14px;
                             color: #8998AC;
                         }
+                        .sh-title-blue{
+                            color:  #3B7CFF;
+                            cursor: pointer;
+                        }
+                        
                     }
                    >div:nth-child(odd){
                        background: #F8F9FB;
@@ -1301,6 +1348,45 @@ export default {
                    }
                     .sh-file-head{
                         
+                    }
+                    .pl-info-title{
+                        font-size: 14px;
+                        color: #3B4859;
+                    }
+                }
+
+                .pl-sign{
+                    display: block!important;
+                    .pl-item-wrapper{
+                        display: flex;
+                        >.pl-input{
+                            flex: 1;
+                            display: flex;
+                            justify-content: flex-start;
+                            align-items:center;
+                            .pl-input-name{
+                                font-size: 14px;
+                                color: #39475B;
+                                display: inline-block;
+                                min-width: 120px;
+                                i{
+                                    color: #FE5959;
+                                    font-size: 18px;
+                                    padding: 0 5px;
+                                }
+                            }
+                            & /deep/ .el-input-group__append, .el-input-group__prepend{
+                                width: 50px;
+                                text-align: center;
+                                padding: 0;
+                            }
+                        }
+                        >.pl-input:nth-child(1){
+                            margin-right: 5px;
+                        }
+                        >.pl-input:nth-child(2){
+                            margin-left: 5px;
+                        }
                     }
                 }
             }
@@ -1402,6 +1488,15 @@ export default {
     
     .st-steps-bot-name p{
         font-size: 12px!important;
+    }
+    @import url('../../components/Common/less/fillAppalication.less');
+    // dialog
+    .ma-dialog{
+        .el-dialog__header{
+            font-size: 28px;
+            color: #3B4859;
+            letter-spacing: 0;
+        }
     }
 }
             

@@ -484,6 +484,12 @@ export default {
                     this.fileName=res.data.fileName;
                     this.fileUrl=res.data.fileUrl;
                     this.fileType=res.data.fileType;
+                    if(this.val1==null||this.val1==''){
+                        var str=res.data.fileName;
+                        var index = str.lastIndexOf(".");  
+                        str  = str.substring(0,index);
+                        this.val1= str;
+                    }
                     
                 }else{
                     this.fileList = []

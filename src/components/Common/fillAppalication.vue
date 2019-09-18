@@ -293,11 +293,8 @@ export default {
             }
             
         },
-        handleListDel(type, i) {
-            let params = {
-                id:i.id
-            }
-            
+        handleListDel(type, i) {  
+            let params = {id:i.id,pid:this.sessionGet.id}             
             if(type === 'make') {
                 this.$http.post("/api/project/deletedCgqd", params)
                 .then((res) => {
@@ -419,6 +416,7 @@ export default {
                             this.marTop = '20vh'
                             this.hasNewClass = true
                             this.$emit('hasSubmit', true)
+                            this.exchangeFill = false
                             this.$message({
                                 type:'success',
                                 message:res.message

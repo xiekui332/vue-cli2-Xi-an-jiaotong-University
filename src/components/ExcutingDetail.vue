@@ -293,7 +293,10 @@ export default {
                         for(let j = 0; j < this.steps[i].children.length; j ++) {
                             this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
                             if(this.steps[i].children[j].status === true){
-                                location.hash= this.steps[i].children[j].path
+                                this.$router.push({
+                                    path:this.steps[i].children[j].path
+                                })
+                                // location.hash= this.steps[i].children[j].path
                                 
                             }
                         }

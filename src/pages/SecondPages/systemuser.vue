@@ -72,7 +72,7 @@
                         :label="item.roles.rolesName" 
                         v-for="(item, index) in rolesList" 
                         :key="index"
-                        :checked="item.istrue == 1?true:false"
+                        :checked="(item.istrue) == 1?true:false"
                         @change="handleCheckItem(item)"
                         ></el-checkbox>
                     </el-checkbox-group>
@@ -226,7 +226,8 @@ export default {
         },
 
         handleAssign() {
-            if(this.changeParams.length==1){   
+            if(this.changeParams.length==1){  
+
                 let params = {
                     userId:this.changeParams[0].id
                 }
@@ -325,13 +326,13 @@ export default {
         },
 
         // get roles List
-        handleGetRoles(params) {
+        handleGetRoles(params) { 
             this.$http.post("/api/user/getRoles", params)
             .then((res) => {
                 if(res.code == "00000") {
-                    this.rolesList = []
+                    this.rolesList = [];
                     this.rolesList = res.data;
-                    this.menutemplate = true
+                    this.menutemplate = true;
                 }else {
                     this.$message({
                         message: res.message,

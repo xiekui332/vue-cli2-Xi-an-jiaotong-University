@@ -59,10 +59,15 @@ export default {
     methods:{
         handleCommand(command) {
             if(command === 'handlelogout') {
-                clearSession()
-                this.$router.push({
-                    path:'/'
+                this.$http.post("/api/user/logout").then(res =>{
+                    if(res.code=="00000"){
+                        clearSession()
+                        this.$router.push({
+                            path:'/'
+                        })
+                    }
                 })
+
             }
             
         },

@@ -2,7 +2,7 @@
     <div id="root-wrapper">
         <p class="ro-title">执行计划维护</p>
         <div class="ro-item">
-            <span class="ro-title-b" v-if="isChange===true">项目编号：</span>
+            <span :class="isChange===true?'ro-title-b':'ro-title-b ro-title-none'">项目编号：</span>
             <div class="ro-item-content">
                 <span class="ro-num" >{{projectNo}}</span>
                 <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasLk">是否历史项目</el-checkbox>
@@ -114,7 +114,7 @@
         <div class="ro-item">
             <span class="ro-title-b">项目状态：</span>
             <div class="ro-item-content">
-                <el-select v-model="proState" placeholder="请选择" :disabled="hasDis" @change="handleChangeType">
+                <el-select v-model="proState" placeholder="请选择" :disabled="isxj" @change="handleChangeType">
                     <el-option
                     v-for="(item,index) in opt4"
                     :key="index"
@@ -128,7 +128,7 @@
         <div class="ro-item" :disabled="hasDis">
             <span class="ro-title-b">项目节点：</span>
             <div class="ro-item-content">
-                <el-select v-model="proNode" placeholder="请选择" :disabled="hasDis">
+                <el-select v-model="proNode" placeholder="请选择" :disabled="isxj">
                     <el-option
                     v-for="item in opt5"
                     :key="item.value"
@@ -162,7 +162,8 @@
                     :on-preview="handlePreview"
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
-                    :on-success="handleSuccess"
+                    :before-upload="handleBefore"
+                    :http-request="customRequest"
                     multiple
                     :limit="3"
                     :on-exceed="handleExceed"
@@ -237,26 +238,41 @@ export default {
             typeList:[],
             oldAppdendixList:[],
             projectType:'',
-            projectCategory:''
+            projectCategory:'',
+            isxj:false,
+            ismrfz:false
+
         }
     },
     methods:{
-        checkHistory() {
-            console.log(1)
+        checkHistory() {//历史项目选中
+            var isxz=this.checked;
+            var isnew=this.ismrfz;
+            if(isxz==true){//选中历史项目
+               if(isnew==true){//新建项目选中
+                   this.rechangeState();
+                   this.opt5=[];
+                   this.isxj=false;
+                   this.proNode='';
+                   this.proState='';
+               }
+            }else{//未选中
+               if(isnew==true){//新建项目未选中
+                   this.proNode='立项申请';
+                   this.proState='项目立项';
+                   this.isxj=true;
+               }
+            }
         },
         handleRemove(file, fileList) {
-             var fileMsg=fileList;
-             this.fileMsgList=[];
-             for(var i=0;i<fileMsg.length;i++){
-                  var msg={};
-                  msg.fileName=fileMsg[i].response.data.fileName;
-                  msg.fileAddress=fileMsg[i].response.data.fileUrl;
-                  msg.fileType=fileMsg[i].response.data.fileType;
-                  this.fileMsgList.push(msg);
-             }
+            for(let i = 0; i < this.fileMsgList.length; i ++) {
+                if(this.fileMsgList[i].fileName == file.name) {
+                    this.fileMsgList.splice(i, 1)
+                }
+            }
+             
         },
         handlePreview(file) {
-            console.log(file);
         },
         handleExceed(files, fileList) {
             this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -323,7 +339,6 @@ export default {
                     }
                 })
           }else{//新建项目
-                // console.log(this.establishmenTime)
                if(!this.name){
                    return this.$message("项目名称不能为空");
                }
@@ -333,10 +348,10 @@ export default {
                var startTime=(this.planningTime)[0];
                var endTime=(this.planningTime)[1];
                if(startTime==null||endTime==null){
-                    return this.$message("项目周期不能为空");
+                    return this.$message("计划周期不能为空");
                }
                if(!this.budgetNum){
-                   return this.$message("预算金额不能为空");
+                   return this.$message("项目预算不能为空");
                }
                 if(!this.kind){
                    return this.$message("项目类别不能为空");
@@ -352,20 +367,26 @@ export default {
                    isOldProject=1;
                }
                if(isOldProject==1){
-                   if(this.proState==null){
-                      return this.$message("老项目的项目状态不能为空");
+                   if(this.proState==null||this.proState==''){
+                      return this.$message("历史项目的项目状态不能为空");
                    }
-                   if(this.proNode==null){
-                      return this.$message("老项目的项目节点不能为空");
+                   if(this.proNode==null||this.proNode==''){
+                      return this.$message("历史项目的项目节点不能为空");
                    }
                    if(this.leading.length<1){
-                      return this.$message("老项目的项目负责人不能为空");
+                      return this.$message("历史项目的项目负责人不能为空");
                    }
                }
                if(this.proState){
-                   if(this.proNode==null){
+                   if(this.proNode==null||this.proNode==''){
                         return this.$message("项目状态下节点不能为空");
                    }
+               }
+               if(this.proState=='项目立项'){
+                   this.proState="43623bacc9244afd9abd3365cb6c36c9";
+               }
+               if(this.proNode=='立项申请'){
+                   this.proNode="716aa0fd239a4aa1b9469592122782c9";
                }
                var params={
                    name:this.name,createTime:this.establishmenTime,
@@ -414,15 +435,6 @@ export default {
                   }
               }
             })
-        },
-        handleSuccess(res,file,fileList){
-              if(res.code=="00000"){
-                  var msg={};
-                  msg.fileName=res.data.fileName;
-                  msg.fileAddress=res.data.fileUrl;
-                  msg.fileType=res.data.fileType;
-                  this.fileMsgList.push(msg);
-              }
         },
         rechangeState(){//获取状态
             this.$http.post("/api/template/getStatusAndNodes",{}).then(res =>{
@@ -481,8 +493,7 @@ export default {
                 }
             })
         },
-        changeType(param){//获取项目类型
-       
+        changeType(param){//获取项目类型      
             var list=this.typeList;
             var msglist=list[param].cType
             this.opt2=[];
@@ -513,7 +524,46 @@ export default {
             // console.log(this.budgetNum)
             // 先转成number类型
             this.budgetNum = (Number(this.budgetNum)).toFixed(2)
-        }
+        },
+
+        handleBefore(file) {
+            this.files = file
+        },
+
+
+        customRequest() {
+            const formData = new FormData();
+            
+            formData.append('file',this.files);
+            
+            this.$http.post("/api/system/project/uploadAppdenix", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:res.message
+                    })
+                    var msg={};
+                    msg.fileName=res.data.fileName;
+                    msg.fileAddress=res.data.fileUrl;
+                    msg.fileType=res.data.fileType;
+                    this.fileMsgList.push(msg);
+                }else{
+                    this.fileList = []
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.fileList = []
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
+        },
     },
     mounted(){
        this.msgDetails= this.changeMsg;
@@ -529,6 +579,7 @@ export default {
         },
         msgDetails(params){
             if(params){//编辑
+                this.isxj=true;
                 this.isChange=true;
                 this.budgetNum=params.money;
                 this.kind=params.projectTypeNames;
@@ -553,9 +604,14 @@ export default {
                 this.proNode=params.projectNodeName;
                 this.hasDis=true;
                 this.projectId=params.id;
-                this.getAppendix(this.projectId)
+                this.getAppendix(this.projectId);
+                this.ismrfz=false;
             }else{//新建
                this.isChange=false;
+               this.ismrfz=true;
+               this.proState="项目立项";
+               this.proNode="立项申请";
+               this.isxj=true;
             }
 
         },
@@ -633,6 +689,9 @@ export default {
             letter-spacing: 0;
             line-height: 46px;
             margin-right: 20px;
+        }
+        .ro-title-none{
+            opacity: 0;
         }
         .ro-item-content{
             line-height: 46px;
