@@ -37,8 +37,10 @@ export const format = (num) => {
 
 export const regexFile = /\.(gif|jpg|jpeg|png|GIF|JPG|PNG|PDF|pdf)$/
 
-export const baseUrl = 'http://192.168.31.173:8081'
-//export const baseUrl = 'http://10.49.7.111'
+
+
+export const baseUrl = process.env.NODE_ENV == "development"?"http://192.168.31.173:8081":"http://10.49.7.111"
+
 
 
 export const uploadUrl = baseUrl + '/api/system/project/uploadTemplate' //上传模板地址
@@ -46,3 +48,10 @@ export const uploadUrl = baseUrl + '/api/system/project/uploadTemplate' //上传
 export const uploadUrl1 = baseUrl + '/api/project/uploadNodeAppendixLxsq' //上传资料附件和其他资料
 
 export const nodeUploadUrl = baseUrl + '/api/system/project/uploadAppdenix'  //上传节点附件
+
+// test download
+export const file_download = "http://timesheet.pactera.com/Log/Unlockapplicationform.xlsx" 
+
+export const img_download = "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2943410095,2495017621&fm=11&gp=0.jpg" 
+
+export const pdf_download = "http://ms.ga.tj.gov.cn/fjsmswap/img/show.pdf" 

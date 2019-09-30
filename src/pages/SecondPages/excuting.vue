@@ -20,7 +20,7 @@
 
         <div class="de-tips">
             <i class="pub-css de-icon"></i>
-            <p class="de-tips-txt">项目总计 <span>{{allCount.a?allCount.a:"0"}}</span> 项   项目立项 {{ allCount.b?allCount.b:'0' }} 项  项目采购 {{ allCount.c?allCount.c:'0' }} 项  项目执行 {{ allCount.d?allCount.d:'0' }} 项   项目验收 {{ allCount.e?allCount.e:'0' }} 项   项目维保 {{ allCount.f?allCount.f:'0' }} 项</p>
+            <p class="de-tips-txt">项目总计 <span>{{allCount.a?allCount.a:"0"}}</span> 项：   项目立项 {{ allCount.b?allCount.b:'0' }} 项，  项目采购 {{ allCount.c?allCount.c:'0' }} 项，  项目执行 {{ allCount.d?allCount.d:'0' }} 项，   项目验收 {{ allCount.e?allCount.e:'0' }} 项，   项目维保 {{ allCount.f?allCount.f:'0' }} 项。</p>
         </div>
 
         <ul class="de-items">
@@ -28,7 +28,7 @@
                 <!-- <div class="de-item-order">
                     {{ind + 1}}
                 </div> -->
-                <div class="de-item-name">
+                <div class="de-item-name" @click="handleLook(i.id)">
                     <el-tooltip class="item" effect="dark" :content="i.name?i.name:'暂无'" placement="top">
                         <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
                     </el-tooltip>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="de-item-num">
                     <span>中标</span>
-                    <span><span>{{i.zbje?i.zbje:'0.00'}}</span>万</span>
+                    <span><span>{{i.zbje?(i.zbje).toFixed(2):'0.00'}}</span>万</span>
                 </div>
                 <div class="de-item-percent">
                     <p>
@@ -49,7 +49,7 @@
                     查看
                 </div>
 
-                <!-- <div class="pub-css de-back"></div> -->
+                <div class="pub-css de-back" v-if="i.isBH"></div>
             </li>
         </ul>
     </div>
@@ -90,7 +90,14 @@ export default {
             parentRoute:'/proj',
             statusList1:[],
             pageList:[],
-            allCount:{},
+            allCount:{
+                a:0,
+                b:0,
+                c:0,
+                d:0,
+                e:0,
+                f:0
+            },
             proInfo:{},
             paramsUrl:''
         }
@@ -101,8 +108,18 @@ export default {
         },
 
         handleSearchRes(params) {
+        //    console.log(params)
+           
+
+            if(params.projectState=="0"){
+                params.projectState="";
+            }
+            if(params.projectType=="全部"){
+                params.projectType="";
+            }
             this.$http.post("/api/project/getProjectZXZList", params)
             .then((res) => {
+                
                 this.pageList = []
                 if(res.code == "00000") {
                     this.pageList = res.data
@@ -113,13 +130,14 @@ export default {
                     })
                 }
             })
-            
             let obj = {}
-            obj.year = params.year
-            obj.yeprojectTypear = params.projectType
-            obj.fundsSources = params.fundsSources
-            obj.searchText = params.searchText
-            this.getProjectStateCount(obj)
+            obj.year = params.year;
+            obj.projectState=params.projectState;
+            obj.projectNode=params.projectNode;
+            obj.projectType = params.projectType;
+            obj.fundsSources = params.fundsSources;
+            obj.searchText = params.searchText;
+            this.getProjectStateCount(obj);
 
         },
 
@@ -294,7 +312,7 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
-    padding: 20px;
+    padding: 0px 20px 10px;
     min-height: 100%;
     .pub-css{
         background: url('../../assets/img/css_sprites.png');
@@ -353,9 +371,14 @@ export default {
             }
             .de-item-name{
                 width: 380px;
+                cursor: default;
+                overflow: hidden;
+                padding-right: 15px;
+                cursor: pointer;
             }
             .de-item-num{
                 width: 240px;
+                overflow: hidden;
                 >span{
                     line-height: 88px;
                 }
@@ -374,6 +397,7 @@ export default {
             }
             .de-item-percent{
                 width: 404px;
+                overflow: hidden;
                 >p:nth-child(1){
                     margin: 30px 0 0 0;
                     >span:nth-child(1){
@@ -397,6 +421,7 @@ export default {
                 line-height: 88px;
                 margin-left: 30px;
                 margin-right: 10px;
+                text-align: center;
             }
             .de-item-name-title{
                 font-size: 18px;

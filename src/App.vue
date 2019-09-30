@@ -39,4 +39,9 @@ html, body{
     background: url('./assets/img/css_sprites.png');
     background-size:440px 391px; 
 }
+
+.pub-width{
+    max-width: 400px!important;
+    line-height: 20px;
+}
 </style>

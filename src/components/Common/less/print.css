@@ -1,0 +1,212 @@
+#printFill {
+  background: #FFFFFF;
+}
+#printFill .fl-title {
+  font-size: 28px;
+  color: #3B4859;
+  letter-spacing: 0;
+  text-align: center;
+  margin-top: -20px;
+  font-weight: 600;
+}
+#printFill .el-divider {
+  background: #F5F6F5;
+}
+#printFill .fl-item {
+  padding: 0 40px;
+}
+#printFill .fl-item .fl-item-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#printFill .fl-item .fl-item-head button {
+  background: #3B7CFF;
+  padding: 8px 20px;
+  font-size: 14px!important;
+  color: #FFFFFF;
+}
+#printFill .fl-item .fl-item-head .pub-family {
+  font-size: 18px;
+  color: #3B4859;
+  letter-spacing: 0;
+}
+#printFill .fl-item .fl-list {
+  display: flex;
+  text-align: center;
+  min-height: 50px;
+  align-items: center;
+}
+#printFill .fl-item .fl-list > div,
+#printFill .fl-item .fl-list > span {
+  display: inline-block;
+  flex: 1;
+}
+#printFill .fl-item .fl-list > div i,
+#printFill .fl-item .fl-list > span i {
+  display: inline-block;
+  height: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  word-spacing: 1px;
+}
+#printFill .fl-item .fl-list > div .fl-icon-edit,
+#printFill .fl-item .fl-list > span .fl-icon-edit {
+  background-position: -377px -91px;
+}
+#printFill .fl-item .fl-list > div .fl-icon-del,
+#printFill .fl-item .fl-list > span .fl-icon-del {
+  background-position: -376px -168px;
+  display: inline-block;
+}
+#printFill .fl-item .fl-list > div /deep/ .el-input__inner,
+#printFill .fl-item .fl-list > span /deep/ .el-input__inner {
+  border: none;
+  text-align: center;
+  height: 30px;
+}
+#printFill .fl-item .fl-list .fl-order {
+  display: flex;
+  align-items: center;
+}
+#printFill .fl-item .fl-list .fl-order > span {
+  text-indent: 1em;
+}
+#printFill .fl-item .fl-item-con .fl-list:nth-child(odd) {
+  background: #F8F9FB;
+}
+#printFill .fl-item .fl-item-con .fl-list:nth-child(odd) /deep/ .el-input__inner {
+  background: #F8F9FB;
+}
+#printFill .fl-item .fl-item-con .fl-list:nth-child(even) {
+  background: #FCFDFF;
+}
+#printFill .fl-item .fl-item-con .fl-list:nth-child(even) /deep/ .el-input__inner {
+  background: #FCFDFF;
+}
+#printFill .fl-item .fl-matters {
+  padding-left: 10px;
+  line-height: 30px;
+}
+#printFill .fl-item .fl-matters-head {
+  font-size: 14px;
+  color: #3B7CFF;
+  letter-spacing: 0;
+  margin: 20px 0 10px;
+}
+#printFill .fl-item .fl-matters-list {
+  font-size: 14px;
+  color: #8998AC;
+  letter-spacing: 0;
+}
+#printFill .fl-item .fl-check-title {
+  font-size: 14px;
+  color: #8998AC;
+  letter-spacing: 0;
+  padding-left: 20px;
+}
+#printFill .fl-item-basic .fl-item-basic-title {
+  font-size: 18px;
+  color: #3B4859;
+  letter-spacing: 0;
+  margin-bottom: 30px;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-title {
+  min-width: 110px;
+  color: black;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-title span {
+  display: flex;
+  flex-direction: column;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-title span:nth-child(2) {
+  font-size: 12px;
+  color: #39475B;
+  letter-spacing: 0;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-input {
+  width: 360px;
+  height: 36px;
+  background: #FFFFFF;
+  border-radius: 4px;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-input /deep/ .el-input__inner {
+  height: 36px;
+  box-shadow: 0 2px 4px 0 #EFF2F7;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-radio {
+  margin-left: 50px;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-radio /deep/ .el-radio__input {
+  display: none;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L .fl-L-radio /deep/ span.is-checked + span.el-radio__label {
+  color: #3B7CFF;
+}
+#printFill .fl-item-basic .fl-item-basic-block .fl-L:last-child {
+  margin-top: 15px;
+}
+#printFill .fl-item-make {
+  margin: 40px 0 30px;
+}
+#printFill .fl-item-supllier {
+  margin: 40px 0 30px;
+}
+#printFill .fl-item-basis .fl-basis-block {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+#printFill .fl-item-basis .fl-basis-block .fl-basis-title {
+  width: 100px;
+  text-align: right;
+  padding-right: 5px;
+}
+#printFill .fl-item-basis .fl-basis-block /deep/ textarea {
+  background: #FFFFFF;
+  box-shadow: 0 2px 4px 0 #EFF2F7;
+  border-radius: 4px;
+}
+#printFill .fl-item-agreement .fl-check {
+  margin-left: 20px;
+  margin-top: 5px;
+}
+#printFill .fl-item-agreement .fl-check /deep/ .el-checkbox__input.is-checked .el-checkbox__inner,
+#printFill .fl-item-agreement .fl-check .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: #3B7CFF;
+}
+#printFill .fl-item-agreement .fl-check /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+  font-size: 14px;
+  color: #8998AC;
+  letter-spacing: 0;
+}
+#printFill .fl-item-agreement .fl-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+#printFill .fl-item-agreement .fl-btn-wrapper .el-button {
+  font-size: 14px;
+  padding: 10px 25px;
+}
+#printFill .fl-item-agreement .fl-btn-wrapper .fl-btn-cancel button {
+  color: #8392A7;
+  background: #F9FAFC;
+  border: 1px solid #AEB9CA;
+}
+#printFill .fl-item-agreement .fl-btn-wrapper .fl-btn-save button {
+  color: #FFFFFF;
+  background: #3B7CFF;
+  margin-left: 20px;
+}
+#printFill .st-dialog-new /deep/ .el-dialog {
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  box-shadow: none;
+}

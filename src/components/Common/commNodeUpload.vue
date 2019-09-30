@@ -63,7 +63,7 @@ export default {
               this.uploadParams=res.data;
            }else{
                this.fileListL=[];
-               this.$message(res.message);
+            //    this.$message(res.message);
            }
         }
 

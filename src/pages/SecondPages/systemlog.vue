@@ -68,12 +68,6 @@
             :cell-class-name="cell"
             @selection-change="handleSelectionChange"
             @cell-click='handleLookDetail'>
-            
-            <el-table-column
-                type="index"
-                label="序号"
-                width="55">
-            </el-table-column>
 
             <el-table-column 
                 v-for="(i, ind) in tablekind"
@@ -139,6 +133,11 @@ export default {
             endTime:"",
             tablekind:[
                 {
+                    prop:'rnum',
+                    label:'序号',
+                    width:'50'
+                },
+                {
                     prop:'trueName',
                     label:'操作人',
                     width:''
@@ -200,6 +199,7 @@ export default {
             }
             this.$http.post("/api/syslog/user/viewLog", this.params)
             .then((res) => {
+                console.log(res)
                 if(res.success == true) {
                     this.tableData = res.rows
                     this.total = res.total
@@ -272,13 +272,13 @@ export default {
 #lo-wrapper{
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
-    padding: 20px;
+    padding: 10px 20px 10px;
     .lo-header{
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
         .el-select{
-            width: 200px;
+            width: 190px;
             height: 34px;
             background: #FFFFFF;
             margin: 0 15px 0 0; 

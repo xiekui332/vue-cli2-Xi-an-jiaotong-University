@@ -31,13 +31,7 @@
             :cell-class-name="cell"
             @selection-change="handleSelectionChange"
             @cell-click='handleLookDetail'>
-            
-            <el-table-column
-                type="index"
-                label="序号"
-                width="55">
-            </el-table-column>
-
+        
             <el-table-column
                 type="selection"
                 width="55">
@@ -67,15 +61,20 @@
             <div class="ma-dia-content">
                 <div class="ma-item-wrapper ma-item-menu-auth">
 
-                    <el-checkbox-group v-model="checkList" class="ma-roles-item">
+                    <!-- <el-checkbox-group v-model="checkList" class="ma-roles-item">
                         <el-checkbox 
-                        :label="item.roles.rolesName" 
-                        v-for="(item, index) in rolesList" 
-                        :key="index"
-                        :checked="(item.istrue) == 1?true:false"
+                        class="ma-roles-item"
+                        :label="item.roles.id" 
+                        v-for="item in rolesList" 
+                        :key="item.roles.id"
+                        :checked="item.istrue?true:false"
                         @change="handleCheckItem(item)"
                         ></el-checkbox>
-                    </el-checkbox-group>
+                    </el-checkbox-group> -->
+                    <div class="ma-roles-item" v-for="item in rolesList" :key="item.roles.id" @click="handleCheckItem(item)" >
+                        <i :class="item.istrue == 1?'ma-checked':''"></i>
+                        <span>{{item.roles.rolesName}}</span>
+                    </div>
                     
                 </div>
             </div>
@@ -104,6 +103,11 @@ export default {
             },
             tableData:[],
             tablekind:[
+                {
+                    prop:'rnum',
+                    label:'序号',
+                    width:'50' 
+                },
                 {
                     prop:'netId',
                     label:'NetId',
@@ -156,6 +160,7 @@ export default {
         init() {
             this.$http.post("/api/user/getlist", this.params)
             .then((res) => {
+                console.log(res)
                 if(res.success == true) {
                     var msg= res.rows;
                     this.tableData=[];
@@ -211,7 +216,7 @@ export default {
         },
 
         handleLookDetail(row, column, cell ,event) {    
-           console.log(row, column, cell ,event)
+        //    console.log(row, column, cell ,event)
             
         },
 
@@ -234,7 +239,7 @@ export default {
                 this.handleGetRoles(params)
                 
             }else{
-                this.$message("请选择一个角色进行菜单授权");
+                this.$message.error("请选择一个角色进行菜单授权");
             } 
 
         },
@@ -299,6 +304,10 @@ export default {
                         let params = {
                             userId:this.changeParams[0].id
                         }
+                        this.$message({
+                            type:"success",
+                            message:res.message
+                        })
                         this.handleGetRoles(params)
                     }else {
                         this.$message({
@@ -314,6 +323,10 @@ export default {
                         let params = {
                             userId:this.changeParams[0].id
                         }
+                        this.$message({
+                            type:"success",
+                            message:res.message
+                        })
                         this.handleGetRoles(params)
                     }else {
                         this.$message({
@@ -331,7 +344,14 @@ export default {
             .then((res) => {
                 if(res.code == "00000") {
                     this.rolesList = [];
+                    let checkArray = []
                     this.rolesList = res.data;
+                    for(let i = 0; i < this.rolesList.length; i ++) { 
+                        if(this.rolesList[i].istrue == 1) {
+                            checkArray.push(this.rolesList[i])
+                        }
+                    }
+                    this.checkList = checkArray
                     this.menutemplate = true;
                 }else {
                     this.$message({
@@ -340,6 +360,7 @@ export default {
                     })
                 }
                 
+                // console.log(this.checkList)
                 
             })
         }
@@ -356,7 +377,7 @@ export default {
 #us-wrapper{
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
-    padding: 20px;
+    padding: 10px 20px 10px;
     .el-divider--horizontal{
         margin: 5px 0;
         background: #F0F3F7;
@@ -406,7 +427,8 @@ export default {
             }
         }
         .de-search-input{
-            width: 200px;
+            max-width: 200px;
+            flex: 1;
             margin: 0 15px 0 0; 
             & /deep/ .el-input__inner{
                 height: 36px;
@@ -464,11 +486,34 @@ export default {
     }
 
     .ma-roles-item{
-        
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 10px 0;
+        cursor: default;
         .el-checkbox{
             display: block;
             margin: 0 0 10px 0;
         }
+        i{
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 1px;
+            border: 1px solid #dddddd;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+        .ma-checked{
+            background: url('../../assets/img/checked.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    }
+
+    .el-checkbox{
+        display: block;
+        margin: 10px 0;
     }
 }
 </style>

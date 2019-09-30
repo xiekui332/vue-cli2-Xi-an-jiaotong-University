@@ -10,7 +10,8 @@
                            <div class="sh-node-item">
                                 <div class="sh-node-item-head">
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
-                                        <i class="sh-node-icon pub-css sh-node-finish"></i>
+                                        <!-- <i class="sh-node-icon pub-css sh-node-finish"></i> -->
+                                        <i class="sh-node-icon pub-css">1</i>
                                         <el-dropdown trigger="click">
                                             <span class="pub-family el-dropdown-link">
                                                 立项准备<i class="el-icon-arrow-down el-icon--right"></i>
@@ -22,7 +23,7 @@
                                         </el-dropdown>
                                     </div>
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
-                                        <a class="sh-change-padding" href="javascript:;" @click.stop.prevent="handleLook('node')">节点流程</a>
+                                        
                                         <div @click="handleLook('rotate')">
                                             <!-- <img src="../../assets/img/more-L.png" :class="activeName == 1?'pj-transform':''" ref="transform" alt=""> -->
                                         </div>
@@ -40,65 +41,78 @@
                                             <el-table-column
                                                 prop="expectTime"  
                                                 label="计划付款时间"
-                                                width="180">
+                                                min-width="100"
+                                                >
                                             </el-table-column>
                                             <el-table-column
                                                 prop="payRatio"
                                                 label="计划付款%"
-                                                width="180">
+                                                min-width="100"
+                                                >
                                             </el-table-column>
                                             <el-table-column
                                                 prop="payMoney"
-                                                label="计划付款金额">
+                                                label="计划付款金额(万元)"
+                                                min-width="100">
                                             </el-table-column>
                                             <el-table-column
                                                 prop="remark"
-                                                label="备注">
+                                                label="备注"
+                                                min-width="100">
                                             </el-table-column>
                                             </el-table>                                  
                                     </div>                
                                 </div>
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="lxzbList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
-                                                width="280">
+                                                width="280"
+                                                show-overflow-tooltip>
                                             </el-table-column>
                                             <el-table-column
                                                 prop="createTime"
                                                 label="操作时间"
-                                                width="200">
+                                                width="200"
+                                                show-overflow-tooltip>
                                             </el-table-column>
                                             <el-table-column
                                                 prop="createUserName"
-                                                label="操作人">
+                                                label="操作人"
+                                                show-overflow-tooltip>
                                             </el-table-column>
-                                            </el-table>                                  
+                                        </el-table>                                  
                                     </div>   
                                 </div>
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
                                             <el-table
-                                            :data="lxzbList2"
-                                            style="width: 100%">
-                                            <el-table-column
-                                                prop="attachName"  
-                                                label="其他资料"
-                                                width="280">
-                                            </el-table-column>
-                                            <el-table-column
-                                                prop="createTime"
-                                                label="操作时间"
-                                                width="200">
-                                            </el-table-column>
-                                            <el-table-column
-                                                prop="createUserName"
-                                                label="操作人">
-                                            </el-table-column>
+                                                :data="lxzbList2"
+                                                style="width: 100%"
+                                                @cell-click="handleCell"
+                                                :cell-class-name="cell"
+                                                >
+                                                <el-table-column
+                                                    prop="attachName"  
+                                                    label="其他资料"
+                                                    width="280">
+                                                </el-table-column>
+                                                <el-table-column
+                                                    prop="createTime"
+                                                    label="操作时间"
+                                                    width="200">
+                                                </el-table-column>
+                                                <el-table-column
+                                                    prop="createUserName"
+                                                    label="操作人">
+                                                </el-table-column>
                                             </el-table>                                  
                                     </div>   
                                 </div>
@@ -106,9 +120,11 @@
 
                             <div class="sh-file-box">
                                 <div class="sh-file-list">
-                                        <el-table
+                                    <el-table
                                         :data="lxlzList"
-                                        style="width: 100%">
+                                        style="width: 100%"
+                                        @cell-click="handleCell"
+                                        :cell-class-name="cell">
                                         <el-table-column
                                             prop="attachName"  
                                             label="资料附件"
@@ -123,8 +139,31 @@
                                             prop="createUserName"
                                             label="操作人">
                                         </el-table-column>
-                                        </el-table>                                  
-                                </div>   
+                                    </el-table>                                  
+                                </div>  
+
+                                <div class="sh-file-list">
+                                    <el-table
+                                        :data="lxlzList2"
+                                        style="width: 100%"
+                                        @cell-click="handleCell"
+                                        :cell-class-name="cell">
+                                        <el-table-column
+                                            prop="attachName"  
+                                            label="其他资料"
+                                            width="280">
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="createTime"
+                                            label="操作时间"
+                                            width="200">
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="createUserName"
+                                            label="操作人">
+                                        </el-table-column>
+                                    </el-table>                                  
+                                </div>    
                             </div>
                         </div>
                     </el-collapse-item>
@@ -148,6 +187,7 @@
 
                                     </div>
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
+                                        <a class="sh-change-padding" href="javascript:;" @click.stop.prevent="handleLook('node', 'cg')">节点流程</a>
                                         <div @click="handleLook('rotate')">
                                         
                                         </div>
@@ -160,9 +200,11 @@
                             <div class="sh-file-box">
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="xqlzList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
@@ -177,8 +219,31 @@
                                                 prop="createUserName"
                                                 label="操作人">
                                             </el-table-column>
-                                            </el-table>                                  
-                                    </div>   
+                                        </el-table>                                  
+                                    </div>
+
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xqlzList2"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>      
                                 </div>
                             </div>
                             <!--采购申请 -->
@@ -189,9 +254,11 @@
                                         <span class="sh-title-blue">{{cgname}}</span>     
                                     </div>
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="cgsqList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
@@ -206,47 +273,51 @@
                                                 prop="createUserName"
                                                 label="操作人">
                                             </el-table-column>
-                                            </el-table>                                  
+                                        </el-table>                                  
                                     </div> 
                                     <div class="sh-file-list">
-                                                <el-table
-                                                :data="cgsqList1"
-                                                style="width: 100%">
-                                                <el-table-column
-                                                    prop="attachName"  
-                                                    label="其他资料"
-                                                    width="280">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="createTime"
-                                                    label="操作时间"
-                                                    width="200">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="createUserName"
-                                                    label="操作人">
-                                                </el-table-column>
-                                                </el-table>                                  
+                                        <el-table
+                                            :data="cgsqList1"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
                                     </div>   
                                     <div class="sh-file-list">
-                                                <el-table
-                                                :data="cgsqList2"
-                                                style="width: 100%">
-                                                <el-table-column
-                                                    prop="attachName"  
-                                                    label="审批资料"
-                                                    width="280">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="createTime"
-                                                    label="操作时间"
-                                                    width="200">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="createUserName"
-                                                    label="操作人">
-                                                </el-table-column>
-                                                </el-table>                                  
+                                        <el-table
+                                            :data="cgsqList2"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="审批资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
                                     </div>   
                                 </div>
                             </div>
@@ -254,9 +325,11 @@
                             <div class="sh-file-box">
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="cghList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
@@ -271,7 +344,30 @@
                                                 prop="createUserName"
                                                 label="操作人">
                                             </el-table-column>
-                                            </el-table>                                  
+                                        </el-table>                                  
+                                    </div>  
+                                    
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="cghList2"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
                                     </div>  
                                 </div>
                             </div>
@@ -279,35 +375,35 @@
                             <div class="sh-file-box">
                                 <div class="sh-file-item">                                     
                                     <div class="sh-file-list">
-                                                <el-table
-                                                :data="cgfkList"
-                                                style="width: 100%">
-                                                <el-table-column
-                                                    prop="createTime"  
-                                                    label="付款时间"
-                                                    width="160">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="payMoney"
-                                                    label="付款金额（万元）"
-                                                    width="150">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="payRatio"
-                                                    label="付款比例%"
-                                                    width="120">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="surplusMoney"
-                                                    label="剩余付款金额(万)"
-                                                    width="150">
-                                                </el-table-column>
-                                                <el-table-column
-                                                    prop="remark"
-                                                    label="备注"
-                                                    >
-                                                </el-table-column>
-                                                </el-table>                                  
+                                        <el-table
+                                            :data="cgfkList"
+                                            style="width: 100%">
+                                            <el-table-column
+                                                prop="createTime"  
+                                                label="付款时间"
+                                                width="160">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="payMoney"
+                                                label="付款金额（万元）"
+                                                width="150">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="payRatio"
+                                                label="付款比例%"
+                                                width="120">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="surplusMoney"
+                                                label="剩余付款金额(万)"
+                                                width="150">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="remark"
+                                                label="备注"
+                                                >
+                                            </el-table-column>
+                                        </el-table>                                  
                                     </div>                               
                                     <div class="pl-info pl-sign">
                                         <p class="pl-info-title pub-family">&nbsp;&nbsp;&nbsp;&nbsp;信息填写(合同信息)</p>
@@ -364,9 +460,11 @@
                                         </div>
                                     </div>                    
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="qdhtList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
@@ -381,7 +479,30 @@
                                                 prop="createUserName"
                                                 label="操作人">
                                             </el-table-column>
-                                            </el-table>                                  
+                                        </el-table>                                  
+                                    </div>   
+
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="qdhtList2"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell">
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
                                     </div>   
 
                                 </div>
@@ -418,9 +539,12 @@
                             <div class="sh-file-box">
                                 <div class="sh-file-item">
                                     <div class="sh-file-list">
-                                            <el-table
+                                        <el-table
                                             :data="xmzxList"
-                                            style="width: 100%">
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
                                             <el-table-column
                                                 prop="attachName"  
                                                 label="资料附件"
@@ -435,7 +559,7 @@
                                                 prop="createUserName"
                                                 label="操作人">
                                             </el-table-column>
-                                            </el-table>                                  
+                                        </el-table>                                  
                                     </div>   
                                 </div>
                             </div>
@@ -451,13 +575,13 @@
                         <el-radio v-model="radio" label="2">驳回</el-radio>
                     </div>
                     <el-input
-                    type="textarea"
-                    placeholder="请输入内容"
-                    v-model="textarea"
-                    show-word-limit
-                    class="sh-node-textarea"
-                    :autosize="{ minRows: 10}"
-                    >
+                        type="textarea"
+                        placeholder="请输入内容"
+                        v-model="textarea"
+                        show-word-limit
+                        class="sh-node-textarea"
+                        :autosize="{ minRows: 10}"
+                        >
                     </el-input>
                     <div class="sh-node-tips">
                         <div>
@@ -486,9 +610,16 @@
                 </div>
 
                 <div v-else>
-                    <p class="pub-family sh-node-agree">审批意见: 同意</p>
-                    <p class="sh-node-agree-reason">符合学校立项标准，同意！</p>
-                    <p class="sh-node-agree-file">本地文件1.pdf</p>
+                    <p class="pub-family sh-node-agree">审批意见: 
+                        <!-- {{approveState}} -->
+                        <el-radio v-model="radio" label="1" :disabled="true">同意</el-radio>
+                        <el-radio v-model="radio" label="2" :disabled="true">驳回</el-radio>
+                    </p>
+                    <p class="sh-node-agree-reason">{{approveRemark}}</p>
+                    <p class="sh-node-agree-file" @click="handleDOwnLoad(approveFileS.attachUrl)">{{approveFileS.attachName}}</p>
+                    <el-row class="sh-node-btn">
+                        <el-button type="primary" @click="handleCancel()">返回</el-button>
+                    </el-row>
                 </div>
             </div>
         </div>
@@ -496,10 +627,10 @@
         <el-dialog
             class="st-dialog"
             :visible.sync="dialogVisible"
-            :show-close=false
+            :show-close=true
             width="60%"
             >
-            <p class="st-steps-title pub-family">阶段进行中</p>
+            <p class="st-steps-title pub-family">{{proTxt}}</p>
             <div class="st-steps-name">
                 <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.spName?i.spName:''}}</p>
             </div>
@@ -508,9 +639,12 @@
                 process-status='wait'
             
             >
-                <el-step  v-for="(i, ind) in hasNodeInfo" :key="ind" :title="i.userName?i.userName:'' + ' ' + i.time?i.time:''" :description="i.state?i.state:''"></el-step>
+                <el-step  v-for="(i, ind) in hasNodeInfo" :key="ind" :title="i.userName?i.userName:''" :description="i.state?i.state:''"></el-step>
             </el-steps>  
             <div class="st-steps-name st-steps-bot-name">
+                <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.time?i.time:''}}</p>
+            </div>
+            <div class="st-steps-name st-steps-bot-name st-change-height">
                 <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.remark?i.remark:''}}</p>
             </div> 
         </el-dialog>
@@ -524,13 +658,13 @@
                 :close-on-press-escape=true
                 @close='handleClose'
                 width='60%'
-                title="院处采购申请单"
                 >
                 <el-divider></el-divider>
                     <div class="ma-dia-content">
                         <div class="ma-item-wrapper">
                         <div>
                             <div id="printFill">
+                                <p class="pub-family fl-title">院处采购申请单</p>
                                 <div class="fl-item fl-item-basic">
                                     <p class="pub-family fl-item-basic-title">基本信息</p>
                                     <div class="fl-item-basic-block">
@@ -539,7 +673,7 @@
                                             <span>{{purchaseNo}}</span>
                                         </div>
                                         <div class="fl-L">
-                                            <span>填报日期：</span>
+                                            <span class="fl-L-title">填报日期：</span>
                                             <span>{{createTime}}</span>
                                         </div>
                                         <div class="fl-L">
@@ -643,9 +777,10 @@
                                         <div class="fl-basis-title">调研情况：</div>
                                         <el-input
                                             type="textarea"
-                                            :rows="4"
+                                            :rows="8"
                                             maxlength="1000字"
-                                            v-model="cgtxt1">
+                                            v-model="cgtxt1"
+                                            :disabled="true">
                                         </el-input>
                                     </div>
 
@@ -653,9 +788,10 @@
                                         <div class="fl-basis-title">技术指标：</div>
                                         <el-input
                                             type="textarea"
-                                            :rows="4"
+                                            :rows="8"
                                             maxlength="10000字"
-                                            v-model="cgtxt2">
+                                            v-model="cgtxt2"
+                                            :disabled="true">
                                         </el-input>
                                     </div>
                                 </div>
@@ -683,7 +819,7 @@
                                         <span class="pub-family">项目负责人意见</span>
                                     </div>
                                     <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实</p>
-                                    <el-checkbox class="fl-check" v-model="isAgree">同意购置</el-checkbox>
+                                    <el-checkbox class="fl-check" v-model="isAgree" :disabled="true">同意购置</el-checkbox>
                                 </div>
                             </div>
                         </div>
@@ -702,13 +838,15 @@
 
 <script>
 import proInfoHead from '@/components/Common/ProInfoHead'
+import { store } from "@/store"
 export default {
     props:[
         'type',
         'proInfo',
         'rowInfo',
         'handleChangeDetail',
-        "tableType"
+        "tableType",
+        "approveType"
     ],
     components:{
         proInfoHead
@@ -738,7 +876,6 @@ export default {
             ],
             steps:0,
             exproInfo:{},
-            hasNode:false,
             hasNodeInfo:[],
             yfkList:[],
             lxzbList:[],
@@ -747,8 +884,11 @@ export default {
             cgsqList1:[],
             cgsqList2:[],
             xqlzList:[],
+            xqlzList2:[],
             cghList:[],
+            cghList2:[],
             qdhtList:[],
+            qdhtList2:[],
             xmzxList:[],
             cgmsg:{},
             cgname:'',
@@ -770,20 +910,36 @@ export default {
             fileUrl:'',
             extableType:'',
             lxlzList:[],
+            lxlzList2:[],
             getuploadUrl1:'',
-            fileList:[]
+            fileList:[],
+            jdId:'',
+
+
+            exApproveType:"",
+            approveRemark:"",
+            approveState:"",
+            approveFileS:{},
+            proTxt:"阶段进行中"
+
         }
     },
     methods:{
-        handleLook(type) {
+        handleLook(type, kind) {
+
+            if(kind == 'cg') {
+                this.jdId = '6a3c8fb95ebe4a4696cd13e2051473b4'
+            }else if(kind == 'ys') {
+                this.jdId = '2798118bf3ca47439750b4e4acdd7735'
+            }else if(kind == 'wb') {
+                this.jdId = 'a2414bacf75144098799a178f0ff2a41'
+            }
+
             if(type === 'rotate') {
                 
             }else if(type === 'node'){
-                if(!this.hasNode){
-                    this.$message.info('本节点无审批流程')
-                }else{
-                    this.dialogVisible = true
-                }
+                this.handleHasNode();
+                
             }
         },
 
@@ -796,7 +952,7 @@ export default {
             var rowmsg=this.exRowInfo;
             if(this.radio==2){
                 if(!this.textarea){
-                  return this.$message("驳回原因不能为空") ;
+                  return this.$message.error("驳回原因不能为空") ;
                 }
             }
            if(rowmsg.projectNode=="6a3c8fb95ebe4a4696cd13e2051473b4"||rowmsg.projectNode=="2798118bf3ca47439750b4e4acdd7735"||rowmsg.projectNode=="a2414bacf75144098799a178f0ff2a41"){
@@ -804,18 +960,23 @@ export default {
      
             this.$http.post("/api/project/confirmApproval",param).then(res =>{
                     if(res.code=="00000"){
-                        this.$message(res.message);
-                        // this.$message({
-                        //     type:'success',
-                        //     dangerouslyUseHTMLString: true,
-                        //     message:'<p style="font-size:14px;color:#666666;margin:0 0 10px 0;">已成功！</p> <p style="font-size:13px;color:#999999;">下一审批节点：XXXXXX，请及时跟进审核状态。如有问题，请联系审核人员或联系8266-XXXX。</p><p></p>',
-                        //     showClose:true
-                        // })
+                        
+                        if(res.data.message) {
+                            this.$message({
+                                type:'success',
+                                dangerouslyUseHTMLString: true,
+                                message:'<p style="font-size:14px;color:#666666;margin:0 0 10px 0;">已成功！</p> <p style="font-size:13px;color:#999999;">下一审批节点：'+ res.data.message +'，请及时跟进审核状态。</p><p></p>',
+                                showClose:true
+                            })
+                        }else{
+                            this.$message.success(res.message);
+                        }
+                        
                         this.$emit('handleChangeDetail', false)
                     }else{
-                        this.$message(res.message)
+                        this.$message.error(res.message)
                     }
-                })
+            })
            }
 
 
@@ -828,61 +989,42 @@ export default {
         handleHasNode(){
             let params = {
                 id:this.exproInfo.id,
-                nodeId:this.exproInfo.projectNode
+                nodeId:this.jdId
             }
             this.$http.post('/api/project/getExamineList', params)
             .then((res) => {
-                // res = {
-                //     "code": "00000",
-                //     "data": [
-                //         {
-                //             "spName":"主管部门",//审批名称
-                //             "time":"2019-01-12",//时间
-                //             "remark": '小菜审批',
-                //             "state": 1,//状态0：待审核，1：审核通过；2：审核被驳回，3：重新提交待审核
-                //             "userName": "谢奎" //审核人姓名
-                //         },
-                //         {   
-                //             "spName":"主管部门",
-                //             "time":"2019-01-12",
-                //             "remark": '小菜审批',
-                //             "state": 1,
-                //             "userName": "谢奎" 
-                //         },
-                //         {
-                //             "spName":"主管部门",
-                //             "time":"2019-01-12",
-                //             "remark": '小菜审批',
-                //             "state": 2,
-                //             "userName": "谢奎" 
-                //         },
-                //         {
-                //             "spName":"主管部门"
-                //         },
-                //         {
-                //             "spName":"主管部门"
-                //         }
-                //     ],
-                //     "message": "操作成功"
-                // }
+                console.log(res)
                 if(res.message == '本节点无审批流程'){
-                    this.hasNode = false
+                    this.$message.error('本节点无审批流程')
+                    this.dialogVisible = false
                 }else{
-                    this.hasNode = true
                     for(let i = 0; i < res.data.length; i ++) {
                         if(res.data[i].state == 0) {
                             res.data[i].state = '待审核'
                         }else if(res.data[i].state == 1) {
-                            res.data[i].state = '审核通过'
+                            if(i==0){
+                                res.data[i].state = ''
+                            }else{
+                                res.data[i].state = '审核通过'
+                            }
                             this.steps = i + 1
                         }else if(res.data[i].state == 2) {
                             res.data[i].state = '审核被驳回'
                         }else if(res.data[i].state == 3) {
                             res.data[i].state = '重新提交待审核'
                         }
+
+                        if(res.data[res.data.length - 1].state == '审核通过') {
+                            this.proTxt = "阶段完成"
+                        }
+
+                        res.data[i].remark?res.data[i].remark:""
+                        res.data[i].spName?res.data[i].spName:""
+                        res.data[i].time?res.data[i].time:""
+                        res.data[i].userName?res.data[i].userName:""
                     }
                     this.hasNodeInfo = res.data
-                    
+                    this.dialogVisible = true
                 }
             })
             
@@ -915,35 +1057,58 @@ export default {
                     //立项-立项准备资料模板
                     var lxzbMsg=(dataList[0].list)[0].zlList;
                     this.lxzbList=[];
-                    for(var i=0;i<lxzbMsg.length;i++){
-                        var obj={};
-                        obj.createTime=lxzbMsg[i].createTime
-                        obj.createUserName=lxzbMsg[i].createUserName;
-                        obj.attachName=lxzbMsg[i].attachName;
-                        this.lxzbList.push(obj);
+                    if(lxzbMsg.length) {
+                        for(var i=0;i<lxzbMsg.length;i++){
+                            var obj={};
+                            obj.createTime=lxzbMsg[i].createTime
+                            obj.createUserName=lxzbMsg[i].createUserName;
+                            obj.attachName=lxzbMsg[i].attachName;
+                            obj.attachUrl=lxzbMsg[i].attachUrl;
+                            this.lxzbList.push(obj);
+                        }
                     }
+                    
 
                     //立项-立项准备其他资料
                     var lxzbqtMsg=(dataList[0].list)[0].qtList;
                     this.lxzbList2=[];
-                    for(var i=0;i<lxzbqtMsg.length;i++){//立项-资料
-                        var obj={};
-                        obj.createTime=lxzbqtMsg[i].createTime
-                        obj.createUserName=lxzbqtMsg[i].createUserName;
-                        obj.attachName=lxzbqtMsg[i].attachName;
-                        this.lxzbList2.push(obj);
+                    if(lxzbqtMsg.length) {
+                        for(var i=0;i<lxzbqtMsg.length;i++){//立项-资料
+                            var obj={};
+                            obj.createTime=lxzbqtMsg[i].createTime
+                            obj.createUserName=lxzbqtMsg[i].createUserName;
+                            obj.attachName=lxzbqtMsg[i].attachName;
+                            obj.attachUrl=lxzbqtMsg[i].attachUrl;
+                            this.lxzbList2.push(obj);
+                        }
                     }
+                    
 
                     //立项-立项论证资料
                     let lxlzListOne = (dataList[0].list)[1].zlList
-                    if(this.lxlzList) {
+                    if(lxlzListOne.length) {
                         for(let i = 0; i < lxlzListOne.length; i ++) {
                             let obj = {}
                             obj.createTime=lxlzListOne[i].createTime
                             obj.createUserName=lxlzListOne[i].createUserName;
                             obj.attachName=lxlzListOne[i].attachName;
+                            obj.attachUrl=lxlzListOne[i].attachUrl;
                             this.lxlzList.push(obj);
                         }
+                    }
+
+                    // 立项论证其他资料
+                    let lxlzListTwo = (dataList[0].list)[1].qtList
+                    if(lxlzListTwo.length) {
+                        for(let i = 0; i < lxlzListTwo.length; i ++) {
+                            let obj = {}
+                            obj.createTime=lxlzListTwo[i].createTime
+                            obj.createUserName=lxlzListTwo[i].createUserName;
+                            obj.attachName=lxlzListTwo[i].attachName;
+                            obj.attachUrl=lxlzListTwo[i].attachUrl;
+                            this.lxlzList2.push(obj);
+                        }
+                        
                     }
 
 
@@ -958,9 +1123,25 @@ export default {
                         obj.createTime=xqlzzllist[j].createTime
                         obj.createUserName=xqlzzllist[j].createUserName;
                         obj.attachName=xqlzzllist[j].attachName;
+                        obj.attachUrl=xqlzzllist[j].attachUrl;
                         this.xqlzList.push(obj);
                       }
                     }
+
+                    // 需求论证-- 其他资料
+                    let xqlzzllistTwo=xmcgMsg[0].qtList;
+                    if(xqlzzllistTwo.length>0){
+                      for(var j=0;j<xqlzzllistTwo.length; j++){
+                        var obj={};
+                        obj.createTime=xqlzzllistTwo[j].createTime
+                        obj.createUserName=xqlzzllistTwo[j].createUserName;
+                        obj.attachName=xqlzzllistTwo[j].attachName;
+                        obj.attachUrl=xqlzzllistTwo[j].attachUrl;
+                        this.xqlzList2.push(obj);
+                      }
+                    }
+
+
                     //采购申请
                     var cgsqzllist=xmcgMsg[1].zlList;
                     var cgsqqtlist=xmcgMsg[1].qtList;
@@ -974,6 +1155,7 @@ export default {
                             obj.createTime=cgsqzllist[j].createTime
                             obj.createUserName=cgsqzllist[j].createUserName;
                             obj.attachName=cgsqzllist[j].attachName;
+                            obj.attachUrl=cgsqzllist[j].attachUrl;
                             this.cgsqList.push(obj); 
                         }
                     }
@@ -983,6 +1165,7 @@ export default {
                             obj.createTime=cgsqqtlist[j].createTime
                             obj.createUserName=cgsqqtlist[j].createUserName;
                             obj.attachName=cgsqqtlist[j].attachName;
+                            obj.attachUrl=cgsqqtlist[j].attachUrl;
                             this.cgsqList1.push(obj); 
                         }
                     }
@@ -992,6 +1175,7 @@ export default {
                             obj.createTime=cgsqsplist[j].createTime
                             obj.createUserName=cgsqsplist[j].createUserName;
                             obj.attachName=cgsqsplist[j].attachName;
+                            obj.attachUrl=cgsqsplist[j].attachUrl;
                             this.cgsqList2.push(obj); 
                         }
                     }
@@ -1050,14 +1234,33 @@ export default {
                             obj.createTime=cghzllist[j].createTime
                             obj.createUserName=cghzllist[j].createUserName;
                             obj.attachName=cghzllist[j].attachName;
+                            obj.attachUrl=cghzllist[j].attachUrl;
                             this.cghList.push(obj); 
                         }
                     }
+
+                    //采购会-其他资料
+                    this.cghLis2=[];
+                    var cghzllistTwo=(dataList[1].list)[2].qtList;
+                    if(cghzllistTwo.length>0){
+                        for(var j=0;j<cghzllistTwo.length;j++){
+                            var obj={};
+                            obj.createTime=cghzllistTwo[j].createTime
+                            obj.createUserName=cghzllistTwo[j].createUserName;
+                            obj.attachName=cghzllistTwo[j].attachName;
+                            obj.attachUrl=cghzllistTwo[j].attachUrl;
+                            this.cghList2.push(obj); 
+                        }
+                    }
+
+
+
                     //采购合同
                     var cgfklist= (dataList[1].list)[3].fkList;
                     this.cgfkList=[];
                     this.qdhtList=[];
                     var qdhtzllist=(dataList[1].list)[3].zlList; 
+                    var qdhtzllistTwo=(dataList[1].list)[3].qtList; 
                     if(cgfklist && cgfklist.length>0){
                         this.cgfkList=[];
                         for(var j=0;j<cgfklist.length;j++){
@@ -1103,9 +1306,23 @@ export default {
                             obj.createTime=qdhtzllist[j].createTime
                             obj.createUserName=qdhtzllist[j].createUserName;
                             obj.attachName=qdhtzllist[j].attachName;
+                            obj.attachUrl=qdhtzllist[j].attachUrl;
                             this.qdhtList.push(obj); 
                         }
                     }
+
+                    //签订合同-其他资料
+                    if(qdhtzllistTwo.length>0){
+                        for(var j=0;j<qdhtzllistTwo.length;j++){
+                            var obj={};
+                            obj.createTime=qdhtzllistTwo[j].createTime
+                            obj.createUserName=qdhtzllistTwo[j].createUserName;
+                            obj.attachName=qdhtzllistTwo[j].attachName;
+                            obj.attachUrl=qdhtzllistTwo[j].attachUrl;
+                            this.qdhtList2.push(obj); 
+                        }
+                    }
+
                     //项目执行
                     var xmzxMsg=(dataList[2].list);
                     if(xmzxMsg.length>0){
@@ -1117,10 +1334,12 @@ export default {
                                 obj.createTime=zxlist[j].createTime
                                 obj.createUserName=zxlist[j].createUserName;
                                 obj.attachName=zxlist[j].attachName;
+                                obj.attachUrl=zxlist[j].attachUrl;
                             this.xmzxList.push(obj);
                         }
                         }
                     }
+                    
 
                 }
             })
@@ -1154,14 +1373,21 @@ export default {
         },
         
         handleExc(files, fileList) {
-            this.$message.warning(`如需更换文件请先删除后操作`);
+            this.$message.error(`如需更换文件请先删除后操作`);
         },
 
         // change upload
         handleBefore(file) {
             this.files = file
+            
+            let limitCount = 1024*1024*5
+            if(file.size > limitCount) {
+                this.$message.error(`请选择小于5M的文件`);
+                return false
+            }
+            
             if(this.fileList.length) {
-                this.$message.warning(`如需更换文件请先删除后操作`);
+                this.$message.error(`如需更换文件请先删除后操作`);
                 return false
             }
             
@@ -1190,7 +1416,7 @@ export default {
                     this.fileList = []
                     this.$message({
                         type:'error',
-                        message:err.message
+                        message:res.message
                     })
                 }
             })
@@ -1201,7 +1427,98 @@ export default {
                     message:err.message
                 })
             })
+        },
+
+        getApproveDetail() {
+            let params = {
+                type:this.exApproveType,
+                pl:this.exRowInfo.pl,
+                pid:this.exRowInfo.id
+            }
+            this.$http.post("/api/project/getExamineOpinion", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    // if(res.data.state) {
+                    //     if(res.data.state == "1") {
+                    //         res.data.state = "通过"
+                    //     }else if(res.data.state == "2") {
+                    //         res.data.state = "驳回"
+                    //     }
+                    // }
+                    this.approveRemark = res.data.remark
+                    this.approveState = res.data.state
+                    this.radio = res.data.state
+                    this.radio = (this.radio).toString()
+                    if(res.data.fj) {
+                        this.approveFileS = res.data.fj
+                    }else{
+                        this.approveFileS = {
+                            id:"",
+                            attachName:"",
+                            attachUrl:""
+                        }
+                    }
+                    
+                }
+            })
+            .catch((err) => {
+
+            })
+        },
+
+        handleDOwnLoad(url) {
+            window.open(url)
+        },
+
+        handleCell(row, column, cell, event) {
+            // console.log(column)
+            // console.log(row)
+            if(column.property == "attachName") {
+                window.open(row.attachUrl)
+            }
+        },
+
+        cell({row, column, rowIndex, columnIndex}) {
+            if( columnIndex == 0){
+                return 'project-style'
+            }
+        },
+
+        handleCommand() {
+            let status = Number(store.state.proInfo.status)
+            let index = 0
+            let elCollection = ""
+            if(status == 4 || status == 5) {
+                this.activeName = "1"
+                elCollection = this.$refs.lxbox.getElementsByClassName('sh-file-box')
+            }else if(status == 6 || status == 7 || status == 8 || status == 9) {
+                this.activeName = "2"
+                elCollection = this.$refs.cgbox.getElementsByClassName('sh-file-box')
+            }else if(status == 10) {
+                this.activeName = "3"
+                elCollection = this.$refs.zxbox.getElementsByClassName('sh-file-box')
+            }else if(status == 11 || status == 12 || status == 13) {
+                this.activeName = "4"
+            }else if(status == 14 || status == 15) {
+                this.activeName = "5"
+            }
+
+            if(status == 4 || status == 6 || status == 10 || status == 11 || status == 14) {
+                index = 0
+            }else if(status == 5 || status == 7 || status == 12 || status == 15) {
+                index = 1
+            }else if(status == 8 || status == 13) {
+                index = 2
+            }else if(status == 9) {
+                index = 3
+            }
+
+            for(let i = 0; i < elCollection.length; i ++) {
+                elCollection[i].style.display = "none"
+            }
+            elCollection[index].style.display = "block"
         }
+
     },
     watch:{
         '$route'(to, from){
@@ -1210,15 +1527,31 @@ export default {
     },
     mounted(){
         this.exproInfo = this.proInfo
-        this.handleHasNode();
+        
         this.getProjectStatusMsg();
         this.exRowInfo=this.rowInfo;
+        
         if(this.tableType == "已审批") {
             this.extableType = true
         }else if(this.tableType == "待审批") {
             this.extableType = false
         }
-         
+
+        // get approve detail
+        this.getApproveDetail()
+        
+        // auto open command
+        this.handleCommand();
+    },
+
+    created() {
+        this.exApproveType = this.approveType
+    },
+
+    computed: {
+        // storeProInfo () {
+        //     return store.state.proInfo
+        // }
     }
 }
 </script>
@@ -1243,7 +1576,7 @@ export default {
                     display: flex;
                     justify-content: space-between;
                     .sh-node-box{
-                        flex: 1;
+                        // flex: 1;
                         font-size: 14px;
                         display: flex;
                         align-items: center;
@@ -1339,6 +1672,7 @@ export default {
                             cursor: pointer;
                         }
                         
+                        
                     }
                    >div:nth-child(odd){
                        background: #F8F9FB;
@@ -1388,6 +1722,12 @@ export default {
                             margin-left: 5px;
                         }
                     }
+                }
+            }
+
+            .sh-node-wrapper{
+                .sh-file-box:nth-child(1){
+                    display: block;
                 }
             }
         }
@@ -1476,6 +1816,7 @@ export default {
                 color: #3B7CFF;
                 letter-spacing: 0;
                 margin: 20px 0 10px 10px;
+                cursor:pointer;
             }
         }
     }
@@ -1484,18 +1825,33 @@ export default {
         padding-bottom: 0;
     }
 
+    & /deep/ .el-table .el-table__header-wrapper .cell{
+        text-indent: 1em;
+    }
+
+    & /deep/ .el-table .el-table__body-wrapper .cell{
+        text-indent: 1em;
+    }
+
     @import url('../../components/Common/less/commNode.less');
     
     .st-steps-bot-name p{
         font-size: 12px!important;
     }
+    .st-change-height{
+        margin-top: -5px;
+    }
+    & /deep/ .el-step__description{
+        margin-top: 0;
+    }
     @import url('../../components/Common/less/fillAppalication.less');
     // dialog
     .ma-dialog{
-        .el-dialog__header{
-            font-size: 28px;
-            color: #3B4859;
-            letter-spacing: 0;
+        .el-divider--horizontal{
+            margin: 0 auto;
+        }
+        .fl-title:nth-child(1){
+            margin-top: 0!important;
         }
     }
 }

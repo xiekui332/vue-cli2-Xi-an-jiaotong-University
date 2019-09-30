@@ -15,7 +15,7 @@
                 v-if="extype == 'todo'"
                 type="index"
                 label="序号"
-                width="55">
+                min-width="20">
             </el-table-column>
 
             <!-- <div v-else-if="extype == 'first'">
@@ -34,7 +34,7 @@
             <el-table-column
                 v-else
                 type="selection"
-                width="55">
+                min-width="25">
             </el-table-column>
             
             <el-table-column 
@@ -42,12 +42,13 @@
                 :key="ind"
                 :prop="i.prop"
                 :label="i.label"
-                :width="i.width"
+                :min-width="i.width"
                 show-overflow-tooltip>
             </el-table-column>
             <el-table-column
                 prop=""
                 :label="colName"
+                :min-width="100"
                 show-overflow-tooltip
                 v-if="extype !== 'situatio'&&extype !=='role'"
                 >
@@ -82,18 +83,18 @@
         </el-table>
 
         <el-dialog
-        :class="hasNewClass?'ta-dialog-new':''"
-        :visible.sync='hasdialog'
-        :show-close='hasClose'
-        :close-on-click-modal=false 
-        :close-on-press-escape=false
-        :width='dialogWid'
-        :top='marTop'
-        :title='dialogTitle'
-        >
+            :class="hasNewClass?'ta-dialog-new':''"
+            :visible.sync='hasdialog'
+            :show-close='hasClose'
+            :close-on-click-modal=false 
+            :close-on-press-escape=false
+            :width='dialogWid'
+            :top='marTop'
+            :title='dialogTitle'
+            >
             <el-divider></el-divider>
             <div class="ta-reason" v-if="!hasStop">
-                <p>{{projectName}}</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;确认删除 "{{projectName}}" ?</p>
             </div>
 
             <div v-else class="ta-stop-wrapper">
@@ -191,7 +192,7 @@ export default {
                 this.projectId=id.id;
                 this.leaderName=id.men;
                 this.projectNo=id.num
-                this.handlehasdialog(true, true, true, true, '30%', '终止确认',id.name, 'stop')
+                this.handlehasdialog(true, true, true, true, '45%', '终止确认',id.name, 'stop')
             }
             
         },
@@ -270,7 +271,7 @@ export default {
                         this.$http.post("/api/project/deleteProjectById",params).then(res =>{
                             console.log(res)
                             if(res.code=="00000"){
-                                this.$message("删除成功");
+                                this.$message.success("删除成功");
                                 this.$emit('handleReload',true);
                             }
                         })
@@ -288,7 +289,7 @@ export default {
                     var params={projectId:this.projectId,stopRemark:this.textarea};
                     this.$http.post("/api/project/updateProjectStop",params).then(res =>{
                        if(res.code=="00000"){
-                            this.$message("操作完成")
+                            this.$message.success("操作完成")
                             this.$emit('handleReload',true);
                        }
                     })
@@ -318,7 +319,7 @@ export default {
             if(this.type === 'upload' && column.label === '模板名称') {
                 this.$emit('handleChangeEdit', row, true)
             }
-            if(this.type === 'first' && column.label === '项目'){
+            if(this.type === 'first' && column.label === '项目编号'){
                  this.$emit('handleLook', row, true)
             }
             
@@ -365,13 +366,13 @@ export default {
         font-size: 14px;
         color: #39475B;
         letter-spacing: 0;
-        text-align: center;
+        text-align: left;
     }
     & /deep/ .el-table .el-table__body-wrapper .cell{
         font-size: 14px;
         color: #8998AC;
         letter-spacing: 0;
-        text-align: center;
+        text-align: left;
     }
     & /deep/ .tex-color .cell{
         color: #B5C5DB;

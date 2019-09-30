@@ -35,6 +35,7 @@
         :class="'ma-dialog'"
         :visible.sync='newtemplate'
         :show-close='hasClose'
+        :before-close="handleCloseLog"
         :close-on-click-modal=true 
         :close-on-press-escape=true
         title='新建模板'
@@ -62,13 +63,21 @@
                         v-for="item in options9"
                         :key="item.value"
                         :label="item.label"
-                        :value="item.value">
+                        :value="item.value"
+                        @click.native="changeNode(item.value)">
                         </el-option>
                     </el-select>
                 </div>
                 <div class="ma-item">
                     <span class="ma-title">模板名称：</span>
-                    <el-input v-model="val1" placeholder="例如西安交通大学立项资料（模板），默认等于上传文件名称" class="ma-dia-sel"></el-input>
+                     <el-select v-model="val1" placeholder="请选择" class="ma-dia-sel">
+                        <el-option
+                        v-for="item in tdicList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
                 </div>
                 <div class="ma-item ma-item-baseline">
                     <span class="ma-title">模板文件：</span>
@@ -105,7 +114,7 @@
 import HeaderSearch from '@/components/HeaderSearch'
 import TableCommon from '@/components/Common/TableCommon'
 import CommPage from '@/components/CommPage'
-import { getUrlParams, regexFile, baseUrl} from '../../utils/util';
+import { getUrlParams, regexFile} from '../../utils/util';
 export default {
     components:{
         HeaderSearch,
@@ -130,14 +139,15 @@ export default {
             ],
             type:'upload',
             tablekind:[
-                {prop:'no',
-                 label:'序号',
-                 width:'50'
+                {
+                    prop:'no',
+                    label:'序号',
+                    width:'50'
                 },
                 {
                     prop:'name',
                     label:'模板名称',
-                    width:'300'
+                    width:'200'
                 },
                 {
                     prop:'status',
@@ -165,6 +175,7 @@ export default {
                     width:''
                 }
             ],
+            tdicList:[{}],
             tableData:[{} ],
             statusList1:[],
             hasPage:true,
@@ -218,16 +229,16 @@ export default {
                 }
             }
             if(li.length<1){
-                return this.$message('请选中要发布的模板');
+                return this.$message.error('请选中要发布的模板');
             }        
             var param={list:JSON.stringify(li)};
             this.$http.post("/api/template/update/plfb",param).then(res =>{
                   if(res.code=="00000"){
-                      this.$message('批量发布成功！');
+                      this.$message.success('批量发布成功！');
                       //刷新列表数据
                       this.init();
                   }else{
-                      this.$message(res.message);
+                      this.$message.error(res.message);
                   }
             })
         },
@@ -240,39 +251,30 @@ export default {
                 }
             }
             if(li.length<1){
-                return this.$message('请选中要撤销的模板');
+                return this.$message.error('请选中要撤销的模板');
             }        
             var param={list:JSON.stringify(li)};
             this.$http.post("/api/template/update/plcx",param).then(res =>{
                   if(res.code=="00000"){
-                      this.$message('批量撤销成功！');
+                      this.$message.success('批量撤销成功！');
                       //刷新列表数据
                       this.init();
                   }else{
-                      this.$message(res.message);
+                      this.$message.error(res.message);
                   }
             })
             
         },
-        handleChangeEdit(params, disabled){ //点击项目-文件下载，图片直接打开
-            let data = {
-                fileUrl:params.url,
-                fileName:params.spareI
-            }           
-            // let aLink = document.createElement('a');
-            // aLink.target = '_blank'
-            // aLink.href = baseUrl + '/api/system/project/downTemplate?fileUrl=' + params.url + '&fileName=' + params.spareI;
-            // aLink.click();            
+        handleChangeEdit(params, disabled){ //点击项目-文件下载，图片直接打开       
             if(params.spareIi){
                 let spareIi = params.spareIi.substring(1)
-                // console.log(spareIi)
                 if(regexFile.test(spareIi)){
                     window.open(params.url)
                 }else{
                     let aLink = document.createElement('a');
                     aLink.target = '_blank'
                     aLink.href = params.url;
-                    aLink.click();
+                    aLink.click();            
                 }
             }           
         },
@@ -286,12 +288,18 @@ export default {
             var id=params.id;
             this.$http.post("/api/template/update/file",{id:id,isRelease:isRelease}).then(res =>{
                 if(res.code=="00000"){
-                    this.$message('操作成功！');
+                    this.$message.success('操作成功！');
                      this.init();
                 }
             })
         },
         init(){//获取模板列表
+            if(this.statusId==0){
+            this.statusId='';  
+            }
+            if(this.nodeId==0){
+            this.nodeId='';  
+            }
          var param={page:this.page,
                     rows:this.rows,
                     statusId:this.statusId,
@@ -328,14 +336,9 @@ export default {
          })
         },
         handleUpload(params) {//上传模板
-        console.log(params)
             this.fileName=params.fileName;
             this.fileUrl=params.fileUrl;
             this.fileType=params.fileType;
-            // if(!this.val1){
-            //    this.val1=this.fileName;
-            // }
-
         },
         handlePageUp(params){//分页
           this.page=params;
@@ -379,20 +382,27 @@ export default {
             var fileType=this.fileType;
             var param={name:name,nodeId:nodeId,statusId:stateId,isRelease:isRelease,fileUrl:fileUrl,fileName:fileName,fileType:fileType}
             this.$http.post("/api/template/upload/file",param).then(res =>{
-                console.log(res)
                 if(res.code=="00000"){
-                    this.$message('添加成功！');
+                    this.$message.success('添加成功！');
                     this.val1='';
                     this.nodeVal='';
                     this.statusVal='';
                     this.newtemplate = false;
-                    this.isClear=true
+                    this.fileList=[];
+                    this.isClear=true;
                     this.init();
                 }else{
-                      this.$message(res.message);
+                      this.$message.error(res.message);
                 }
             })
 
+        },
+        handleCloseLog(){
+            this.fileList=[];
+            this.nodeVal='';
+            this.statusVal='';
+            this.val1='';
+            this.newtemplate = false;
         },
         getPid(){
           var pid=getUrlParams("pid");       
@@ -435,6 +445,9 @@ export default {
            }
         },
         changeStatus(index){//获取节点
+            this.nodeVal='';
+            this.val1='';
+            this.tdicList=[];
             var list=this.statusList1[index].list;
             var l=[];
             for(var i=0;i<list.length;i++){
@@ -445,6 +458,24 @@ export default {
             }
              this.options9=l;
         },
+        changeNode(index){//获取模板字段
+         this.val1='';
+         var params={nodeId:index};
+         this.$http.post("/api/system/getTemplateDictionaries",params).then(res =>{
+             if(res.code=="00000"){
+                 var datamsg=res.data;
+                 for(var i=0;i<datamsg.length;i++){
+                    var obj={};
+                    obj.label=datamsg[i].name;
+                    obj.value=datamsg[i].id;
+                    this.tdicList.push(obj);
+                 }
+              
+
+             }
+         })
+    
+        },
 
         handleDel(file, fileList) {
             this.fileName="";
@@ -453,14 +484,21 @@ export default {
         },  
         
         handleExc(files, fileList) {
-            this.$message.warning(`如需更换文件请先删除后操作`);
+            this.$message.error(`如需更换文件请先删除后操作`);
         },
 
         // change upload
         handleBefore(file) {
             this.files = file
+            
+            let limitCount = 1024*1024*5
+            if(file.size > limitCount) {
+                this.$message.error(`请选择小于5M的文件`);
+                return false
+            }
+            
             if(this.fileList.length) {
-                this.$message.warning(`如需更换文件请先删除后操作`);
+                this.$message.error(`如需更换文件请先删除后操作`);
                 return false
             }
             
@@ -495,7 +533,7 @@ export default {
                     this.fileList = []
                     this.$message({
                         type:'error',
-                        message:err.message
+                        message:res.message
                     })
                 }
             })
@@ -520,7 +558,7 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
-    padding: 20px;
+    padding: 0px 20px 10px;
     min-height: 100%;
     .el-divider--horizontal{
         margin: 5px 0;

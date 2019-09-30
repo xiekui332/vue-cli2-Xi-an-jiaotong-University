@@ -1,7 +1,7 @@
 <template>
     <div id="demo" v-if="isLook===true" >
 		<div id="nav">
-			<img src="../assets/img/LOGO.png" alt="logo" class="lg-logo">
+			<img src="../assets/img/LOGIN.png" alt="logo" class="lg-logo">
 
 			<div class="lg-container">
 				<p class="lg-title">项目管理平台</p>
@@ -48,6 +48,7 @@ export default {
 		   var code=getUrlParams("code");
 		   var state=getUrlParams("state");
 		  if(islogin){
+			  console.log(1)
 			  this.isLook=true;
 		  }else{
 			var token=getSession("token");
@@ -72,12 +73,15 @@ export default {
 					})
 				}else{
 					this.$http.post("/api/user/redirectUrl").then(res =>{
-						console.log(res)
 						if(res.code=="00000"){
 							window.location.href=res.data;
 						}
 					})
 				}
+			}else{
+				this.$router.push({
+					path:'/stage?pid=c63413dae6034485b7cb6275f78c0091'
+				})
 			}
 		  }
 		},

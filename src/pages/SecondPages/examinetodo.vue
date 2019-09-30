@@ -9,15 +9,15 @@
         </div>
     </div>
     <div v-else class="to-wrapper">
-        <ApproveDetail v-if="hasExcutingDetail" :tableType="tableType" :type='type' :parentRoute='parentRoute' :proInfo='proInfo' :rowInfo='rowInfo' @handleChangeDetail = "handleChangeDetail" />
+        <ApproveDetail v-if="hasExcutingDetail" :approveType="approveType" :tableType="tableType" :type='type' :parentRoute='parentRoute' :proInfo='proInfo' :rowInfo='rowInfo' @handleChangeDetail = "handleChangeDetail" />
         <div id="to-wrapper" v-else>
             <HeaderSearch 
-            :options1='options1'
-            :options3='options3'
-            :options6='options6'
-            :searchTex='searchTex'
-            :type='type'
-            @handleSearchRes = 'handleSearchRes'
+                :options1='options1'
+                :options3='options3'
+                :options6='options6'
+                :searchTex='searchTex'
+                :type='type'
+                @handleSearchRes = 'handleSearchRes'
             />
 
             <el-divider></el-divider>
@@ -96,30 +96,7 @@ export default {
     data() {
         return {
             options1: [],
-            options3: [     // 经费来源
-                // {
-                //     value: '',
-                //     label: '全部'
-                // }, {
-                //     value: '1',
-                //     label: '改善办学条件'
-                // }, {
-                //     value: '2',
-                //     label: '一流大学'
-                // }, {
-                //     value: '3',
-                //     label: '校级专项'
-                // }, {
-                //     value: '4',
-                //     label: '课题经费'
-                // }, {
-                //     value: '5',
-                //     label: '银行投资经费'
-                // }, {
-                //     value: '6',
-                //     label: '其他'
-                // }
-            ],
+            options3: [],
             options6: [
                 {
                     value: '1',
@@ -131,21 +108,7 @@ export default {
                 }
             ],
             searchTex:'',
-            tableData:[
-                {
-                    // num: 'GS2019001',
-                    // name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    // premoney: '28.1万',
-                    // money: '28.1万',
-                    // resource: '改善办学条件',
-                    // men: '文华',
-                    // kind: '货物|软件',
-                    // time: '2019-02-18',
-                    // endtime: '2019-02-18',
-                    // approveTime: '2019-02-18',
-                    // status:'维保|结束申请'
-                }
-            ],
+            tableData:[{}],
             tablekind:[
                 {
                     prop:'index',
@@ -272,6 +235,7 @@ export default {
         },
         
         handleSearchRes(params) {
+            console.log(params)
             this.tableType = params.type
             this.handleReset()
             this.state = params.state
@@ -387,8 +351,8 @@ export default {
                             obj.index = i + 1
                             obj.num = res.rows[i].no
                             obj.name = res.rows[i].name
-                            obj.premoney = res.rows[i].ysje 
-                            obj.money = res.rows[i].zbje
+                            obj.premoney = res.rows[i].ysje?(res.rows[i].ysje).toFixed(2):"0.00"
+                            obj.money = res.rows[i].zbje?(res.rows[i].zbje).toFixed(2):"0.00"
                             obj.status = res.rows[i].stateAndNodeName
                             obj.men = res.rows[i].leaderNames
                             obj.kind = res.rows[i].projectTypeName
@@ -451,13 +415,23 @@ export default {
         font-size: 14px;
         color: #39475B;
         letter-spacing: 0;
-        text-align: center;
+        text-align: left;
+        // text-indent: 1em;
     }
     & /deep/ .el-table .el-table__body-wrapper .cell{
         font-size: 14px;
         color: #8998AC;
         letter-spacing: 0;
-        text-align: center;
+        text-align: left;
+        // text-indent: 1em;
+    }
+    & /deep/ .el-table .el-table__body-wrapper{
+        .project-style{
+            .cell{
+                cursor: pointer;
+                color: #3B7CFF!important;
+            }
+        }
     }
     & /deep/ .project-style .cell{
         cursor: pointer;
@@ -474,7 +448,7 @@ export default {
 #to-wrapper{
     
     border-radius: 4px;
-    padding: 20px;
+    padding: 0px 20px 10px;
     min-height: 100%;
     
     // change font css color

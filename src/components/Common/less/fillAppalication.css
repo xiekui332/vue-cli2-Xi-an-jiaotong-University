@@ -45,9 +45,10 @@
 #fl-wrapper .fl-item .fl-list > div i,
 #fl-wrapper .fl-item .fl-list > span i {
   display: inline-block;
-  width: 20px;
   height: 20px;
   cursor: pointer;
+  font-size: 13px;
+  word-spacing: 1px;
 }
 #fl-wrapper .fl-item .fl-list > div .fl-icon-edit,
 #fl-wrapper .fl-item .fl-list > span .fl-icon-edit {
@@ -56,7 +57,7 @@
 #fl-wrapper .fl-item .fl-list > div .fl-icon-del,
 #fl-wrapper .fl-item .fl-list > span .fl-icon-del {
   background-position: -376px -168px;
-  margin-left: 20px;
+  display: inline-block;
 }
 #fl-wrapper .fl-item .fl-list > div /deep/ .el-input__inner,
 #fl-wrapper .fl-item .fl-list > span /deep/ .el-input__inner {

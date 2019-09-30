@@ -116,6 +116,7 @@
 </template>
 
 <script>
+import { store } from '@/store'
 export default {
     props:[
         'options1',
@@ -212,6 +213,13 @@ export default {
                     obj.fundsSources = this.sel3
                     obj.searchText = this.tex
                 }
+                if(this.type == "situatio") {
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
+                }
 
             }else{
                 if(this.type === 'tracking') {
@@ -246,6 +254,12 @@ export default {
                     obj.projectType = this.sel2
                     obj.fundsSources = this.sel3
                     obj.searchText = this.tex
+                }else if(this.type == "situatio") {
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
                 }
                 
             }
@@ -260,7 +274,7 @@ export default {
             }
               
             else{
-                this.explaceholder = '关键字搜索：负责人、项目编号、项目名称'
+                this.explaceholder = '搜索：负责人、项目编号、项目名称'
             }
         },
         changeStatus(param){//状态改变
@@ -270,6 +284,22 @@ export default {
     },
     mounted() {
         this.handlePlaceholder(this.type)
+        
+    },
+    created() {
+        let typeSearchNum = store.state.status
+        if(typeSearchNum == 1) {
+            this.sel4 = "43623bacc9244afd9abd3365cb6c36c9"
+        }else if(typeSearchNum == 2) {
+            this.sel4 = "9d7cba37176a4252b67be2294a45a87b"
+            
+        }else if(typeSearchNum == 3) {
+            this.sel4 = "aba2a0b30afa49dc918b4be6f5659143"
+            
+        }else if(typeSearchNum == 4) {
+            this.sel4 = "7573afa999d346dcba4696a230c91c39"
+            
+        }
     },
     watch:{
         options3(params){
@@ -304,10 +334,11 @@ export default {
 .de-header{
     display: flex;
     justify-content: flex-start;
-    flex-wrap: wrap;
+    flex-wrap: no-wrap;
+    padding-top: 10px;
 }
 .el-select{
-    width: 98px;
+    min-width: 105px;
     height: 34px;
     background: #FFFFFF;
     margin: 0 15px 0 0; 
@@ -315,6 +346,7 @@ export default {
     border-radius: 4px;
     border-radius: 4px;
     margin-bottom: 20px;
+    flex:1;
     & /deep/ .el-input__inner{
         font-size: 12px;
         color: #8998AC;
@@ -333,9 +365,10 @@ export default {
 }
 
 .de-search-input{
-    width: 360px;
+    flex: 1;
+    min-width: 230px;
     height: 36px;
-    margin-right: 40px;
+    margin-right: 20px;
 }
 & /deep/ .el-input__inner{
     height: 36px;
@@ -349,6 +382,7 @@ export default {
     margin-right: 20px;
 }
 .de-btn-wrapper{
+    flex: 2;
     display: inline-flex;
     justify-content: flex-start;
     margin-bottom: 10px;

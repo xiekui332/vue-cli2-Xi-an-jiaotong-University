@@ -1,4 +1,4 @@
-#fl-wrapper{
+#printFill{
 
     background: #FFFFFF;
     .fl-title{
@@ -143,7 +143,12 @@
                 }
                 .fl-L-radio{
                     margin-left: 50px;
-                    
+                    & /deep/ .el-radio__input{
+                        display: none;
+                    }
+                    & /deep/ span.is-checked+span.el-radio__label{
+                        color: #3B7CFF;
+                    }
                 }
             }
             .fl-L:last-child{

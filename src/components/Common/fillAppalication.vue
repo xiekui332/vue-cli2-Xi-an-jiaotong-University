@@ -1,5 +1,5 @@
 <template>
-    <div id="fl-wrapper">
+    <div id="fl-wrapper" :class="exPrint?'':'fl-wrapper2'">
         <el-dialog
             :class="hasNewClass?'st-dialog-fill st-dialog-new':'st-dialog-fill'"
             :visible.sync='exchangeFill'
@@ -7,17 +7,20 @@
             :close-on-click-modal=false 
             :close-on-press-escape=false
             :width='dialogWid'
+            :modal="exPrint?false:true"
+            @close="handleClose"
+            @opened="handleOpen"
             :top='marTop'
             >
-            <div v-if="fill">
-                <div id="printFill">
+            <div>
+                <div id="printFill" ref="print">
                     <p class="pub-family fl-title">院处采购申请单<span @click="hadlePrint" style="display:none;"> 打印机</span></p>
                     <div class="fl-item fl-item-basic">
                         <p class="pub-family fl-item-basic-title">基本信息</p>
                         <div class="fl-item-basic-block">
                             <div class="fl-L">
                                 <span class="fl-L-title">采购申请编号：</span>
-                                <el-input class="fl-L-input" v-model="baseNum" placeholder="请输入内容"></el-input>
+                                <el-input class="fl-L-input" v-model="baseNum" placeholder="请输入内容" :disabled="hasLook"></el-input>
                             </div>
                             <div class="fl-L">
                                 <span class="fl-L-title">填报日期：</span>
@@ -27,21 +30,22 @@
                                     type="date"
                                     placeholder="选择日期"
                                     value-format="yyyy-MM-dd"
+                                    :disabled="hasLook"
                                     >
                                 </el-date-picker>
                             </div>
                             <div class="fl-L">
                                 <span class="fl-L-title">采购名称：</span>
-                                <el-input class="fl-L-input" v-model="baseName" placeholder="默认项目编码+项目名称"></el-input>
+                                <el-input class="fl-L-input" v-model="baseName" placeholder="默认项目编码+项目名称" :disabled="hasLook"></el-input>
                             </div>
                             <div class="fl-L">
                                 <p class="fl-L-title">
                                     <span>货物安装是否涉及开挖室内地面或改变房屋结构<br/>（修改或增加门窗，增加或拆除墙体等）：</span>
                                     <span>若有，请提供规划与基建管理中心审批意见书</span>
                                 </p>
-                                <div class=" fl-L-radio">
-                                    <el-radio v-model="radio" label="1">是</el-radio>
-                                    <el-radio v-model="radio" label="0">否</el-radio>
+                                <div class=" fl-L-radio" >
+                                    <el-radio v-model="radio" label="1" :disabled="hasLook">是</el-radio>
+                                    <el-radio v-model="radio" label="0" :disabled="hasLook">否</el-radio>
                                 </div>
                                 
                             </div>
@@ -53,7 +57,7 @@
                     <div class="fl-item fl-item-make">   
                         <div class="fl-item-head">
                             <span class="pub-family">采购清单</span>
-                            <el-row>
+                            <el-row v-show="!hasLook">
                                 <el-button type="primary" round @click="handleAddList('make')">添加</el-button>
                             </el-row>
                         </div>
@@ -70,20 +74,20 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" type="number" v-model="i.cgNumber" placeholder="请输入内容" ></el-input>
+                                    <el-input class="fl-L-input" type="number" v-model="i.cgNumber" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.company" placeholder="请输入内容" ></el-input>
+                                    <el-input class="fl-L-input" v-model="i.company" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.planMoney" placeholder="请输入内容" ></el-input>
+                                    <el-input class="fl-L-input" v-model="i.planMoney" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <i class="pub-css fl-icon-edit" @click="handleListEdit('make', ind)"></i>
-                                    <i class="pub-css fl-icon-del" @click="handleListDel('make', i)"></i>
+                                    <!-- <i class="pub-css fl-icon-edit" @click="handleListEdit('make', ind)"></i> -->
+                                    <i class="fl-icon-del" @click="handleListDel('make', i, ind)">删除</i>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +98,7 @@
                     <div class="fl-item fl-item-supllier">
                         <div class="fl-item-head">
                             <span class="pub-family">供应商信息</span>
-                            <el-row>
+                            <el-row v-show="!hasLook">
                                 <el-button type="primary" round @click="handleAddList('supllier')">添加</el-button>
                             </el-row>
                         </div>
@@ -112,23 +116,23 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.address" placeholder="请输入内容" ></el-input>
+                                    <el-input class="fl-L-input" v-model="i.address" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.legalPerson" placeholder="请输入内容"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.legalPerson" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.phone" placeholder="请输入内容"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.phone" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.email" placeholder="请输入内容"></el-input>
+                                    <el-input class="fl-L-input" v-model="i.email" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <i class="pub-css fl-icon-edit" @click="handleListEdit('supllier', ind)"></i>
-                                    <i class="pub-css fl-icon-del" @click="handleListDel('supllier', i)"></i>
+                                    <!-- <i class="pub-css fl-icon-edit" @click="handleListEdit('supllier', ind)"></i> -->
+                                    <i class="fl-icon-del" @click="handleListDel('supllier', i, ind)">删除</i>
                                 </div>
                             </div>
                         </div>
@@ -145,10 +149,11 @@
                             <div class="fl-basis-title">调研情况（免招标项目请填写免招标理由）：</div>
                             <el-input
                                 type="textarea"
-                                :rows="4"
+                                :rows="8"
                                 maxlength="1000字"
                                 :show-word-limit='hasLimit'
                                 placeholder="请输入内容"
+                                :disabled="hasLook"
                                 v-model="txt1">
                             </el-input>
                         </div>
@@ -157,10 +162,11 @@
                             <div class="fl-basis-title">技术指标：</div>
                             <el-input
                                 type="textarea"
-                                :rows="4"
+                                :rows="8"
                                 maxlength="10000字"
                                 :show-word-limit='hasLimit'
                                 placeholder="请输入内容"
+                                :disabled="hasLook"
                                 v-model="txt2">
                             </el-input>
                         </div>
@@ -180,7 +186,7 @@
                             <span class="pub-family">项目负责人意见</span>
                         </div>
                         <p class="fl-check-title">我单位承诺，该采购项目安置地点（货物类）和购置经费均已落实，</p>
-                        <el-checkbox class="fl-check" v-model="checked">同意购置</el-checkbox>
+                        <el-checkbox class="fl-check" v-model="checked"    :disabled="hasLook">同意购置</el-checkbox>
                     </div>
                 </div>
 
@@ -190,15 +196,11 @@
                             <el-button type="primary" round @click="handleDialog('cancel')">取消</el-button>
                         </el-row>
                         <el-row class="fl-btn-save">
-                            <el-button type="primary" round @click="handleDialog('save')">保存</el-button>
+                            <el-button type="primary" round @click="handleDialog('save')" :disabled="hasLook">保存</el-button>
                         </el-row>
                     </div>
                 </div>
             </div>
-
-            <!-- <div v-else>
-                <Success @handleDialog='handleDialog' :hasSuccessStatus='hasSuccessStatus' />
-            </div> -->
             
         </el-dialog>
 
@@ -206,12 +208,14 @@
     </div>
 </template>
 
+
+
 <script>
 import Success from '@/components/Common/Success'
 import { store } from "@/store"
 export default {
     props:[
-        'fillStatus',
+        "fillStatus",
         'hasLoad'
     ],
     components:{
@@ -246,20 +250,23 @@ export default {
             ],
             checked:true,
             hasLimit:true,
-            exchangeFill:this.fillStatus,
+            exchangeFill:false,
             exchangeLoad:this.hasLoad,
-            success:false,
             fill:true,
             dialogWid:"60%",
-            hasClose:false,
+            hasClose:true,
             marTop:'15vh',
             hasNewClass:false,
             hasSuccessStatus:true,
             sessionGet:{},
-            id:""
+            id:"",
+            hasLook:false
         }
     },
     methods:{
+        handleClose(done) {
+            this.$emit('handleFillApplication', 'close')
+        },
         handleAddList(type) {
             if(type === 'make') {
                 let obj = {
@@ -293,9 +300,17 @@ export default {
             }
             
         },
-        handleListDel(type, i) {  
+        handleListDel(type, i, ind) { 
+            // 只读时不能删除
+            if(this.hasLook) {
+                return false
+            } 
             let params = {id:i.id,pid:this.sessionGet.id}             
             if(type === 'make') {
+                if(!i.id) {
+                    this.listArr.splice(ind, 1)
+                    return false
+                }
                 this.$http.post("/api/project/deletedCgqd", params)
                 .then((res) => {
                     if(res.code == "00000") {
@@ -314,6 +329,10 @@ export default {
                     })
                 })
             }else if(type === 'supllier') {
+                if(!i.id) {
+                    this.listArr2.splice(ind, 1)
+                    return false
+                }
                 this.$http.post("/api/project/deletedSupplier", params)
                 .then((res) => {
                     if(res.code == "00000") {
@@ -336,58 +355,49 @@ export default {
         },
         handleDialog(type) {
             if(type === 'cancel') {
-                this.exchangeFill = false
                 this.fill = true
                 this.$emit('handleFillApplication', 'close')
             }else if(type === 'save') {
-                // this.exchangeFill = false
-                // this.fill = false
-                // this.success = true
-                // this.dialogWid = '40%'
-                // this.marTop = '20vh'
-                // this.hasNewClass = true
-
-                // console.log(this.baseDate)
                 let cgList = this.listArr
                 let gysList = this.listArr2
 
                 
                 if(!this.baseNum) {
-                    this.$message.warning("请填写采购申请编号")
+                    this.$message.error("请填写采购申请编号")
                     return false
                 }
                 
                 if(!this.baseDate) {
-                    this.$message.warning("请填写填报日期")
+                    this.$message.error("请填写填报日期")
                     return false
                 }
                 
                 if(!this.baseName) {
-                    this.$message.warning("请填写采购名称")
+                    this.$message.error("请填写采购名称")
                     return false
                 }
 
                 if(!cgList.length) {
-                    this.$message.warning("请先填写采购清单")
+                    this.$message.error("请先填写采购清单")
                     return false
                 }
-                if(!gysList.length) {
-                    this.$message.warning("请先添加推荐供应商")
-                    return false
-                }
+                // if(!gysList.length) {
+                //     this.$message.warning("请先添加推荐供应商")
+                //     return false
+                // }
                 
                 if(!this.txt1) {
-                    this.$message.warning("请填写调研情况")
+                    this.$message.error("请填写调研情况")
                     return false
                 }
                 
                 if(!this.txt2) {
-                    this.$message.warning("请填写技术指标")
+                    this.$message.error("请填写技术指标")
                     return false
                 }
 
                 if(!this.checked) {
-                    this.$message.warning("请先勾选项目负责人意见")
+                    this.$message.error("请先勾选项目负责人意见")
                     return false
                 }
                 
@@ -411,16 +421,12 @@ export default {
                     .then((res) => {
                         if(res.code == "00000") {
                             this.fill = false
-                            this.success = true
-                            this.dialogWid = '40%'
-                            this.marTop = '20vh'
-                            this.hasNewClass = true
-                            this.$emit('hasSubmit', true)
-                            this.exchangeFill = false
+                            // this.$emit('hasSubmit', true)
                             this.$message({
                                 type:'success',
                                 message:res.message
                             })
+                            this.$emit('handleFillApplication', 'close')
                         }else{
                             this.$message({
                                 type:'error',
@@ -438,12 +444,14 @@ export default {
                     this.$http.post("/api/project/addcgsq", params)
                     .then((res) => {
                         if(res.code == "00000") {
-                            this.fill = false
-                            this.success = true
-                            this.dialogWid = '40%'
-                            this.marTop = '20vh'
-                            this.hasNewClass = true
-                            this.$emit('hasSubmit', true)
+                            // this.$emit('hasSubmit', true)
+                            this.$message({
+                                type:'success',
+                                message:res.message
+                            })
+                            this.init();
+                            this.exchangeFill = false
+                            this.$emit('handleFillApplication', 'close')
                         }else{
                             this.$message({
                                 type:'error',
@@ -465,7 +473,8 @@ export default {
             }
         },
         hadlePrint() {
-            window.print()
+            // let el = document.getElementById("printFill")
+            // window.print(el)
         },
 
         handleLoadStatus() {
@@ -481,7 +490,6 @@ export default {
             let params = {
                 pid:this.sessionGet.id
             }
-
             this.$http.post("/api/project/getcgsq", params)
             .then((res) => {
                 if(res.code == "00000") {
@@ -523,19 +531,33 @@ export default {
                     message:err.message
                 })
             })
+        },
+
+        handleOpen() {
+            if(this.exPrint) {
+                this.$print(this.$refs.print)
+            }
+            
         }
     },
     mounted() {
         this.sessionGet = store.state.proInfo
+        
+        this.hasLook=this.sessionGet.spareIi?true:false;
+        // console.log(this.hasLook)
         this.init()
         this.baseName = this.sessionGet.no + this.sessionGet.name
+        
     },
     computed: {
-        timeDefault() {
-            let date = new Date();
-            let s1 = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate());
-            return s1;
+        exProInfo() {
+            return store.state.proInfo
+        },
+        
+        exPrint() {
+            return store.state.isprint
         }
+
     },
     watch:{
         fillStatus(params) {
@@ -544,11 +566,18 @@ export default {
         hasLoad(params) {
             this.exchangeLoad = params
             this.handleLoadStatus(params)
+        },
+        exProInfo(params) {
+            // console.log(params)
+            this.hasLook=params.spareIi?true:false;
         }
     },
     created() {
-        this.baseDate = this.timeDefault
-        // console.log(this.timeDefault)
+        this.$http.get("/api/system/get/systemDate").then(res =>{
+            if(res.code=="00000"){
+                this.baseDate = res.message;
+            }
+        })
     }
 }
 </script>
@@ -562,6 +591,16 @@ export default {
         & /deep/ .el-input__prefix, .el-input__suffix{
             top: -3px;
         }
+        opacity: 0;
+    }
+
+    @media print {
+        @import url('./less/print.less');
+    }
+    .fl-wrapper2{
+        opacity: 1!important;
     }
     
 </style>
+
+

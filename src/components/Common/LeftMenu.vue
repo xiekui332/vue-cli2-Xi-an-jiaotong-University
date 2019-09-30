@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { getUrlParams } from '@/utils/util.js'
 export default {
     props:[
         'navArray'
@@ -58,24 +59,31 @@ export default {
         return {
             count:1,
             menu:[],
-            activeName:1
+            activeName:1,
+            screenWidth:document.body.clientWidth
         }
     },
     methods:{
        
         init() {
-            this.$refs.client.style.height = window.innerHeight - 64 + 'px'
-            this.$refs.container.style.height = window.innerHeight - 104 + 'px'
+            this.$refs.client.style.height = window.innerHeight - 40 + 'px'
+            this.$refs.container.style.height = window.innerHeight - 65 + 'px'
             
         },
 
         handlePush() {
-            // console.log(this.menu)
+            let id = getUrlParams('id')
+            // console.log(id)
             if(this.menu.length) {
-                let path = this.menu[0].children[0].path
-                this.$router.push({
-                    path:path
-                })
+                if(!id) {
+                    let path = this.menu[0].children[0].path
+                    this.$router.push({
+                        path:path
+                    })
+                }else{
+
+                }
+                
             }
         },
 
@@ -86,7 +94,13 @@ export default {
 
     mounted() {
         this.init();
-        
+        // console.log(this.screenWidth)
+        window.onresize = () => {
+            return (() => {
+                window.screenWidth = document.body.clientWidth
+                this.screenWidth = window.screenWidth
+            })()
+        }
         
     },
 
@@ -102,6 +116,20 @@ export default {
             // console.log(params)
             this.menu = params
             this.handlePush();
+        },
+
+        screenWidth(val) {
+            if(!this.timer) {
+                this.screenWidth = val
+                this.timer = true
+                let that = this
+                setTimeout(function(){
+                    // 打印screenWidth变化的值
+                    // console.log(that.screenWidth)
+                    that.timer = false
+                    that.init()
+                },400)
+            }
         }
     },
     directives:{
@@ -129,7 +157,7 @@ export default {
         background-size:440px 391px; 
     }
     .pj-left{
-        min-width: 240px;
+        min-width: 220px;
         background: #ffffff;
         box-shadow: 1px 0 4px 0 rgba(59,124,255,0.10);
         overflow-y: auto;
@@ -232,7 +260,7 @@ export default {
     // 右边部分
     .pj-container{
         flex: 2;
-        padding: 20px;
+        padding: 10px 15px 0;
         background: #f9fafc;
         overflow-y: auto;
     }

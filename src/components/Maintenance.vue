@@ -5,17 +5,17 @@
             <span :class="isChange===true?'ro-title-b':'ro-title-b ro-title-none'">项目编号：</span>
             <div class="ro-item-content">
                 <span class="ro-num" >{{projectNo}}</span>
-                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasLk">是否历史项目</el-checkbox>
+                <el-checkbox class="ro-hasHistory" v-model="checked" @change="checkHistory" :disabled="hasChenge">是否历史项目</el-checkbox>
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目名称：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目名称：</span>
             <div class="ro-item-content">
                 <el-input v-model="name" placeholder="请输入内容" :disabled="hasLk" ></el-input>
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">立项时间：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 立项时间：</span>
             <div class="ro-item-content">
                 <el-date-picker
                     v-model="establishmenTime"
@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">计划周期：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 计划周期：</span>
             <div class="ro-item-content">
                 <el-date-picker
                     v-model="planningTime"
@@ -46,15 +46,15 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目预算：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目预算：</span>
             <div class="ro-item-content">
-                <el-input type="number" placeholder="请输入内容" class="ro-budget" @change="handleSetNum" v-model="budgetNum" :disabled="hasLk" >
+                <el-input type="number" step="0.01" title=" " placeholder="请输入内容" class="ro-budget" @change="handleSetNum" v-model="budgetNum" :disabled="hasLk" >
                     <template slot="append">万元</template>
                 </el-input>
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目类别：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目类别：</span>
             <div class="ro-item-content">
                 <el-select v-model="kind" placeholder="请选择"  @change='handleSel()' :disabled="hasLk" >
                     <el-option
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目类型：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目类型：</span>
             <div class="ro-item-content">
                 <el-select v-model="types" placeholder="请选择"  :disabled="hasLk" >
                     <el-option
@@ -83,7 +83,7 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">经费来源：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 经费来源：</span>
             <div class="ro-item-content">
                 <el-select v-model="moneySource" placeholder="请选择" :disabled="hasDis">
                     <el-option
@@ -97,9 +97,9 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目负责人：</span>
+            <span class="ro-title-b"><i class="hxClass" v-if="isxj==false">* </i> 项目负责人：</span>
             <div class="ro-item-content">
-                <el-select v-model="leading" multiple placeholder="请选择 " :disabled="hasLk" >
+                <el-select v-model="leading" filterable  multiple placeholder="请选择 " :disabled="hasLk" >
                     <el-option
                     v-for="item in opt6"
                     :key="item.value"
@@ -112,7 +112,7 @@
             </div>
         </div>
         <div class="ro-item">
-            <span class="ro-title-b">项目状态：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目状态：</span>
             <div class="ro-item-content">
                 <el-select v-model="proState" placeholder="请选择" :disabled="isxj" @change="handleChangeType">
                     <el-option
@@ -126,7 +126,7 @@
             </div>
         </div>
         <div class="ro-item" :disabled="hasDis">
-            <span class="ro-title-b">项目节点：</span>
+            <span class="ro-title-b"><i class="hxClass">* </i> 项目节点：</span>
             <div class="ro-item-content">
                 <el-select v-model="proNode" placeholder="请选择" :disabled="isxj">
                     <el-option
@@ -144,7 +144,7 @@
             <div class="ro-item-content">
                 <el-input
                     type="textarea"
-                    :rows="2"
+                    :rows="4"
                     placeholder="请输入内容"
                     v-model="textarea"
                     maxlength="200"
@@ -158,10 +158,8 @@
             <div class="ro-item-content">
                 <el-upload
                     class="upload-demo"
-                    :action= nodeUploadUrl
+                    action= ""
                     :on-preview="handlePreview"
-                    :on-remove="handleRemove"
-                    :before-remove="beforeRemove"
                     :before-upload="handleBefore"
                     :http-request="customRequest"
                     multiple
@@ -169,17 +167,29 @@
                     :on-exceed="handleExceed"
                     :file-list="fileList"
                     :disabled="hasLk"
-                    accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                    accept='.doc,.docx,.xls,.xlsx,.pdf,.jpg'
                     >
-                    <el-button size="small" type="primary"  :disabled="hasLk" >支持扩展名：.rar .zip .doc .docx .pdf .jpg...</el-button>
+                    <el-button size="small" type="primary"  :disabled="hasLk" >支持扩展名：.doc、.docx、.xls、.xlsx、.pdf、.jpg...</el-button>
                 </el-upload>
             </div>
         </div>
-        <div class="ro-item" v-if="hasDis">
-            <span class="ro-title-b">已传附件：</span>
-            <div >
-                <div v-for="(item,index) in oldAppdendixList" :key="index">{{item.attachName}}</div>
+        <div class="ro-item ro-file-wrapper" >
+            <span class="ro-title-b"></span>
+            <div>
+                <div class="ro-file-b" v-for="(item,index) in fileMsgList" :key="index + 1">
+                    <i class="pub-css st-icon-file"></i>
+                    <span @click="handleDownLoad(item.fileUrl)">{{item.fileName}}</span>
+                    <i v-if="!hasLk" class="pub-css st-icon-del" @click="handleDelet(item)"></i>
+                </div>
+
+                <div class="ro-file-b" v-for="(item,index) in oldAppdendixList" :key="index">
+                    <i class="pub-css st-icon-file"></i>
+                    <span @click="handleDownLoad(item.attachUrl)">{{item.attachName}}</span>
+                    <i v-if="!hasLk" class="pub-css st-icon-del" @click="handleDelet(item)"></i>
+                </div>
+                
             </div>
+            
         </div>
 
         <div class="ro-btn-wrapper">
@@ -197,7 +207,6 @@
 </template>
 
 <script>
-import { nodeUploadUrl } from '../utils/util.js'
 export default {
     props:[
         'hasDisabled',
@@ -233,14 +242,14 @@ export default {
             hasLk:this.hasLook,
             isChange:false,
             projectId:"",
-            nodeUploadUrl:nodeUploadUrl,
             statusList1:[],
             typeList:[],
             oldAppdendixList:[],
             projectType:'',
             projectCategory:'',
             isxj:false,
-            ismrfz:false
+            ismrfz:false,
+            hasChenge:false
 
         }
     },
@@ -256,6 +265,8 @@ export default {
                    this.proNode='';
                    this.proState='';
                }
+
+              this.$message.success("历史项目无需相关审批，请谨慎操作。")
             }else{//未选中
                if(isnew==true){//新建项目未选中
                    this.proNode='立项申请';
@@ -264,21 +275,11 @@ export default {
                }
             }
         },
-        handleRemove(file, fileList) {
-            for(let i = 0; i < this.fileMsgList.length; i ++) {
-                if(this.fileMsgList[i].fileName == file.name) {
-                    this.fileMsgList.splice(i, 1)
-                }
-            }
-             
-        },
+        
         handlePreview(file) {
         },
         handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-        },
-        beforeRemove(file, fileList) {
-            return this.$confirm(`确定移除 ${ file.name }？`);
+            this.$message.error(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },
         handleCancle() {
             this.name='';
@@ -327,40 +328,40 @@ export default {
                   };
 
                   if(!this.leading || !this.leading.length) {
-                      this.$message.warning("编辑项目时项目负责人不能为空")
+                      this.$message.error("编辑项目时项目负责人不能为空")
                       return
                   }
                 this.$http.post("/api/project/updateProjectMsg",params).then(res =>{
                     if(res.code=="00000"){
-                        this.$message("编辑成功！");
+                        this.$message.success("编辑成功！");
                         this.handleCancle();
                     }else{
-                          this.$message(res.message);
+                          this.$message.error(res.message);
                     }
                 })
           }else{//新建项目
                if(!this.name){
-                   return this.$message("项目名称不能为空");
+                   return this.$message.error("项目名称不能为空");
                }
                if(!this.establishmenTime){
-                   return this.$message("立项时间不能为空");
+                   return this.$message.error("立项时间不能为空");
                }
                var startTime=(this.planningTime)[0];
                var endTime=(this.planningTime)[1];
                if(startTime==null||endTime==null){
-                    return this.$message("计划周期不能为空");
+                    return this.$message.error("计划周期不能为空");
                }
                if(!this.budgetNum){
-                   return this.$message("项目预算不能为空");
+                   return this.$message.error("项目预算不能为空");
                }
                 if(!this.kind){
-                   return this.$message("项目类别不能为空");
+                   return this.$message.error("项目类别不能为空");
                }
                if(!this.types){
-                   return this.$message("项目类型不能为空");
+                   return this.$message.error("项目类型不能为空");
                }
                if(!this.moneySource){
-                   return this.$message("经费来源不能为空");
+                   return this.$message.error("经费来源不能为空");
                }                          
                var isOldProject=0;
                if(this.checked==true){
@@ -368,18 +369,18 @@ export default {
                }
                if(isOldProject==1){
                    if(this.proState==null||this.proState==''){
-                      return this.$message("历史项目的项目状态不能为空");
+                      return this.$message.error("历史项目的项目状态不能为空");
                    }
                    if(this.proNode==null||this.proNode==''){
-                      return this.$message("历史项目的项目节点不能为空");
+                      return this.$message.error("历史项目的项目节点不能为空");
                    }
                    if(this.leading.length<1){
-                      return this.$message("历史项目的项目负责人不能为空");
+                      return this.$message.error("历史项目的项目负责人不能为空");
                    }
                }
                if(this.proState){
                    if(this.proNode==null||this.proNode==''){
-                        return this.$message("项目状态下节点不能为空");
+                        return this.$message.error("项目状态下节点不能为空");
                    }
                }
                if(this.proState=='项目立项'){
@@ -413,10 +414,10 @@ export default {
                             this.moneySource='';
                             this.fileList=[];
                             this.leading='';
-                            this.$message("新建成功！");
+                            this.$message.success("新建成功！");
                             this.handleCancle();
                         }else{
-                            this.$message(res.message);
+                            this.$message.error(res.message);
                         }
                     })
           }
@@ -426,11 +427,14 @@ export default {
             var params={projectId:params}
             this.$http.post("/api/project/getProjectAppendixById",params).then(res =>{
               if(res.code=="00000"){
+
                   var msglsit=res.data;
+                //   console.log(msglsit)
                   this.oldAppdendixList=[];
                   for(var i=0;i<msglsit.length;i++){
                       var msg={};
                       msg.attachName=msglsit[i].attachName;
+                      msg.id=msglsit[i].id;
                        this.oldAppdendixList.push(msg);
                   }
               }
@@ -528,6 +532,11 @@ export default {
 
         handleBefore(file) {
             this.files = file
+            let limitCount = 1024*1024*5
+            if(file.size > limitCount) {
+                this.$message.error(`请选择小于5M的文件`);
+                return false
+            }
         },
 
 
@@ -549,7 +558,6 @@ export default {
                     msg.fileType=res.data.fileType;
                     this.fileMsgList.push(msg);
                 }else{
-                    this.fileList = []
                     this.$message({
                         type:'error',
                         message:res.message
@@ -557,13 +565,53 @@ export default {
                 }
             })
             .catch((err) => {
-                this.fileList = []
                 this.$message({
                     type:'error',
                     message:err.message
                 })
             })
         },
+
+        handleDownLoad(url) {
+            window.open(url)
+        },
+
+        handleDelet(item) {
+            if(item.id) {
+                let params = {
+                    appendixId:item.id
+                }
+                this.$http.post("/api/project/deletedNodeAppendixZxjh", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        // this.$message({
+                        //     type:"success",
+                        //     message:res.message
+                        // })
+                        this.getAppendix(this.projectId);
+                    }else{
+                        this.$message({
+                            type:"error",
+                            message:res.message
+                        })
+                    }
+                })
+                .catch((err) => {
+                    this.$message({
+                        type:"error",
+                        message:err.message
+                    })
+                })
+            }else{
+                for(let i = 0; i < this.fileMsgList.length; i ++) {
+                    if(this.fileMsgList[i].fileName == item.fileName) {
+                        this.fileMsgList.splice(i, 1)
+                    }
+                }
+            }
+            
+        }   
+
     },
     mounted(){
        this.msgDetails= this.changeMsg;
@@ -578,6 +626,7 @@ export default {
             this.hasDis = params
         },
         msgDetails(params){
+            // console.log(params)
             if(params){//编辑
                 this.isxj=true;
                 this.isChange=true;
@@ -600,12 +649,18 @@ export default {
                     var menIds=mens.split(",");
                     this.leading=menIds;
                 }
+                if(this.leading){
+                   if(this.leading.length>0){
+                      this.hasChenge=true;
+                   }
+                }
                 this.proState=params.projectStateName;
                 this.proNode=params.projectNodeName;
                 this.hasDis=true;
                 this.projectId=params.id;
                 this.getAppendix(this.projectId);
                 this.ismrfz=false;
+               
             }else{//新建
                this.isChange=false;
                this.ismrfz=true;
@@ -660,12 +715,15 @@ export default {
 
 #root-wrapper{
     & /deep/ input::placeholder,& /deep/ textarea::placeholder{
-        font-size: 12px!important;
+        font-size: 14px!important;
     }
     & /deep/ input{
-        font-size: 12px;
+        font-size: 14px;
         color: #8998AC;
         letter-spacing: 0;
+    }
+    & /deep/ input::placeholder{
+        font-size: 14px!important;
     }
     display: flex;
     flex-direction:column ;
@@ -695,11 +753,17 @@ export default {
         }
         .ro-item-content{
             line-height: 46px;
-            width: 360px;
+            min-width: 450px;
             display: flex;
             align-items: center;
+            & /deep/ .el-tag{
+                font-size: 14px;
+            }
+            & /deep/ .el-button--primary{
+                font-size: 14px!important;
+            }
             .ro-num{
-                font-size: 12px;
+                font-size: 14px;
                 color: #3B4859;
                 letter-spacing: 0;
                 margin-left: 10px;
@@ -710,15 +774,13 @@ export default {
                 justify-content: flex-end;
                 align-items: center;
                 & /deep/ .el-checkbox__label{
-                    font-size: 12px;
+                    font-size: 14px;
                     color: #3B4859;
                 }
             }
             & /deep/ .el-input__prefix{
-                // text-align: right;
                 width: 25px;
-                // right: 5px;
-                left: 330px;
+                left: 420px;
             }
             & /deep/ .el-input--prefix .el-input__inner{
                 padding-left: 15px;
@@ -748,6 +810,15 @@ export default {
                 letter-spacing: 0;
                 text-align: left;
             }
+            & /deep/ .el-textarea__inner{
+                font-size: 14px;
+                color: #8998AC;
+                letter-spacing: 0;
+            }
+            & /deep/ .el-upload-list{
+                height: 0;
+                overflow: hidden;
+            }
         }
         & /deep/ .el-input__inner::placeholder{
             font-size: 12px;
@@ -759,6 +830,43 @@ export default {
         .el-date-editor.el-input, .el-date-editor.el-input__inner{
             width: 100%;
         }
+        .ro-file-b{
+            line-height: 30px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            text-decoration: underline;
+            color: #3B7CFF;
+            cursor: pointer;
+            .st-icon-file{
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background-position: -375px -314px;
+                margin-right: 10px;
+            }
+            .st-icon-del{
+                margin: 0 10px 0 0;
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background-position: -377px -168px;
+                margin:0 10px;
+                cursor: pointer;
+                opacity: .2;
+                transition: all .3s ease;
+            }
+            .st-icon-del:hover{
+                opacity: 1;
+            }
+            >span{
+                display: inline-block;
+                min-width: 380px;
+            }
+        }
+    }
+    .ro-file-wrapper{
+        
     }
     .ro-btn-wrapper{
         text-align: center;
@@ -784,6 +892,9 @@ export default {
             color: #FFFFFF;
             margin-left: 20px;
         }
+    }
+    .hxClass{
+        color:red;
     }
 }
 </style>

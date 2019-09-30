@@ -2,7 +2,10 @@
     <div id="com-proInfoHead">
         <div class="et-detail">
             <div class="et-left">
-                <p class="et-title">{{exTwoproInfo.name?exTwoproInfo.name:'暂无'}}</p>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content" class="pub-width">{{exTwoproInfo.name?exTwoproInfo.name:'暂无'}}</div>
+                    <p class="et-title">{{exTwoproInfo.name?exTwoproInfo.name:'暂无'}}</p>
+                </el-tooltip>
                 <div class="et-col-wrapper">
                     <div class="et-col-item">
                         <p>
@@ -31,7 +34,10 @@
                         </p>
                         <p>
                             <span>计划周期：</span>
-                            <span>{{exTwoproInfo.startTime?exTwoproInfo.startTime:'暂无'}} ~ {{exTwoproInfo.endTime?exTwoproInfo.endTime:'暂无'}}</span>
+                            <el-tooltip class="item" effect="dark" placement="top-start">
+                                <div slot="content" class="pub-width">{{exTwoproInfo.startTime?exTwoproInfo.startTime:'暂无'}} ~ {{exTwoproInfo.endTime?exTwoproInfo.endTime:'暂无'}}</div>
+                                <span>{{exTwoproInfo.startTime?exTwoproInfo.startTime:'暂无'}} ~ {{exTwoproInfo.endTime?exTwoproInfo.endTime:'暂无'}}</span>
+                            </el-tooltip>
                         </p>
                     </div>
                     <div class="et-col-item">
@@ -45,7 +51,8 @@
                         </p>
                         <p>
                             <span>项目说明：</span>
-                            <el-tooltip class="item" effect="dark" :content="exTwoproInfo.remark?exTwoproInfo.remark:'暂无'" placement="top">
+                            <el-tooltip class="item" effect="dark" placement="top-start">
+                                <div slot="content" class="pub-width">{{exTwoproInfo.remark?exTwoproInfo.remark:'暂无'}}</div>
                                 <span class="com-remark">{{exTwoproInfo.remark?exTwoproInfo.remark:'暂无'}}</span>
                             </el-tooltip>
                         </p>
@@ -53,7 +60,7 @@
                 </div>
             </div>
             <div class="et-right">
-                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</p>
+                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} / {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</p>
                 <p class="et-money-num">¥<span>{{exTwoproInfo.zbje?exTwoproInfo.zbje:'0.00'}}</span>万</p>
                 <p class="et-money-txt">中标金额</p>
             </div>
@@ -106,12 +113,16 @@ export default {
             color: #404040;
             letter-spacing: 1px;
             margin: 30px 0 20px 0px;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .et-col-wrapper{
             display: flex;
             .et-col-item {
-                max-width: 450px;
-                margin-right: 3%;
+                // max-width: 400px;
+                flex: 1;
+                padding-right: 20px;
                 .com-leaderNames{
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -123,6 +134,9 @@ export default {
                     white-space: nowrap;
                     max-width: 200px;
                 }
+            }
+            .et-col-item:nth-child(3){
+                max-width: 380px;
             }
             .et-col-item >p {
                 line-height: 36px;

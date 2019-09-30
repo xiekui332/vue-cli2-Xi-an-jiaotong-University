@@ -4,7 +4,7 @@
         <div class="st-item">
             <div class="st-item-header">
                 <span class="pub-family">信息填写</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" @click="handleAddmenu('info')">添加</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('info')">添加</a>
             </div>
 
             <div class="st-edit-content">
@@ -13,7 +13,7 @@
                     <div><i>*</i> <span>计划付款%</span></div>
                     <div><i>*</i> <span>计划付款金额(万元)</span></div>
                     <div> <span>备注</span></div>
-                    <div> <span>操作</span></div>
+                    <div v-show="!isSituatiostep"> <span>操作</span></div>
                 </div>
 
                 <div class="st-edit-item st-oparate" v-for="(i, ind) in infoArr" :key="ind">
@@ -21,25 +21,23 @@
                         <el-date-picker
                         v-model="i.timeVal"
                         type="date"
-                        placeholder="选择日期"
                         :disabled='i.isEdit'
                         value-format="yyyy-MM-dd"
                         >
                         </el-date-picker>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.percentVal" placeholder="请输入内容" type='number' :disabled='i.isEdit' @change="handlePer(ind)"></el-input>
+                        <el-input v-model="i.percentVal" type='number' title=" " :disabled='i.isEdit'></el-input>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.moneyVal" placeholder="请输入内容" type='number' :disabled='true'></el-input>
+                        <el-input v-model="i.moneyVal" type='number' title=" " :disabled='true'></el-input>
                     </div>
                     <div class="st-oparate-col">
-                        <el-input v-model="i.remarksVal" placeholder="请输入备注(选填)" :disabled='i.isEdit' maxlength='20'></el-input>
+                        <el-input v-model="i.remarksVal" :disabled='i.isEdit' maxlength='20'></el-input>
                     </div>
-                    <div class="st-oparate-col st-oparate-btn">
+                    <div class="st-oparate-col st-oparate-btn" v-show="!isSituatiostep">
                         <i :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleItem('edit', ind)">编辑</i>
                         <i :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleItem('del', ind)">删除</i>
-                        <i :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleItem('mit', ind)">提交</i>
                     </div>
                 </div>
             </div>
@@ -50,7 +48,7 @@
                 <span class="pub-family">模板资料</span>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
@@ -58,7 +56,7 @@
                 <div class="st-edit-item" v-for="(i, ind) in zlList" :key="ind" @click="handleUploadChange('1', ind, i.mb.id)">
                     <div class="st-icon-file-title">
                         <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>
-                        <span class="st-file-title"><i class="st-tips-required">*</i> {{i.mb.name}}</span>
+                        <span class="st-file-title"><i class="st-tips-required" v-if="i.mb.isMust==0" >*</i> {{i.mb.name}}</span>
                     </div>
                     <div class="st-icon-file-name">
 
@@ -80,19 +78,40 @@
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> </p>
+                        <p class="file-name">
+                            <span @click="handleDownHisFile(i)">{{i.zl.length && i.zl[i.zl.length - 1].attachName?i.zl[i.zl.length - 1].attachName:''}}</span> 
+                            <i v-if="i.zl.length && i.zl[i.zl.length - 1].attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.zl[i.zl.length - 1].id)"></i> 
+                        </p>
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div> <span>资料模板</span></div>
+                    <div> <span>上传资料</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in zlList" :key="ind">
+                    <div>{{i.mb.name}}</div>
+                    <div class="allow-down" @click="handleDownLoadSitua(i.zl[0].attachUrl)">{{i.zl.length && i.zl[0].attachName?i.zl[0].attachName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createUserName?i.zl[0].createUserName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createTime?i.zl[0].createTime:""}}</div>
+                </div>
+            </div>
+
         </div>
 
         <div class="st-item st-templates st-others">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('other')">增行</a>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
@@ -121,19 +140,86 @@
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
 
-                        <p class="file-name"><span>{{i.attachName?i.attachName:''}}</span> <i v-if="i.attachName" :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.id)"></i> </p>
+                        <p class="file-name">
+                            <span @click="handleDownHisFile(i, 'qi')">{{i.attachName?i.attachName:''}}</span> 
+                            <i :class="noDrop?'pub-css pub-dis':'pub-css'" @click="handleFileDel(i.id, ind)"></i> 
+                        </p>
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div class="st-qt-name"> <span>资料名称</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in otherArr" :key="ind">
+                    <div class="st-qt-name allow-down" @click="handleDownLoadSitua(i.attachUrl)">{{i.attachName}}</div>
+                    <div>{{i.createUserName}}</div>
+                    <div>{{i.createTime}}</div>
+                </div>
+            </div>
+
         </div>
 
-        <el-row class="st-checkHandle">
+        <el-row class="st-checkHandle" v-if="!noDrop" v-show="!isSituatiostep">
             <el-button type="primary" :loading="loading" :disabled="noDrop" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
                 完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
             </div>
         </el-row>
+
+        <el-dialog
+            class="new-dialog"
+            :visible.sync='isDialogInfo'
+            :close-on-click-modal=false 
+            :close-on-press-escape=false  
+            width="60%"  
+            >
+            <div class="new-info-wrapper">
+                <div class="st-edit-item st-ed-head">
+                    <div><i>*</i> <span>计划付款时间</span></div>
+                    <div><i>*</i> <span>计划付款%</span></div>
+                    <div><i>*</i> <span>计划付款金额(万元)</span></div>
+                    <div> <span>备注</span></div>
+                </div>
+
+                <div class="st-edit-item st-oparate">
+                    <div class="st-oparate-col">
+                        <el-date-picker
+                            v-model="diaTime"
+                            type="date"
+                            placeholder="选择日期"
+                            value-format="yyyy-MM-dd"
+                            >
+                            </el-date-picker>
+                        </div>
+                        <div class="st-oparate-col">
+                            <el-input v-model="disPercentVal" placeholder="请输入内容" type='number' title=" " @change="handlePer(disPercentVal)"></el-input>
+                        </div>
+                        <div class="st-oparate-col">
+                            <el-input v-model="diaMoneyVal" placeholder="系统计算" type='number' title=" " :disabled='true'></el-input>
+                        </div>
+                        <div class="st-oparate-col">
+                            <el-input v-model="diaRemarksVal" placeholder="请输入备注(选填)" maxlength='20'></el-input>
+                        </div>
+                    </div>
+
+                    <div class="fl-btn-wrapper">
+                        <el-row class="fl-btn-cancel">
+                            <el-button type="primary" round @click="handleDialog('cancel')">取消</el-button>
+                        </el-row>
+                        <el-row class="fl-btn-save">
+                            <el-button type="primary" round @click="handleDialog('save')">保存</el-button>
+                        </el-row>
+                    </div>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -146,15 +232,7 @@ export default {
     },
     data() {
         return {
-            infoArr:[
-                {
-                    timeVal:'',
-                    moneyVal:'',
-                    remarksVal:'',
-                    percentVal:'',
-                    isEdit:true
-                }
-            ],
+            infoArr:[],
             otherArr:[],
             fileList:[],
             fileListD:[],
@@ -178,7 +256,25 @@ export default {
             loading:false,
             proNode:4,
             proNodeId:'716aa0fd239a4aa1b9469592122782c9',
-            noDrop:false
+            noDrop:false,
+
+            isDialogInfo:false,
+            diaTime:"",
+            disPercentVal:"",
+            diaMoneyVal:"",
+            diaRemarksVal:"",
+            isAdd:true,
+            diaId:'',
+
+            isSituatiostep:false,
+            situationList:[
+                {
+                   mouldName:"项目管理平台需求说明书V1.1(1)",
+                   fileName:"项目管理平台需求说明书V1.1(1)",
+                   operateMen:"谢奎",
+                   operateTime:"2019-09-23"
+                }
+            ]
         }
     },
 
@@ -188,19 +284,13 @@ export default {
                 return false
             }
             if(type === 'info') {
-                let obj = {}
                 let len = this.infoArr.length
                 if(len > 5){
                     return
                 }
-                obj = {
-                    timeVal:'',
-                    moneyVal:'',
-                    remarksVal:'',
-                    percentVal:'',
-                    isEdit:true
-                }
-                this.infoArr.push(obj)
+                this.handleClearInfo()
+                this.isDialogInfo = true
+                this.isAdd = true
             }else if(type === 'other') {
                 this.otherArr.push({})
             }
@@ -212,7 +302,15 @@ export default {
                 return false
             }
             if(type == "edit") {
-                this.infoArr[ind].isEdit = false
+                // console.log(this.infoArr[ind])
+                this.isAdd = false
+                this.diaId = this.infoArr[ind].id
+                this.diaTime = this.infoArr[ind].timeVal
+                this.disPercentVal = this.infoArr[ind].percentVal
+                this.diaMoneyVal = this.infoArr[ind].moneyVal
+                this.diaRemarksVal = this.infoArr[ind].remarksVal
+
+                this.isDialogInfo = true
             }else if(type == 'del') {
                 // console.log(this.infoArr[ind])
                 let params = {
@@ -315,7 +413,7 @@ export default {
             console.log(file);
         },
         handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
+            this.$message.error(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
         },
         beforeRemove(file, fileList) {
             // return this.$confirm(`确定移除 ${ file.name }？`);
@@ -325,6 +423,7 @@ export default {
             console.log(res);
         },
 
+        // payment details
         getPayMentRecodeList() {
             let params = {
                 projectId:this.sessionGet.id
@@ -337,7 +436,7 @@ export default {
                         for(let i = 0;i < res.data.length; i ++) {
                             let obj = {}
                             obj.timeVal = res.data[i].expectTime
-                            obj.moneyVal = res.data[i].payMoney
+                            obj.moneyVal = (res.data[i].payMoney).toFixed(2)
                             obj.remarksVal = res.data[i].remark
                             obj.percentVal = res.data[i].payRatio
                             obj.id = res.data[i].id
@@ -349,14 +448,7 @@ export default {
                     }
                     
                 }else{
-                    let arr = [{
-                        timeVal:'',
-                        moneyVal:'',
-                        remarksVal:'',
-                        percentVal:'',
-                        isEdit:true
-                    }]
-                    this.infoArr = arr
+                    
                 }
             })
             .catch((err) => {
@@ -367,31 +459,30 @@ export default {
             })
         },
 
+        // modules
         getNodeAppendix() {
-            // console.log(this.sessionGet)
             let params = {
                 pid:this.sessionGet.id,
                 nodeId:store.state.proInfo.projectNode
             }
+
             if(this.sessionGet.status > this.proNode) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
+                store.dispatch('commitChangeIsHistory',true)
+            }else{
+                store.dispatch('commitChangeIsHistory',false)
             }
 
             this.$http.post("/api/project/getNodeAppendix", params)
             .then((res) => {
                 if(res.code == "00000") {
-                    if(res.data && res.data.zlList) {
-                        for(let i = 0; i < res.data.zlList.length; i ++) {
-                            let pop = res.data.zlList[i].mb.spareI.indexOf('.')
-                        }
-                        this.zlList = res.data.zlList
-                        // console.log(this.zlList)
+                    if(res.data && res.data.zlList) {                 
+                        this.zlList = res.data.zlList;
                     }
                     if(res.data && res.data.qtList) {
                         this.qtList = res.data.qtList
                         this.otherArr = res.data.qtList
-                        // console.log(this.otherArr)
                     }
 
                 }else{
@@ -406,14 +497,14 @@ export default {
             })
         },
 
-        handlePer(ind) {
-            let count = Number(this.infoArr[ind].percentVal)
+        handlePer(disPercentVal) {
+            let count = disPercentVal
             let newCount = (count * 0.01)
             if(count > 0 && count%1 === 0) {
-                this.infoArr[ind].moneyVal = (this.sessionGet.ysje * count * 0.01).toFixed(2)
+                this.diaMoneyVal = (this.sessionGet.ysje * count * 0.01).toFixed(2)
             }else{
-                this.infoArr[ind].percentVal = ''
-                this.infoArr[ind].moneyVal = ''
+                this.disPercentVal = ''
+                this.diaMoneyVal = ''
             }
             
             
@@ -428,23 +519,40 @@ export default {
         handleDownLoad(i) {
             // console.log(i.mb.url)
             // let testUrl = "http://timesheet.pactera.com/Log/Unlockapplicationform.xlsx"
-            window.open(i.mb.url)
+            if(i.mb.url){
+               window.open(i.mb.url)
+            }else{
+                this.$message.error(`系统管理员还没有上传此模板`); 
+            }
+            
+        },
+
+        handleDownLoadSitua(url) {
+            window.open(url)
         },
 
         handleBefore(file) {
+            // console.log(file)
+            // 1M＝1024KB=1024*1024B
+            
             this.files = file
             if(this.sessionGet.status > this.proNode) {
                 return false
             }
+            let limitCount = 1024*1024*5
+            if(file.size > limitCount) {
+                this.$message.error(`请选择小于5M的文件`);
+                return false
+            }
             if(this.uploadType == "1") {
                 if(this.zlList[this.uploadNo - 1].zl.length) {
-                    this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
+                    this.$message.error(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
                     return false
                 }
             }else if(this.uploadType == "0") {
 
                 if(this.qtList.length && this.qtList[this.uploadNo - 1].attachName) {
-                    this.$message.warning(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
+                    this.$message.error(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
                     return false
                 }
             }
@@ -479,7 +587,6 @@ export default {
                 formData.append('spareI',"");
             }
             
-            // console.log(formData)
             this.fileList = []
             this.$http.post("/api/project/uploadNodeAppendixLxsq", formData)
             .then((res) => {
@@ -504,8 +611,12 @@ export default {
             })
         },
 
-        handleFileDel(id) {
+        handleFileDel(id, ind) {
             if(this.sessionGet.status > this.proNode) {
+                return false
+            }
+            if(!id) {
+                this.otherArr.splice(ind, 1)
                 return false
             }
             let params = {
@@ -540,6 +651,7 @@ export default {
 
         handleFinishNode() {
             // console.log(this.infoArr)
+
             if(this.sessionGet.status > this.proNode) {
                 return false
             }
@@ -564,6 +676,7 @@ export default {
             this.$http.post("/api/project/closeNodeLxsq", params)
             .then((res) => {
                 if(res.code == "00000") {
+                    store.dispatch('commitChangeUpdate',true)
                     this.$router.push({
                         path:'step2' + store.state.exactPath
                     })
@@ -601,14 +714,130 @@ export default {
                     
                 }
             })
+        },
+
+        handleDialog(type) {
+            if(type == "cancel") {
+                this.isDialogInfo = false
+                this.handleClearInfo()
+            }else if(type == "save") {
+                if(this.isAdd) {
+                    let params = {
+                        pid:this.sessionGet.id,
+                        expectTime:this.diaTime,
+                        remark:this.diaRemarksVal,
+                        ratio:this.disPercentVal
+                    }
+                    if(!this.diaTime) {
+                        this.$message({
+                            type:"info",
+                            message:"请选择计划付款时间"
+                        })
+                        return false
+                    }else if(!this.disPercentVal) {
+                        this.$message({
+                            type:"info",
+                            message:"请输入计划付款百分比"
+                        })
+                        return false
+                    }
+
+                    this.$http.post("/api/project/addPayMentRecode", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.$message({
+                                type:"success",
+                                message:res.message
+                            })
+                            this.getPayMentRecodeList()
+                            this.isDialogInfo = false
+                        }else{
+                            this.$message({
+                                type:"error",
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:"error",
+                            message:err.message
+                        })
+                    })
+                }else{
+                    let params = {
+                        pid:this.sessionGet.id,
+                        id:this.diaId,
+                        expectTime:this.diaTime,
+                        remark:this.diaRemarksVal,
+                        payRatio:this.disPercentVal
+                    }
+                    this.$http.post("/api/project/updatePayMentRecode", params)
+                    .then((res) => {
+                        if(res.code == "00000") {
+                            this.$message({
+                                type:"success",
+                                message:res.message
+                            })
+                            this.getPayMentRecodeList()
+                            this.isDialogInfo = false
+                        }else{
+                            this.$message({
+                                type:"error",
+                                message:res.message
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        this.$message({
+                            type:"error",
+                            message:err.message
+                        })
+                    })
+                }
+            }
+        },
+
+        handleClearInfo() {
+            this.diaTime = ""
+            this.disPercentVal = ""
+            this.diaMoneyVal = ""
+            this.diaRemarksVal = ""
+        },
+
+        handleDownHisFile(i, type) {
+            console.log(i)
+            if(type) {
+                let url = i.attachUrl
+                window.open(url)
+            }else{
+                let url = i.zl[0].attachUrl
+                let name = i.zl[0].attachName
+                window.open(url)
+            }
+            
+
+            // let url = "http://timesheet.pactera.com/Log/Unlockapplicationform.xlsx"
+            // let name = "aa.xlsx"
+
+           
         }
+
     },
 
     mounted() {
         this.sessionGet = store.state.proInfo
-        // console.log(this.sessionGet)
+        
         this.getPayMentRecodeList();
         this.getProjectMsgById(this.sessionGet.id)
+
+        // resource == situatiostep
+        if(this.$route.name.indexOf("situatiostep") < 0) {
+            this.isSituatiostep = false
+        }else{
+            this.isSituatiostep = true
+        }
+        // console.log(this.isSituatiostep)
         
     },
 
@@ -824,6 +1053,7 @@ export default {
                     width: 100%;
                     display: flex;
                     justify-content: space-between;
+                    cursor: pointer;;
                     i{
                         margin: 0 10px 0 0;
                         display: inline-block;
@@ -840,8 +1070,56 @@ export default {
                     i{
                         opacity: 1;
                     }
+                    color: #3B7CFF;
                 }
             }
+        }
+
+        // resource == situation
+        .st-edit-content-situation{
+            .st-edit-item{
+                line-height: 50px;
+            }
+            .st-ed-head > div:nth-child(1){
+                text-indent: 0;
+            }
+            .st-ed-head > div{
+                padding-left: 10px;
+            }
+            .st-ed-head > div:nth-child(1){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(2){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(4){
+                min-width: 200px;
+            }
+            .st-ed-List{
+                >div{
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    padding-left: 10px;
+                }
+                >div:nth-child(1){
+                    min-width: 200px;
+                }
+                >div:nth-child(2){
+                    min-width: 200px;
+                }
+                >div:nth-child(4){
+                    min-width: 200px;
+                }
+            }
+            .st-qt-name{
+                min-width: 350px!important;
+            }
+            .allow-down{
+                cursor: pointer;
+                color: #3B7CFF;
+            }
+            
         }
     }
     .st-others{
@@ -877,6 +1155,120 @@ export default {
     }
     .pub-dis:hover{
         color: #39475B!important;
+    }
+
+    // new scheduled payment
+    .new-info-wrapper{
+        .st-ed-head{
+            display: flex;
+            background: #F8F9FB;
+            margin-top: 20px;
+            height: 50px;
+            overflow: hidden;
+            >div{
+                flex: 1;
+                line-height: 50px;
+                text-align: center;
+                span{
+                    font-size: 14px;
+                    color: #39475B;
+                }
+                i{
+                    color: #FE5959;
+                    font-size: 18px;
+                    display: inline-block;
+                    height: 20px;
+                }
+            }
+        }
+        .st-edit-item:nth-child(odd){
+            background: #F8F9FB;
+            & /deep/ .el-input__inner{
+                background: #F8F9FB;
+            }
+        }
+        .st-edit-item:nth-child(even){
+            background: #FCFDFF;
+            & /deep/ .el-input__inner{
+                background: #FCFDFF;
+            }
+        }
+        .st-oparate{
+            height: 50px;
+            display: flex;
+            align-items: center;
+            .st-oparate-col{
+                flex: 1;
+                & /deep/ .el-date-editor .el-input__inner,.el-date-editor.el-input{
+                    width: 100%;
+                }
+                & /deep/ input{
+                    text-align: center;
+                    border: none;
+                    padding: 0;
+                }
+                & /deep/ input[type=number]::-webkit-inner-spin-button,
+                & /deep/ input[type=number]::-webkit-outer-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+                .st-icon-edit{
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    background-position: -377px -91px;
+                    cursor: pointer;
+                }
+                .st-icon-del{
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    background-position: -377px -168px;
+                    margin:0 10px;
+                    cursor: pointer;
+                }
+                & /deep/ .el-input__prefix{
+                    display: none;
+                }
+                
+            }
+            .st-oparate-btn{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                i{
+                    font-size: 13px;
+                    color: #39475B;
+                    cursor: pointer;
+                }
+                i:hover{
+                    color:#3B7CFF;
+                }
+                i:nth-child(2) {
+                    margin:0 10px;
+                }
+            }
+        }
+        .fl-btn-wrapper{
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            .el-button{
+                font-size: 14px;
+                padding: 10px 25px;
+            }
+            .fl-btn-cancel button{
+                color: #8392A7;
+                background: #F9FAFC;
+                border: 1px solid #AEB9CA;
+            }
+            .fl-btn-save button{
+                color: #FFFFFF;
+                background: #3B7CFF;
+                margin-left: 20px;
+            }
+        } 
     }
 }
 </style>

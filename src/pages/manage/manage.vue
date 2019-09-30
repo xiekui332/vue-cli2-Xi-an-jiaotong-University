@@ -1,45 +1,45 @@
 <template>
     <div class="ag-wrapper">
         <div id="stage" ref="stage">
-            <div class="ag-item">
+            <div class="ag-item" @click="handleSee(1)">
                 <img class="pro-img" src="../../assets/img/lixiang.png" alt="图片">
                 <div class="pro-count">
-                    <p class="text-color1">{{lists.lxCount?lists.lxCount:"--"}}</p>
+                    <p class="text-color1">{{lists.lxCount?lists.lxCount:"0"}}</p>
                     <p class="pub-family">立项阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee(1)">查看</a>
+                <a href="javascript:;">查看</a>
             </div>
-            <div class="ag-item">
+            <div class="ag-item" @click="handleSee(2)">
                 <img class="pro-img" src="../../assets/img/caigou.png" alt="图片">
                 <div class="pro-count">
-                    <p class="text-color2">{{lists.cgCount?lists.cgCount:"--"}}</p>
+                    <p class="text-color2">{{lists.cgCount?lists.cgCount:"0"}}</p>
                     <p class="pub-family">采购阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee(2)">查看</a>
+                <a href="javascript:;">查看</a>
             </div>
-            <div class="ag-item">
+            <div class="ag-item" @click="handleSee(3)">
                 <img class="pro-img" src="../../assets/img/yanshou.png" alt="图片">
                 <div class="pro-count">
-                    <p class="text-color3">{{lists.ysCount?lists.ysCount:"--"}}</p>
+                    <p class="text-color3">{{lists.ysCount?lists.ysCount:"0"}}</p>
                     <p class="pub-family">验收阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee(3)">查看</a>
+                <a href="javascript:;">查看</a>
             </div>
-            <div class="ag-item">
+            <div class="ag-item" @click="handleSee(4)">
                 <img class="pro-img" src="../../assets/img/weibao.png" alt="图片">
                 <div class="pro-count">
-                    <p class="text-color4">{{lists.wbCount?lists.wbCount:"--"}}</p>
+                    <p class="text-color4">{{lists.wbCount?lists.wbCount:"0"}}</p>
                     <p class="pub-family">维保阶段</p>
                 </div>
-                <a href="javascript:;" @click="handleSee(4)">查看</a>
+                <a href="javascript:;">查看</a>
             </div>
-            <div class="ag-item">
+            <div class="ag-item" @click="handleSee(5)">
                 <img class="pro-img" src="../../assets/img/daishenpi.png" alt="图片">
                 <div class="pro-count">
-                    <p class="text-color5">{{lists.dspCount?lists.dspCount:"--"}}</p>
+                    <p class="text-color5">{{lists.dspCount?lists.dspCount:"0"}}</p>
                     <p class="pub-family">待审批</p>
                 </div>
-                <a href="javascript:;" @click="handleSee(5)">查看</a>
+                <a href="javascript:;">查看</a>
             </div>
         </div>
         <el-row class="ag-badge">
@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import { store } from '@/store'
 export default {
     data() {
         return {
@@ -97,8 +98,10 @@ export default {
                 })
             }else{
                 this.$router.push({
-                    path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00"
+                    path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00&id=f2ed28e9b1f9426eb65ebd5a81e841a4"
                 })
+                store.dispatch('commitChangeExcutStatus',type)
+                
             }
             
         },
@@ -150,7 +153,7 @@ export default {
     justify-content: flex-center;
     align-content:space-between;
     flex-wrap: wrap;
-    padding: 100px 0px;
+    padding: 100px 0px 0;
     width: 1200px;
     margin: 0 auto;
 }
@@ -164,6 +167,7 @@ export default {
     margin: 0 .3rem 60px;
     overflow: hidden;
     position: relative;
+    cursor: pointer;
     // &:nth-child(3n+1){
     //     margin-left: 0;
     // }

@@ -21,7 +21,7 @@
                 <el-table-column
                     type="index"
                     label="序号"
-                    width="55">
+                    min-width="50">
                 </el-table-column>
 
                 <el-table-column 
@@ -29,7 +29,7 @@
                     :key="ind"
                     :prop="i.prop"
                     :label="i.label"
-                    :width="i.width"
+                    :min-width="i.width"
                     show-overflow-tooltip>
                 </el-table-column>
                 
@@ -100,12 +100,12 @@ export default {
                 {
                     prop:'num',
                     label:'项目编号',
-                    width:'120'
+                    width:'100'
                 },
                 {
                     prop:'name',
                     label:'项目',
-                    width:'300'
+                    width:'250'
                 },
                 {
                     prop:'money',
@@ -115,7 +115,7 @@ export default {
                 {
                     prop:'endtime',
                     label:'维保结束日期',
-                    width:''
+                    width:'100'
                 },
                 {
                     prop:'status',
@@ -169,7 +169,7 @@ export default {
 <style lang="less" scoped>
 #tracking{
     background: #ffffff;
-    padding: 20px;
+    padding: 0px 20px 0;
     height: 100%;
     .tr-wrapper{
         .el-divider--horizontal{

@@ -7,7 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
 import axios from './utils/axios.js'
 import { store } from './store'
-import Print from 'vue-print-nb'
+// import Print from 'vue-print-nb'
+import Print from "@/plugs/print"
 import 'babel-polyfill';
 import './assets/less/base.less'
 

@@ -55,20 +55,20 @@ export default {
             // console.log(file, fileList);
             // console.log(file.size);
             if(file.size > 5242880) {
-                this.$message.warning('请选择5M以下的文件上传')
+                this.$message.error('请选择5M以下的文件上传')
                 return false
             }
         },
 
         handleExceed(files, fileList) {
-            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            this.$message.error(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
         },
         handleSuccess(res,file,fileList){
            if(res.code=="00000"){
               this.uploadParams=res.data;
            }else{
                this.fileListL=[];
-               this.$message(res.message);
+               this.$message.error(res.message);
            }
         }
 

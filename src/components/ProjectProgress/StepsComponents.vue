@@ -1,7 +1,7 @@
 <template>
     <div id="st-wrapper">
         <div class="st-btn pub-family">
-            <p v-if="sessionGet.status == 1"> <img src="../../assets/img/icon-trans.png" alt="">阶段完成</p>
+            <p v-if="exTwoproInfo"> <img src="../../assets/img/icon-trans.png" alt="">阶段完成</p>
             <p v-else> <img src="../../assets/img/icon-trans.png" alt="">阶段进行中</p>
             <el-row>
                 <el-button type="primary" round @click="handleLookSteps">审批进度</el-button>
@@ -13,63 +13,40 @@
             
 
             <!-- 立项申请 S -->
-            <StepsApplication v-if="currentstep === 'excutingstep1' || currentstep === 'allstep1'" />
+            <StepsApplication v-if="currentstep === 'excutingstep1' || currentstep === 'allstep1' || currentstep === 'situatiostep1'" />
 
             <!-- 立项论证 S -->
-            <Demonstration v-if="currentstep === 'excutingstep2' || currentstep === 'allstep2'" />
+            <Demonstration v-if="currentstep === 'excutingstep2' || currentstep === 'allstep2' || currentstep === 'situatiostep2'" />
 
             <!-- 项目采购--需求论证 -->
-            <Demand v-if="currentstep === 'excutingstep3' || currentstep === 'allstep3'" />
+            <Demand v-if="currentstep === 'excutingstep3' || currentstep === 'allstep3' || currentstep === 'situatiostep3'" />
 
             <!-- 项目采购--采购申请 -->
-            <Requisition v-if="currentstep === 'excutingstep4' || currentstep === 'allstep4'" />
+            <Requisition v-if="currentstep === 'excutingstep4' || currentstep === 'allstep4' || currentstep === 'situatiostep4'" />
             
             <!-- 项目采购--采购会 -->
-            <Sourcing v-if="currentstep === 'excutingstep5' || currentstep === 'allstep5'" />
+            <Sourcing v-if="currentstep === 'excutingstep5' || currentstep === 'allstep5' || currentstep === 'situatiostep5'" />
 
             <!-- 项目采购--合同签订 -->
-            <Sign v-if="currentstep === 'excutingstep6' || currentstep === 'allstep6'" />
+            <Sign v-if="currentstep === 'excutingstep6' || currentstep === 'allstep6' || currentstep === 'situatiostep6'" />
 
             <!-- 项目执行--执行资料 -->
-            <Implementation v-if="currentstep === 'excutingstep7' || currentstep === 'allstep7'" />
+            <Implementation v-if="currentstep === 'excutingstep7' || currentstep === 'allstep7' || currentstep === 'situatiostep7'" />
 
             <!-- 验收-验收申请 -->
-            <Acceptance v-if="currentstep === 'excutingstep8' || currentstep === 'allstep8'" />
+            <Acceptance v-if="currentstep === 'excutingstep8' || currentstep === 'allstep8' || currentstep === 'situatiostep8'" />
 
             <!-- 验收-预验收 -->
-            <Preacceptance v-if="currentstep === 'excutingstep9' || currentstep === 'allstep9'" />
+            <Preacceptance v-if="currentstep === 'excutingstep9' || currentstep === 'allstep9' || currentstep === 'situatiostep9'" />
 
             <!-- 验收-验收复核 -->
-            <Acceptancereview v-if="currentstep === 'excutingstep10' || currentstep === 'allstep10'" />
+            <Acceptancereview v-if="currentstep === 'excutingstep10' || currentstep === 'allstep10' || currentstep === 'situatiostep10'" />
 
             <!-- 维保-结束申请 -->
-            <Closeapplication v-if="currentstep === 'excutingstep11' || currentstep === 'allstep11'" />
+            <Closeapplication v-if="currentstep === 'excutingstep11' || currentstep === 'allstep11' || currentstep === 'situatiostep11'" />
 
             <!-- 维保-技术指标验收 -->
-            <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'allstep12'" />
-
-
-
-            <!-- <el-row class="st-checkHandle" v-if="currentstep === 'excutingstep4'">
-                <el-button type="primary" :loading="loading" @click="handleFinishNode()">提交审核</el-button>
-            </el-row> -->
-
-            <!-- <el-row class="st-checkHandle" v-else-if="currentstep === 'excutingstep12'">
-                <el-button type="primary" :loading="loading" @click="handleFinishNode()">项目结题</el-button>
-                <div class="st-checkHandle-tips">
-                    <i class="el-icon-info"></i>
-                    结题后项目完结，不能编辑、上传资料。
-                </div>
-            </el-row> -->
-
-            <!-- <el-row class="st-checkHandle" v-else>
-                <el-button type="primary" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
-                <div class="st-checkHandle-tips">
-                    <i class="el-icon-info"></i>
-                    完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
-                </div>
-            </el-row> -->
-            
+            <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'allstep12' || currentstep === 'situatiostep12'" />
 
             
         </div>
@@ -77,7 +54,7 @@
         <el-dialog
             class="st-dialog"
             :visible.sync="dialogVisible"
-            :show-close=false
+            :show-close=true
             width="60%"
             >
             <p class="st-steps-title pub-family">阶段进行中</p>
@@ -89,11 +66,15 @@
                 process-status='wait'
             
             >
-                <el-step  v-for="(i, ind) in hasNodeInfo" :key="ind" :title="i.userName?i.userName:'' + ' ' + i.time?i.time:''" :description="i.state?i.state:''"></el-step>
+                <el-step  v-for="(i, ind) in hasNodeInfo" :key="ind" :title="i.userName?i.userName:''" :description="i.state?i.state:''"></el-step>
             </el-steps>  
             <div class="st-steps-name st-steps-bot-name">
+                <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.time?i.time:''}}</p>
+            </div>
+            <div class="st-steps-name st-steps-bot-name st-change-height">
                 <p :class="ind + 1 <= steps?'st-black':''" v-for="(i, ind) in hasNodeInfo" :key="ind">{{i.remark?i.remark:''}}</p>
             </div> 
+                
         </el-dialog>
     </div>
 
@@ -159,7 +140,7 @@ export default {
     },
     mounted() {
         this.sessionGet = store.state.proInfo
-        // console.log(this.sessionGet)
+        // console.log(this.currentstep)
     },
     created() {
         
@@ -186,70 +167,55 @@ export default {
         },
 
         handleHasNode(){
-            // console.log(this.sessionGet)
             let params = {
                 id:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
             this.$http.post('/api/project/getExamineList', params)
             .then((res) => {
-                // res = {
-                //     "code": "00000",
-                //     "data": [
-                //         {
-                //             "spName":"主管部门",//审批名称
-                //             "time":"2019-01-12",//时间
-                //             "remark": '小菜审批',
-                //             "state": 1,//状态0：待审核，1：审核通过；2：审核被驳回，3：重新提交待审核
-                //             "userName": "谢奎" //审核人姓名
-                //         },
-                //         {   
-                //             "spName":"主管部门",
-                //             "time":"2019-01-12",
-                //             "remark": '小菜审批',
-                //             "state": 1,
-                //             "userName": "谢奎" 
-                //         },
-                //         {
-                //             "spName":"主管部门",
-                //             "time":"2019-01-12",
-                //             "remark": '小菜审批',
-                //             "state": 2,
-                //             "userName": "谢奎" 
-                //         },
-                //         {
-                //             "spName":"主管部门"
-                //         },
-                //         {
-                //             "spName":"主管部门"
-                //         }
-                //     ],
-                //     "message": "操作成功"
-                // }
+                //   console.log(res)
                 if(res.code == '00000'){
                     this.hasNode = true
+                  
                     if(res.data && res.data.length) {
                         for(let i = 0; i < res.data.length; i ++) {
                             if(res.data[i].state == 0) {
                                 res.data[i].state = '待审核'
                             }else if(res.data[i].state == 1) {
-                                res.data[i].state = '审核通过'
+                                if(i==0){
+                                   res.data[i].state = ''
+                                }else{
+                                   res.data[i].state = '审核通过'
+                                }
+                               
                                 this.steps = i + 1
                             }else if(res.data[i].state == 2) {
                                 res.data[i].state = '审核被驳回'
                             }else if(res.data[i].state == 3) {
                                 res.data[i].state = '重新提交待审核'
                             }
+
+                            res.data[i].remark?res.data[i].remark:""
+                            res.data[i].spName?res.data[i].spName:""
+                            res.data[i].time?res.data[i].time:""
+                            res.data[i].userName?res.data[i].userName:""
                         }
                     }
                     
                     this.hasNodeInfo = res.data
                     this.dialogVisible = true
 
+                    
+
                 }else{
                     this.hasNode = false
                     this.dialogVisible = false
-                    this.$message.info('本节点无审批流程')
+                    if(res.message){
+                       this.$message.error(res.message)
+                    }else{
+                       this.$message.error('本节点无审批流程')
+                    }
+               
                     
                 }
             })
@@ -286,6 +252,13 @@ export default {
         "$route.name"(newname, oldname){
             this.currentstep = newname
             // console.log(this.currentstep)
+        }
+    },
+
+    computed:{
+        exTwoproInfo() {
+            // console.log(store.state.isHistory)
+            return store.state.isHistory
         }
     }
 }
@@ -333,13 +306,16 @@ export default {
     // change marginTop
     .st-dialog{
         & /deep/ .el-step__description{
-            margin-top:0; 
+            margin-top:0px; 
         }
     }
     
 
     .st-steps-bot-name p{
         font-size: 12px!important;
+    }
+    .st-change-height{
+        margin-top: -5px;
     }
 
 

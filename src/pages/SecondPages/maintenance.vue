@@ -28,8 +28,21 @@
                     <el-button type="primary" round @click="handleAssign">指定负责人</el-button>
                 </el-row>
 
-                <el-row class="de-btn de-reset-btn">
-                    <el-button type="primary" round @click="handleExcel">Excel批量导入</el-button>
+                <el-row class="de-btn de-reset-btn de-import">
+                    <el-button type="primary" round @click="handleExcel">
+                        Excel批量导入
+                    </el-button>
+                    <el-upload
+                        class="upload-demo"
+                        action= ""
+                        :before-upload="handleBefore"
+                        :http-request="customRequest"
+                        :limit="1"
+                        :file-list="fileList"
+                        accept='.doc,.docx,.xls,.xlsx'
+                        >
+                        <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
+                    </el-upload>
                 </el-row>
             </div>
             <el-checkbox class="de-show-none" v-model="checked" @change="checkSpecified">显示未指定负责人的项目</el-checkbox>
@@ -40,13 +53,13 @@
         <CommPage :hasPage='hasPage' :total="total"  @handlePageUp='handlePageUp' @handlePageRows='handlePageRows'/>
 
         <el-dialog
-        :class="'ma-dialog'"
-        :visible.sync='exchangeMan'
-        :show-close='hasClose'
-        :close-on-click-modal=true 
-        :close-on-press-escape=true
-        title='指定负责人'
-        >
+            :class="'ma-dialog'"
+            :visible.sync='exchangeMan'
+            :show-close='hasClose'
+            :close-on-click-modal=true 
+            :close-on-press-escape=true
+            title='指定负责人'
+            >
         <el-divider></el-divider>
         <div class="ma-dia-content">
             <div>
@@ -59,7 +72,7 @@
             </div>
             <div>
                 <span><i>*</i> 项目负责人:</span>
-                <el-select v-model="manVal" placeholder="请选择" multiple class="ma-dia-sel" filterable remote reserve-keyword :remote-method="(queryString)=>{remoteMethod(queryString,leadMan); }">
+                <el-select v-model="manVal" filterable placeholder="请选择" multiple class="ma-dia-sel" >
                     <el-option
                     v-for="item in leadMan"
                     :key="item.value"
@@ -117,7 +130,7 @@ export default {
                  {
                     prop:'RNUM',
                     label:'序号',
-                    width:'80'
+                    width:'50'
                 },
                 {
                     prop:'num',
@@ -127,22 +140,22 @@ export default {
                 {
                     prop:'name',
                     label:'项目名称',
-                    width:'280'
+                    width:'160'
                 },
                 {
                     prop:'money',
-                    label:'预算金额',
+                    label:'预算金额(万)',
                     width:'100'
                 },
                 {
                     prop:'resource',
                     label:'经费来源',
-                    width:'100'
+                    width:'120'
                 },
                 {
                     prop:'men',
                     label:'负责人',
-                    width:'200'
+                    width:'150'
                 },
                 {
                     prop:'kind',
@@ -170,7 +183,9 @@ export default {
             projectName:'',
             type:"first",
             changeMsg:{},
-            hasLook:false
+            hasLook:false,
+            fileList:[],
+            files:{}
 
         }
     },
@@ -187,30 +202,6 @@ export default {
                 this.init();
             }
              
-        },
-        remoteMethod(queryString,lists){
-            var newList=[];
-            for(var i=0;i<lists.length;i++){
-               if(lists[i].label.indexOf(queryString)!=-1){
-                 newList.push(lists[i]);
-               }   
-            }
-            var newList2=[];
-            var thimanval=this.manVal;
-            if(thimanval.length>0){
-                for(var i=0;i<thimanval.length;i++){
-                  if(newList.length>0){
-                      for(var j=0;j<newList.length;j++){
-                          if(newList[j].value.indexOf(thimanval[i])==-1){
-                             newList2.push(newList[j]);
-                          }
-                      }
-                  }
-                }
-                this.leadMan=newList2;
-            }else{
-               this.leadMan=newList; 
-            }
         },
         init(){
             var projectType=this.projectType;
@@ -232,7 +223,7 @@ export default {
                         obj.RNUM=datalsit[i].RNUM;
                         obj.num=datalsit[i].no;
                         obj.name=datalsit[i].name;
-                        obj.money=datalsit[i].ysje;
+                        obj.money=(datalsit[i].ysje).toFixed(2);
                         obj.resource=datalsit[i].sourcesFundName;
                         obj.men=datalsit[i].leaderNames;
                         obj.menId=datalsit[i].leaderId;
@@ -290,7 +281,7 @@ export default {
 
         handleAssign() {
             if(this.selectRows.length!=1){
-              this.$message("请选择一行进行指定");
+              this.$message.error("请选择一行进行指定");
             }else{               
                 var rowmsg=this.selectRows;
                 var menids=rowmsg[0].menId;
@@ -319,12 +310,12 @@ export default {
                             this.init();
                             this.exchangeMan = false
                         }else{
-                            this.$message(res.message);
+                            this.$message.error(res.message);
                         }
                     })
                    
                 }else{
-                    this.$message("请选中指定的负责人");
+                    this.$message.error("请选中指定的负责人");
                 }
             }
         },
@@ -402,6 +393,51 @@ export default {
 
         handleExcel() {
             
+        },
+
+        // berfore upload
+        handleBefore(file) {
+            console.log("???")
+            this.files = file
+
+            let limitCount = 1024*1024*5
+            if(file.size > limitCount) {
+                this.$message.error(`请选择小于5M的文件`);
+                return false
+            }
+        },
+
+        // upload
+        customRequest() {
+            console.log("****")
+            const formData = new FormData();
+            formData.append('files',this.files);
+
+            this.$http.post("/api/project/exceltosql", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:res.message
+                    })
+
+                    this.init()
+                    this.files = {}
+                    this.fileList=[];
+                    
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
         }
 
         
@@ -426,7 +462,7 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
-    padding: 20px;
+    padding: 0px 20px 10px;
     min-height: 100%;
     .pub-css{
         background: url('../../assets/img/css_sprites.png');
@@ -473,6 +509,21 @@ export default {
             }
         }
         
+        .de-import{
+            position: relative;
+            & /deep/ .upload-demo{
+                position: absolute;
+                opacity: 0;
+                top: 20px;
+                left: 0;
+                width: 100%;
+                height: 36px;
+                overflow: hidden;
+                .el-upload{
+                    width: 100%;
+                }
+            }
+        }
     }
     
     .ma-dialog{
@@ -529,6 +580,10 @@ export default {
                     font-size: 14px;
                     color: #FFFFFF;
                 }
+
+                
+                
+
             }
         }
     }

@@ -2,7 +2,9 @@
     <div id="manage">
         <div class="ma-header">
             <div class="ma-logo-box">
-                <div class="pub-css ma-logo"></div>
+                <div class="ma-logo">
+                    <img src="../assets/img/logo.png" alt="">
+                </div>
                 <p class="ma-title">项目管理</p>
                 <div class="ma-header-navs">
                     <ul class="ma-header-ul">
@@ -29,11 +31,11 @@
             </div>
             
             <div class="ma-info">
-                <el-dropdown @command='handleCommand'>
+                <el-dropdown @command='handleCommand' trigger="click" >
                     <span class="el-dropdown-link">
                         {{user}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
-                    <el-dropdown-menu slot="dropdown" >
+                    <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item command="handlelogout">退出系统</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -110,7 +112,8 @@ export default {
     }
     height: 100%;
     .ma-header{
-        height: 64px;
+        // height: 64px;
+        height: 40px;
         background: #004E97;
         position: relative;
         .ma-logo-box{
@@ -118,13 +121,17 @@ export default {
             align-items: center;
             height: 100%;
             .ma-logo{
-                width: 40px;
-                height: 40px;
-                background-position: -316px -10px;
+                width: 30px;
+                height: 30px;
                 margin: 0 10px 0 43px;
+                img{
+                    width: 100%;
+                    height: 100%;
+                }
             }
             .ma-title{
-                line-height: 64px;
+                // line-height: 64px;
+                line-height: 40px;
                 font-size: 14px;
                 color: #FFFFFF;
                 letter-spacing: 0;
@@ -184,7 +191,8 @@ export default {
                         font-size: 14px;
                         color: rgb(176, 192, 224);
                         letter-spacing: 0;
-                        line-height: 64px;
+                        // line-height: 64px;
+                        line-height: 40px;
                     }
                 }
                 
@@ -213,7 +221,8 @@ export default {
             .el-dropdown span{
                 display: inline-block;
                 height: 100%;
-                line-height: 64px;
+                // line-height: 64px;
+                line-height: 40px;
                 font-size: 14px;
                 color: #FFFFFF;
                 letter-spacing: 0;
@@ -221,4 +230,6 @@ export default {
         }
     }
 }
+
+
 </style>

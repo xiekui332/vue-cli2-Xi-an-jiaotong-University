@@ -7,9 +7,9 @@
                 </div>
                 <div class="et-c">
                     <p>
-                        【驳回原因】：《磋商文件》中关于采购人、政府采购代理机构通过组建竞争性磋商就采购货物、工程和服务事宜进行磋商的说明有问题，不清楚不理解，请要求填写。
+                        【驳回原因】:{{msgremark}}
                     </p>
-                    <p>【审批人】：艾米 | 2019-03-24</p>
+                    <p>【审批人】：{{msguser}} | {{msgtime}}</p>
                 </div>
                 <div class="et-r" @click="handleClose">
                     ×
@@ -48,7 +48,6 @@
                                         </div>
                                     </a>
                                 </li>
-                                <!-- <span>22</span> -->
                             </ul>
                         </li>
                     </ul>
@@ -167,7 +166,7 @@ export default {
                     ]  
                 },
                 {
-                    title:'项目维护',
+                    title:'项目维保',
                     active:false,
                     children:[
                         {
@@ -185,7 +184,9 @@ export default {
                     ]  
                 },
             ],
-            hasErrorTips:false,
+            msgremark:'',
+            msguser:'',
+            msgtime:'',
             exproInfo:{},
             exparamsUrl:'',
             sessionGet:{}
@@ -246,13 +247,13 @@ export default {
                         this.handleSetroute("项目采购")
                         this.handleSetroute("项目执行")
                         this.handleSetroute("项目验收")
-                        this.handleSetroute("项目维护", "维保结束申请")
+                        this.handleSetroute("项目维保", "维保结束申请")
                     }else if(routerStep == 15) {
                         this.handleSetroute("项目立项")
                         this.handleSetroute("项目采购")
                         this.handleSetroute("项目执行")
                         this.handleSetroute("项目验收")
-                        this.handleSetroute("项目维护", "技术指标验收")
+                        this.handleSetroute("项目维保", "技术指标验收")
                     }
 
                     
@@ -293,11 +294,11 @@ export default {
                         for(let j = 0; j < this.steps[i].children.length; j ++) {
                             this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
                             if(this.steps[i].children[j].status === true){
+                                // console.log(this.steps[i].children[j].path)
                                 this.$router.push({
                                     path:this.steps[i].children[j].path
                                 })
                                 // location.hash= this.steps[i].children[j].path
-                                
                             }
                         }
                     }
@@ -307,7 +308,7 @@ export default {
                 
             }
 
-            console.log(this.steps)
+            // console.log(this.steps)
 
         },
  
@@ -315,12 +316,13 @@ export default {
             
         },
         handleClose(){
-            this.hasErrorTips = false
+            // this.hasErrorTips = false
+            store.dispatch('commitChangeErrorTips',false)
         },
 
         handleRouteUpdate(order) {
-                console.log(order)
-                console.log(this.sessionGet.status)
+                // console.log(order)
+                // console.log(this.sessionGet.status)
             if(this.sessionGet.status < order) {
                 store.dispatch('commitChangeRouteUpdate',false)
                 
@@ -328,8 +330,23 @@ export default {
                 store.dispatch('commitChangeRouteUpdate',true)
             }
             
+        },
+        getBhMsg(){
+            let params = {id:this.exproInfo.id}
+            this.$http.post('/api/project/getRejectReason', params)
+            .then((res) => {
+             if(res.code=="00000"){
+                //  this.hasErrorTips=true;
+                store.dispatch('commitChangeErrorTips',true)
+                 this.msgremark=res.data.remark;
+                 this.msguser=res.data.spUser;
+                 this.msgtime=res.data.time;
+             }
+            })
+
         }
     },
+
     mounted() {
         sessionStorage.setItem('params', JSON.stringify(this.proInfo))
         this.exproInfo = store.state.proInfo
@@ -337,6 +354,7 @@ export default {
         store.dispatch('commitChangePath',this.exparamsUrl)
         this.handleToRoute()
         // console.log(this.steps)
+        this.getBhMsg();
     },
 
     destroyed(){
@@ -347,7 +365,7 @@ export default {
 
     watch:{
          GethasUpdate(params) {
-            console.log(params)
+            // console.log(params)
             if(params) {
                 store.dispatch('commitChangeRouteUpdate',true)
                 this.handleToRoute()
@@ -359,6 +377,10 @@ export default {
     computed:{
        GethasUpdate () {
            return store.state.hasUpdate
+       },
+
+       hasErrorTips() {
+           return store.state.hasErrorTips
        }
     }
 }
@@ -382,7 +404,7 @@ export default {
                 font-size: 18px;
                 color: #3B4859;
                 letter-spacing: 0;
-                padding: 20px 0 40px 20px;
+                padding: 20px 0 20px 20px;
             }
             .et-steps-wrapper{
                 padding-left: 26px;

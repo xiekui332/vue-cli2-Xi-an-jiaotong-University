@@ -145,7 +145,7 @@ export default {
                 {
                     prop:'roleName',
                     label:'角色名称',
-                    width:'300'
+                    width:''
                 },
                 {
                     prop:'men',
@@ -202,7 +202,7 @@ export default {
                 }
                 this.handlegetPowersListByRoles(params)
             }else{
-                this.$message("请选择一个角色进行菜单授权");
+                this.$message.error("请选择一个角色进行菜单授权");
             } 
         },
         
@@ -231,13 +231,13 @@ export default {
             }
             this.$http.post(reqUrl,params).then(res =>{
                 if(res.code=="00000"){
-                    this.$message(message);
+                    this.$message.success(message);
                     this.name='';
                     this.isAss='';
                     this.newtemplate = false;
                     this.init();
                 }else{
-                   this.$message(res.message);  
+                   this.$message.error(res.message);  
                 }
             })
         },
@@ -255,7 +255,7 @@ export default {
              this.setTitle = "编辑角色"
              this.newtemplate = true;
           }else{
-               this.$message('请选择一条信息进行编辑');
+               this.$message.error('请选择一条信息进行编辑');
           }
         },
         handleSelectOprate(param){
@@ -276,16 +276,16 @@ export default {
                 var param={id:JSON.stringify(idList)};
                 this.$http.post("/api/roles/deleteRoles",param).then(res =>{
                     if(res.code=="00000"){
-                        this.$message("删除成功！");
+                        this.$message.success("删除成功！");
                         this.init();
                     }else{
-                        this.$message(res.message)
+                        this.$message.error(res.message)
                     }
                 })
             
                 })
             }else{
-                this.$message("请选中要删除的数据");
+                this.$message.error("请选中要删除的数据");
             }
         },
         handlePageUp(params) {//分页
@@ -411,7 +411,7 @@ export default {
     background: #FFFFFF;
     box-shadow: 0 2px 4px 0 #EFF2F7;
     border-radius: 4px;
-    padding: 20px;
+    padding: 0px 20px 10px;
     min-height: 100%;
     .el-divider--horizontal{
         margin: 5px 0;
