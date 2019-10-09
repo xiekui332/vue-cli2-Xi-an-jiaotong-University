@@ -6,7 +6,7 @@
                 <span class="pub-family">模板资料</span>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
@@ -25,6 +25,7 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
@@ -33,16 +34,33 @@
 
                     </div>
                 </div>                
-            </div>           
+            </div> 
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div> <span>资料模板</span></div>
+                    <div> <span>上传资料</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in zlList" :key="ind">
+                    <div>{{i.mb.name}}</div>
+                    <div class="allow-down" @click="handleDownLoadSitua(i.zl[0].attachUrl)">{{i.zl.length && i.zl[0].attachName?i.zl[0].attachName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createUserName?i.zl[0].createUserName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createTime?i.zl[0].createTime:""}}</div>
+                </div>
+            </div>          
         </div>
 
         <div class="st-item st-templates st-icon-none">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('other')">增行</a>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
@@ -74,8 +92,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div class="st-qt-name"> <span>资料名称</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in otherArr" :key="ind">
+                    <div class="st-qt-name allow-down" @click="handleDownLoadSitua(i.attachUrl)">{{i.attachName}}</div>
+                    <div>{{i.createUserName}}</div>
+                    <div>{{i.createTime}}</div>
+                </div>
+            </div>
         </div>
-        <el-row class="st-checkHandle" v-if="!noDrop">
+        <el-row class="st-checkHandle" v-if="!noDrop" v-show="!isSituatiostep">
             <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
@@ -105,11 +138,18 @@ export default {
             fileList:[],
             loading:false,
             proNode:12,
-            proNodeId:'bf63eaa047b34cc7820b0ed05d94cd86'
+            proNodeId:'bf63eaa047b34cc7820b0ed05d94cd86',
+
+            isSituatiostep:false
         }
     },
 
     methods:{
+
+        handleDownLoadSitua(url) {
+            window.open(url)
+        },
+
         handleBefore(file) {
             if(this.sessionGet.status > this.proNode) {
                 return false
@@ -303,7 +343,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -346,6 +386,17 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
+
+        // resource == situatiostep
+        if(this.$route.name.indexOf("situatiostep") < 0) {
+            this.isSituatiostep = false
+        }else{
+            this.isSituatiostep = true
+        }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
     }
 }
 </script>
@@ -421,6 +472,69 @@ export default {
             }
             color: #3B7CFF;
         }
+    }
+
+    // 只读
+    .st-templates{
+
+        // resource == situation
+        .st-edit-content-situation{
+            .st-edit-item{
+                line-height: 50px;
+            }
+            .st-ed-head > div:nth-child(1){
+                text-indent: 0;
+            }
+            .st-ed-head > div{
+                padding-left: 10px;
+            }
+            .st-ed-head > div:nth-child(1){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(2){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(4){
+                min-width: 200px;
+            }
+            .st-ed-List{
+                >div{
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    padding-left: 10px;
+                }
+                >div:nth-child(1){
+                    min-width: 200px;
+                }
+                >div:nth-child(2){
+                    min-width: 200px;
+                }
+                >div:nth-child(4){
+                    min-width: 200px;
+                }
+            }
+            .st-qt-name{
+                min-width: 350px!important;
+            }
+            .allow-down{
+                cursor: pointer;
+                color: #3B7CFF;
+            }
+            
+        }
+
+        .st-icon-file-title{
+            .st-file-span{
+                display: flex;
+                justify-content:flex-start;
+                cursor: pointer;
+                color: #3B7CFF!important;
+                // text-indent:1em;
+                margin-left: -3em;
+            }
+        }
+        
     }
 }
 </style>

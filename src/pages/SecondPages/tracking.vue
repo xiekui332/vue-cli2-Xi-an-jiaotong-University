@@ -1,6 +1,6 @@
 <template>
 <!-- 执行中项目查看 -->
-    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' />
+    <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' :proInfo="proInfo" :paramsUrl="paramsUrl" />
     <div id="tracking" v-else>
         <div class="tr-wrapper">
             <div class="tr-head">
@@ -13,17 +13,7 @@
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%"
-                :stripe='true'
-                :cell-class-name="cell"
-                @selection-change="handleSelectionChange"
-                @cell-click='handleLookDetail'>
-
-                <el-table-column
-                    type="index"
-                    label="序号"
-                    min-width="50">
-                </el-table-column>
-
+                :stripe='true'>
                 <el-table-column 
                     v-for="(i, ind) in tablekind"
                     :key="ind"
@@ -40,13 +30,13 @@
                     >
                     <template slot-scope="scope">
                         <div class="ma-icon ma-todo" @click="trackingDetail(scope.row)">
-                            审批
+                            详情
                         </div>
                     </template>
                 </el-table-column>
             </el-table>
 
-            <CommPage :hasPage='hasPage' />
+            <CommPage :hasPage='hasPage' :total="total"  @handlePageUp='handlePageUp' @handlePageRows='handlePageRows'/>
         </div>
     </div>
 </template>
@@ -54,12 +44,12 @@
 <script>
 import HeaderSearch from '@/components/HeaderSearch'
 import CommPage from '@/components/CommPage'
-import TableCommon from '@/components/Common/TableCommon'
 import ExcutingDetail from '@/components/ExcutingDetail'
+import { splitUrl } from '../../utils/util.js'
+import { store } from '@/store'
 export default {
     components:{
         HeaderSearch,
-        TableCommon,
         CommPage,
         ExcutingDetail
     },
@@ -71,11 +61,11 @@ export default {
                     label:'已到期'
                 },
                 {
-                    value:'1',
+                    value:'7',
                     label:'剩余7天'
                 },
                 {
-                    value:'2',
+                    value:'30',
                     label:'剩余30天'
                 }
 
@@ -83,72 +73,112 @@ export default {
             ],
             type:'tracking',
             parentRoute:'/proj',
-            tableData:[
-                {
-                    num: 'GS2019001',
-                    name: '西安交通大学项目名称项目名称项目名称项目名称项',
-                    money: '28.1万',
-                    resource: '改善办学条件',
-                    men: '文华',
-                    kind: '货物|软件',
-                    time: '2019-02-18',
-                    endtime: '2019-02-18',
-                    status:'维保|结束申请'
-                }
-            ],
+            tableData:[],
             tablekind:[
                 {
-                    prop:'num',
+                    prop:'RNUM',
+                    label:'序号',
+                    width:'40'
+                },
+                {
+                    prop:'no',
                     label:'项目编号',
-                    width:'100'
+                    width:'80'
                 },
                 {
                     prop:'name',
-                    label:'项目',
-                    width:'250'
+                    label:'项目名称',
+                    width:'200'
                 },
                 {
-                    prop:'money',
+                    prop:'zbje',
                     label:'中标金额',
-                    width:''
+                    width:'60'
                 },
                 {
-                    prop:'endtime',
+                    prop:'repairEndTime',
                     label:'维保结束日期',
-                    width:'100'
+                    width:'90'
                 },
                 {
-                    prop:'status',
+                    prop:'projectStateNodeName',
                     label:'项目状态',
-                    width:''
+                    width:'90'
                 },
                 {
-                    prop:'men',
+                    prop:'leaderNames',
                     label:'负责人',
                     width:''
                 },
                 {
-                    prop:'kind',
+                    prop:'projectTypeName',
                     label:'类型',
                     width:''
                 }
             ],
             hasPage:true,
-            hasExcutingDetail: false
+            hasExcutingDetail: false,
+            page:1,
+            rows:10,
+            total:0,
+            days:'',
+            tex:'',
+            proInfo:{},
+            paramsUrl:''
         }
     },
 
     methods:{
         handleSearchRes(params) {
-            // console.log(params)
+             this.days=params.days;
+             this.tex=params.tex;
+             this.init();
         },
         handleTrackLook() {
             this.hasExcutingDetail = true
+        },
+        trackingDetail(msg){
+            this.getProjectMsgById(msg.id);
+        }, 
+        getProjectMsgById(id){
+            let params = {
+                id:id
+            }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+              //  console.log(res)
+                if(res.code === '00000') {
+                    this.proInfo = res.data
+                    store.dispatch('commitChangeProInfo',res.data)
+                    this.hasExcutingDetail = true;
+                }else{
+                    this.$message.error(res.message);
+                }
+            })
+        },    
+        handlePageUp(params) {
+         this.page=params;
+         this.init();
+        },
+        handlePageRows(params){
+         this.rows=params;
+         this.init();
+        },
+        init(){
+          var params={datas:this.days,searchText:this.tex,page:this.page,rows:this.rows};
+          this.$http.post("/api/project/wkgzList",params).then(res =>{
+             if(res.success==true){
+                 this.tableData=res.rows;
+                 this.total=res.total;
+             }else{
+                 this.$message.error(res.message);
+             }
+          })
         }
     },
 
     mounted() {
-        
+        this.paramsUrl = splitUrl('?')
     },
     beforeRouteEnter(to,from,next) {
         
@@ -177,5 +207,9 @@ export default {
             background: #F0F3F7;
         }
     }
+}
+.ma-todo{
+     color: #3B7CFF!important;
+     cursor:pointer;
 }
 </style>

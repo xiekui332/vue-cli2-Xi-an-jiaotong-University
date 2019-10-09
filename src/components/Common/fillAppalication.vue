@@ -14,7 +14,7 @@
             >
             <div>
                 <div id="printFill" ref="print">
-                    <p class="pub-family fl-title">院处采购申请单<span @click="hadlePrint" style="display:none;"> 打印机</span></p>
+                    <p class="pub-family fl-title">院处采购申请单</p>
                     <div class="fl-item fl-item-basic">
                         <p class="pub-family fl-item-basic-title">基本信息</p>
                         <div class="fl-item-basic-block">

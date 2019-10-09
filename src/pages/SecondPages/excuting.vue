@@ -108,18 +108,18 @@ export default {
         },
 
         handleSearchRes(params) {
-        //    console.log(params)
-           
-
+          //  console.log(params)
             if(params.projectState=="0"){
                 params.projectState="";
+            }
+            if(params.projectNode=="0"){
+                params.projectNode="";
             }
             if(params.projectType=="全部"){
                 params.projectType="";
             }
             this.$http.post("/api/project/getProjectZXZList", params)
-            .then((res) => {
-                
+            .then((res) => {               
                 this.pageList = []
                 if(res.code == "00000") {
                     this.pageList = res.data
@@ -282,10 +282,6 @@ export default {
                     })
                 }
             })
-        },
-
-        init() {
-            
         }
     },
     mounted() {
@@ -293,7 +289,6 @@ export default {
         this.getFundsSource()
         this.getStatusAndNodes()
         this.getProjectType()
-        this.init()
         this.paramsUrl = splitUrl('?')
         // console.log(splitUrl('?'))
     },

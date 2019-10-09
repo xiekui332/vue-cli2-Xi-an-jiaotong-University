@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="et-right">
-                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} / {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</p>
+                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} <span v-if="exTwoproInfo.projectNodeName"> / </span> {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</p>
                 <p class="et-money-num">¥<span>{{exTwoproInfo.zbje?exTwoproInfo.zbje:'0.00'}}</span>万</p>
                 <p class="et-money-txt">中标金额</p>
             </div>

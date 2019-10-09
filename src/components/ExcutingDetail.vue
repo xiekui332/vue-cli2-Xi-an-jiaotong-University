@@ -203,9 +203,11 @@ export default {
                     this.sessionGet = res.data
                     store.dispatch('commitChangeProInfo',res.data)
                     let routerStep = this.sessionGet.status
-                    console.log(routerStep)
-                    // example
-                    // routerStep = 7
+                   // console.log(routerStep)
+                    if(routerStep == 16) {
+                        routerStep = 15;
+                    }
+
                     
                     if(routerStep == 4) {
                         this.handleSetroute("项目立项", "立项申请")
@@ -254,6 +256,12 @@ export default {
                         this.handleSetroute("项目执行")
                         this.handleSetroute("项目验收")
                         this.handleSetroute("项目维保", "技术指标验收")
+                    }else if(routerStep == 16) {
+                        this.handleSetroute("项目立项")
+                        this.handleSetroute("项目采购")
+                        this.handleSetroute("项目执行")
+                        this.handleSetroute("项目验收")
+                        this.handleSetroute("项目维保")
                     }
 
                     
@@ -269,6 +277,7 @@ export default {
         },
 
         handleSetroute(parentName, childName) {
+            // console.log(this.steps)
             for(let i = 0; i < this.steps.length; i ++ ) {
                 if(this.steps[i].title == parentName) {
                     if(childName) {
@@ -290,15 +299,19 @@ export default {
                         this.steps[i].active = true
                     }
 
+                    
                     if(this.steps[i].children && this.steps[i].children.length) {
                         for(let j = 0; j < this.steps[i].children.length; j ++) {
                             this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
                             if(this.steps[i].children[j].status === true){
-                                // console.log(this.steps[i].children[j].path)
                                 this.$router.push({
                                     path:this.steps[i].children[j].path
                                 })
-                                // location.hash= this.steps[i].children[j].path
+                            }else{
+                                
+                                // this.$router.push({
+                                //     path:this.steps[i].children[j].path
+                                // })
                             }
                         }
                     }

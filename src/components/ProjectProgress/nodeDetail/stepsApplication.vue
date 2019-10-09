@@ -407,10 +407,10 @@ export default {
         },
 
         handleRemove(file, fileList) {
-            console.log(file, fileList);
+         //   console.log(file, fileList);
         },
         handlePreview(file) {
-            console.log(file);
+          //  console.log(file);
         },
         handleExceed(files, fileList) {
             this.$message.error(`当前限制选择 1 个文件，如需更换文件请先删除后操作`);
@@ -420,7 +420,7 @@ export default {
         },
         
         handleSuccess(res,file,fileList) {
-            console.log(res);
+           // console.log(res);
         },
 
         // payment details
@@ -466,14 +466,13 @@ export default {
                 nodeId:store.state.proInfo.projectNode
             }
 
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
             }else{
                 store.dispatch('commitChangeIsHistory',false)
             }
-
             this.$http.post("/api/project/getNodeAppendix", params)
             .then((res) => {
                 if(res.code == "00000") {
@@ -806,7 +805,7 @@ export default {
         },
 
         handleDownHisFile(i, type) {
-            console.log(i)
+           // console.log(i)
             if(type) {
                 let url = i.attachUrl
                 window.open(url)
@@ -837,6 +836,10 @@ export default {
         }else{
             this.isSituatiostep = true
         }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
         // console.log(this.isSituatiostep)
         
     },

@@ -1,5 +1,5 @@
 <template>
-    <!-- 执行中项目查看 -->
+    <!-- 全部项目查看 -->
     <ExcutingDetail v-if="hasExcutingDetail" :type='type' :parentRoute='parentRoute' :proInfo="proInfo" :paramsUrl="paramsUrl" />
     <div id="detail" v-else>
         <HeaderSearch 
@@ -40,8 +40,10 @@
                 </div>
                 <div class="de-item-percent">
                     <p>
-                        <span>{{isNaN(i.yfje/i.zbje)?0.00:(i.yfje/i.zbje).toFixed(2)*100}}%</span>
-                        <span>{{i.projectStateName?i.projectStateName:'暂无'}} | {{i.projectNodeName?i.projectNodeName:'暂无'}}</span>
+                        <span>{{isNaN(i.yfje/i.zbje)?0.00:(i.yfje/i.zbje).toFixed(2)*100}}%</span>       
+                        <span v-if="i.pStatus!=2&&i.status!=16">{{i.projectStateName?i.projectStateName:'暂无'}} | {{i.projectNodeName?i.projectNodeName:'暂无'}}</span>
+                        <span class="de-zhongzhi" v-if="i.pStatus==2">已终止</span>
+                        <span v-if="i.status==16">已结题</span>
                     </p>
                     <el-progress :percentage="isNaN(i.yfje/i.zbje)?0:(i.yfje/i.zbje).toFixed(2)*100" :format="format"></el-progress>
                 </div>
@@ -86,7 +88,7 @@ export default {
             select4: '',
             searchTex:'',
             hasExcutingDetail:false,
-            type:'excuting',
+            type:'all',
             parentRoute:'/proj',
             statusList1:[],
             pageList:[],
@@ -108,18 +110,26 @@ export default {
         },
 
         handleSearchRes(params) {
-        //    console.log(params)
-           
-
+          //  console.log(params)
             if(params.projectState=="0"){
                 params.projectState="";
+            }
+            if(params.projectState=="1"){
+                params.status=2;
+                params.projectState="";
+            }
+            if(params.projectState=="2"){
+                params.projectState="";
+                params.status=16;
+            }
+            if(params.projectNode=="0"){
+                params.projectNode="";
             }
             if(params.projectType=="全部"){
                 params.projectType="";
             }
-            this.$http.post("/api/project/getProjectZXZList", params)
-            .then((res) => {
-                
+            this.$http.post("/api/project/allProjectList", params)
+            .then((res) => {              
                 this.pageList = []
                 if(res.code == "00000") {
                     this.pageList = res.data
@@ -194,7 +204,6 @@ export default {
                 }
             })
         },
-
         getStatusAndNodes() {
             this.$http.post("/api/template/getStatusAndNodes", {})
             .then((res) => {
@@ -208,6 +217,14 @@ export default {
                             msg['label']=this.statusList1[a].name;
                             this.options4.push(msg);
                         } 
+                        var msg={};
+                        msg['value']=1;
+                        msg['label']="已终止";
+                        this.options4.push(msg);
+                        var msg1={};
+                        msg1['value']=2;
+                        msg1['label']="已结题";
+                        this.options4.push(msg1);
                     }
                 }else{
                     this.$message({
@@ -216,29 +233,31 @@ export default {
                     })
                 }
             })
-        },
-        
+        },  
         handleChangeStatus(param){
            if(param==0){
                 this.options5=[{'value':"0",'label':"全部"}]
            }else{
-                var list=this.statusList1;
-                for(var i=0;i<list.length;i++){
-                    if(list[i].id==param){
-                        var nodeList=list[i].list;
-                        this.options5=[{'value':"0",'label':"全部"}]
-                            for(var j=0;j<nodeList.length;j++){
-                                    var msg={};
-                                    msg['value']=nodeList[j].id;
-                                    msg['label']=nodeList[j].name;
-                                    this.options5.push(msg);
-                            }
-                            
+               if(param!=1&&param!=2){
+                    var list=this.statusList1;
+                    for(var i=0;i<list.length;i++){
+                        if(list[i].id==param){
+                            var nodeList=list[i].list;
+                            this.options5=[{'value':"0",'label':"全部"}]
+                                for(var j=0;j<nodeList.length;j++){
+                                        var msg={};
+                                        msg['value']=nodeList[j].id;
+                                        msg['label']=nodeList[j].name;
+                                        this.options5.push(msg);
+                                }
+                                
+                        }
                     }
+                }else{
+                     this.options5=[];
                 }
            }
         },
-
         getProjectType(){
             this.$http.post('/api/project/getProjectType')
             .then((res) => {
@@ -295,11 +314,10 @@ export default {
         this.getProjectType()
         this.init()
         this.paramsUrl = splitUrl('?')
-        // console.log(splitUrl('?'))
     },
     watch:{
         '$route'(to, from) {
-            if(to.name === 'excuting') {
+            if(to.name === 'all') {
                 this.hasExcutingDetail = false
             }
         }
@@ -410,6 +428,16 @@ export default {
                         color: #404040;
                         letter-spacing: 1px;
                     }
+                }
+                .de-zhongzhi{
+                    font-size: 12px;
+                    letter-spacing: 1px;
+                    color: #FE5959!important; 
+                }
+                .de-wancheng{
+                    font-size: 12px;
+                    letter-spacing: 1px; 
+                    color: #3B7CFF!important;
                 }
             }
             .de-item-btn{

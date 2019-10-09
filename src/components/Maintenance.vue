@@ -383,23 +383,26 @@ export default {
                         return this.$message.error("项目状态下节点不能为空");
                    }
                }
-               if(this.proState=='项目立项'){
-                   this.proState="43623bacc9244afd9abd3365cb6c36c9";
+               var tproState=this.proState;
+               var tproNode=this.proNode;
+               if(tproState=='项目立项'){
+                   tproState="43623bacc9244afd9abd3365cb6c36c9";
                }
-               if(this.proNode=='立项申请'){
-                   this.proNode="716aa0fd239a4aa1b9469592122782c9";
+               if(tproNode=='立项申请'){
+                   tproNode="716aa0fd239a4aa1b9469592122782c9";
                }
                var params={
                    name:this.name,createTime:this.establishmenTime,
                    startTime:startTime,endTime:endTime,ysje:this.budgetNum,
                    category:this.kind,type:this.types,
                    sourceFundingType:this.moneySource,
-                  isOldProject:isOldProject,nodeId:this.proNode,
-                  statusId: this.proState,
+                  isOldProject:isOldProject,nodeId:tproNode,
+                  statusId: tproState,
                   remark: this.textarea,
                   fileList:JSON.stringify(this.fileMsgList),
                   leaderNo:JSON.stringify(this.leading)};
                     this.$http.post("/api/project/addProjectMsg",params).then(res =>{
+                        console.log(res)
                         if(res.code=="00000"){
                             this.name='';
                             this.establishmenTime='';

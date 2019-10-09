@@ -256,7 +256,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:store.state.proInfo.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -414,6 +414,11 @@ export default {
         }else{
             this.isSituatiostep = true
         }
+        
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
         
         // console.log(this.sessionGet)
     },

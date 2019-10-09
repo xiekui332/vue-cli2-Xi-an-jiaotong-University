@@ -160,7 +160,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:store.state.proInfo.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -170,6 +170,7 @@ export default {
 
             this.$http.post("/api/project/getNodeAppendix", params)
             .then((res) => {
+               // console.log(res)
                 if(res.code == "00000") {
                     if(res.data && res.data.zlList) {
                         for(let i = 0; i < res.data.zlList.length; i ++) {
@@ -376,6 +377,7 @@ export default {
             }
             this.$http.post('/api/project/getProjectMsgById', params)
             .then((res) => {
+              //  console.log(res)
                 if(res.code === '00000') {
                     this.sessionGet = res.data
                     store.dispatch('commitChangeProInfo',res.data)
@@ -387,7 +389,7 @@ export default {
         },
 
         handleDownHisFile(i, type) {
-            console.log(i)
+      //      console.log(i)
             if(type) {
                 let url = i.attachUrl
                 window.open(url)
@@ -402,15 +404,16 @@ export default {
 
     mounted() {
         this.sessionGet = store.state.proInfo
-        // console.log(this.sessionGet)
         this.getProjectMsgById(this.sessionGet.id)
-
-        // resource == situatiostep
         if(this.$route.name.indexOf("situatiostep") < 0) {
             this.isSituatiostep = false
         }else{
             this.isSituatiostep = true
         }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
     },
 
     created() {

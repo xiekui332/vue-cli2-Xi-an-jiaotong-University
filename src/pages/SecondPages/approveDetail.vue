@@ -10,7 +10,6 @@
                            <div class="sh-node-item">
                                 <div class="sh-node-item-head">
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
-                                        <!-- <i class="sh-node-icon pub-css sh-node-finish"></i> -->
                                         <i class="sh-node-icon pub-css">1</i>
                                         <el-dropdown trigger="click">
                                             <span class="pub-family el-dropdown-link">
@@ -25,7 +24,7 @@
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
                                         
                                         <div @click="handleLook('rotate')">
-                                            <!-- <img src="../../assets/img/more-L.png" :class="activeName == 1?'pj-transform':''" ref="transform" alt=""> -->
+
                                         </div>
                                     </div>
                                 </div>
@@ -515,7 +514,6 @@
                                 <div class="sh-node-item-head">
                                     <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
                                         <i class="sh-node-icon">3</i>
-                                        <!-- <span class="pub-family">项目执行</span> -->
 
                                         <el-dropdown trigger="click">
                                             <span class="pub-family el-dropdown-link">
@@ -526,11 +524,6 @@
                                             </el-dropdown-menu>
                                         </el-dropdown>
 
-                                    </div>
-                                    <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
-                                        <div @click="handleLook('rotate')">
-                                            <!-- <img src="../../assets/img/more-L.png" :class="activeName == 3?'pj-transform':''" ref="transform" alt=""> -->
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -562,8 +555,553 @@
                                         </el-table>                                  
                                     </div>   
                                 </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmzxList2"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
                             </div>
                         </div>
+                    </el-collapse-item>
+                    <el-collapse-item name="4">
+                        <template slot="title">
+                            <div class="sh-node-item">
+                                <div class="sh-node-item-head">
+                                    <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
+                                        <i class="sh-node-icon">4</i>
+
+                                        <el-dropdown trigger="click">
+                                            <span class="pub-family el-dropdown-link">
+                                                项目验收<i class="el-icon-arrow-down el-icon--right"></i>
+                                            </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('4', 0, 11, 'yhbox')">验收申请</el-dropdown-item>
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('4', 1, 12, 'yhbox')">预验收</el-dropdown-item>
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('4', 2, 13, 'yhbox')">验收复核</el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+                                    </div>
+                                    <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
+                                        <a class="sh-change-padding" href="javascript:;" @click.stop.prevent="handleLook('node', 'ys')">节点流程</a>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="sh-node-wrapper" ref="yhbox">
+                            <div class="sh-file-box">
+                                <div class="st-item">
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>安装地点：</span>
+                                            <el-input class="pl-input-box" v-model="installationAddress" :disabled="true"></el-input>
+                                        </div>
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>到货日期：</span>
+                                            <el-date-picker
+                                            v-model="arrivalTime"
+                                            type="date"
+                                            class="pl-input-box"
+                                            :disabled="true">
+                                            </el-date-picker>
+                                        </div>
+                                    </div>
+
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>安装日期：</span>
+                                            <el-date-picker
+                                            v-model="installationTime"
+                                            type="date"
+                                            class="pl-input-box"
+                                            :disabled="true">
+                                            </el-date-picker>
+                                        </div>
+                                        <div class="pl-input"></div>
+                                    </div>
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmyhzl"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="资料模板"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmyhqt"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmyhsp"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="审批资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+                            </div>
+
+                            <div class="sh-file-box">
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmyyszl"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="资料模板"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmyysqt"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+                            </div>
+
+                            <div class="sh-file-box">
+                                <div class="st-item">
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>验收日期：</span>
+                                            <el-input class="pl-input-box" v-model="installationAddress" :disabled="true"></el-input>
+                                        </div>
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>验收备注：</span>
+                                            <el-input class="pl-input-box" type="textarea" rows="3" v-model="installationAddress" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+
+                                    <div class="st-edit-content">
+                                        <div class="st-edit-item st-ed-head">
+                                            <div><i>*</i> <span>付款时间</span></div>
+                                            <div><i>*</i> <span>付款比%</span></div>
+                                            <div><i>*</i> <span>付款金额(万)</span></div>
+                                            <div><i>*</i> <span>剩余付款金额(万)</span></div>
+                                            <div> <span>备注</span></div>
+                                        </div>
+                                        <div class="st-edit-item st-oparate" v-for="(i, ind) in infoArr" :key="ind">
+                                            <div class="st-oparate-col">
+                                                <el-date-picker
+                                                v-model="i.expectTime"
+                                                type="date"
+                                                value-format="yyyy-MM-dd"
+                                                :disabled="true" 
+                                                >
+                                                </el-date-picker>
+                                            </div>
+                                            <div class="st-oparate-col">
+                                                <el-input v-model="i.payRatio" type='number' title=" " :disabled="true" ></el-input>
+                                            </div>
+                                            <div class="st-oparate-col">
+                                                <el-input v-model="i.payMoney" type='number' title=" " :disabled="true"></el-input>
+                                            </div>
+                                            <div class="st-oparate-col">
+                                                <el-input v-model="i.surplusMoney" type='number' title=" " :disabled="true"></el-input>
+                                            </div>
+                                            <div class="st-oparate-col">
+                                                <el-input v-model="i.remark" maxlength='20' :disabled="true" ></el-input>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmysfhzl"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="资料模板"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmysfhqt"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </el-collapse-item>
+
+                    <el-collapse-item name="5">
+                        <template slot="title">
+                            <div class="sh-node-item">
+                                <div class="sh-node-item-head">
+                                    <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
+                                        <i class="sh-node-icon">5</i>
+
+                                        <el-dropdown trigger="click">
+                                            <span class="pub-family el-dropdown-link">
+                                                项目维保<i class="el-icon-arrow-down el-icon--right"></i>
+                                            </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('5', 0, 14, 'wbbox')">维保结束申请</el-dropdown-item>
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('5', 1, 15, 'wbbox')">技术指标验收</el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+                                    </div>
+                                    <div class="sh-node-box" @click.stop.prevent="handleSellectNode()">
+                                        <a class="sh-change-padding" href="javascript:;" @click.stop.prevent="handleLook('node', 'wb')">节点流程</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                         <div class="sh-node-wrapper" ref="wbbox">
+                             <div class="sh-file-box">
+                                <div class="st-item st-item-two">
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>退还质保金%：</span>
+                                            <el-input class="pl-input-box" v-model="tZbjRatio" :disabled="true"></el-input>
+                                        </div>
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i></i>退还质保金额：</span>
+                                            <el-input class="pl-input-box" v-model="tZbj" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i></i>备注说明：</span>
+                                            <el-input class="pl-input-box pl-text-box" type="textarea" rows="2" v-model="tZbjRemark" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmwbjszl"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="资料模板"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmwbjsqt"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmwbjssp"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="审批附件名称"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+                             </div>
+
+                             <div class="sh-file-box">
+                                <div class="st-item st-item-two">
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>退保情况：</span>
+                                            <el-radio v-model="isTB" :disabled="true" label="1">全额退保</el-radio>
+                                            <el-radio v-model="isTB" :disabled="true" label="2">不予退还</el-radio>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>实际退还%：</span>
+                                            <el-input class="pl-input-box" type="number" :disabled="true" @change="handleChangeMoney()" v-model="sjTbaoRatio"></el-input>
+                                        </div>
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i></i>退还质保金额：</span>
+                                            <el-input class="pl-input-box" v-model="sjTaoMoney" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i>*</i>实际退还日期：</span>
+                                            <el-date-picker
+                                            v-model="sjTbaoTime"
+                                            type="date"
+                                            class="pl-input-box"
+                                            :disabled="true">
+                                            </el-date-picker>
+                                        </div>
+                                        <div class="pl-input">
+                                            <span class="pl-input-name" v-if="radio === '2'"><i>*</i>不予退还原因：</span>
+                                            <el-input class="pl-input-box" v-if="radio === '2'" v-model="nTbaoRemark" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pl-item-wrapper">
+                                        <div class="pl-input">
+                                            <span class="pl-input-name"><i></i>备注说明：</span>
+                                            <el-input class="pl-input-box" v-model="tbaoRemark" :disabled="true"></el-input>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sh-file-item">
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmjszbzl"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="资料模板"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+
+                                    <div class="sh-file-list">
+                                        <el-table
+                                            :data="xmjszbqt"
+                                            style="width: 100%"
+                                            @cell-click="handleCell"
+                                            :cell-class-name="cell"
+                                            >
+                                            <el-table-column
+                                                prop="attachName"  
+                                                label="其他资料"
+                                                width="280">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createTime"
+                                                label="操作时间"
+                                                width="200">
+                                            </el-table-column>
+                                            <el-table-column
+                                                prop="createUserName"
+                                                label="操作人">
+                                            </el-table-column>
+                                        </el-table>                                  
+                                    </div>   
+                                </div>
+                             </div>
+
+                         </div>
                     </el-collapse-item>
                 </el-collapse>
             </div>
@@ -618,7 +1156,7 @@
                     <p class="sh-node-agree-reason">{{approveRemark}}</p>
                     <p class="sh-node-agree-file" @click="handleDOwnLoad(approveFileS.attachUrl)">{{approveFileS.attachName}}</p>
                     <el-row class="sh-node-btn">
-                        <el-button type="primary" @click="handleCancel()">返回</el-button>
+                        <el-button type="primary" @click="handleCancel()">返回列表</el-button>
                     </el-row>
                 </div>
             </div>
@@ -890,6 +1428,36 @@ export default {
             qdhtList:[],
             qdhtList2:[],
             xmzxList:[],
+            xmzxList2:[],
+
+            xmyhzl:[],
+            xmyhqt:[],
+            xmyhsp:[],
+
+            xmyyszl:[],
+            xmyysqt:[],
+            infoArr:[],
+            xmysfhzl:[],
+            xmysfhqt:[],
+
+            xmwbjszl:[],
+            xmwbjsqt:[],
+            xmwbjssp:[],
+
+            tZbjRatio:"",
+            tZbj:"",
+            tZbjRemark:"",
+
+            xmjszbzl:[],
+            xmjszbqt:[],
+
+            isTB:"",
+            sjTbaoRatio:"",
+            sjTaoMoney:"",
+            sjTbaoTime:"",
+            nTbaoRemark:"",
+            tbaoRemark:"",
+
             cgmsg:{},
             cgname:'',
             cgxqList:[],
@@ -915,12 +1483,16 @@ export default {
             fileList:[],
             jdId:'',
 
-
             exApproveType:"",
             approveRemark:"",
             approveState:"",
             approveFileS:{},
-            proTxt:"阶段进行中"
+            proTxt:"阶段进行中",
+
+            // basic info
+            arrivalTime:"",         // 到货时间
+            installationAddress:"", // 安装地址
+            installationTime:""     // 安装时间
 
         }
     },
@@ -993,7 +1565,7 @@ export default {
             }
             this.$http.post('/api/project/getExamineList', params)
             .then((res) => {
-                console.log(res)
+                // console.log(res)
                 if(res.message == '本节点无审批流程'){
                     this.$message.error('本节点无审批流程')
                     this.dialogVisible = false
@@ -1324,29 +1896,68 @@ export default {
                     }
 
                     //项目执行
-                    var xmzxMsg=(dataList[2].list);
-                    if(xmzxMsg.length>0){
-                        this.xmzxList=[];
-                        for(var i=0;i<xmzxMsg.length;i++){
-                        var zxlist=xmzxMsg[i].zlList;
-                        for(var j=0;j<zxlist.length; j++){
-                                var obj={};
-                                obj.createTime=zxlist[j].createTime
-                                obj.createUserName=zxlist[j].createUserName;
-                                obj.attachName=zxlist[j].attachName;
-                                obj.attachUrl=zxlist[j].attachUrl;
-                            this.xmzxList.push(obj);
+                    if(dataList[2].list.length) {
+                        var xmzxMsg = (dataList[2].list[0].zlList);
+                        let xmzxMsg2 = dataList[2].list[0].qtList;
+                        if(xmzxMsg.length>0){
+                            this.xmzxList=[];
+                            for(let i = 0; i < xmzxMsg.length; i ++) {
+                                let obj = {}
+                                obj.createTime=xmzxMsg[i].createTime
+                                obj.createUserName=xmzxMsg[i].createUserName;
+                                obj.attachName=xmzxMsg[i].attachName;
+                                obj.attachUrl=xmzxMsg[i].attachUrl;
+                                this.xmzxList.push(obj)
+                            }
                         }
+
+                        if(xmzxMsg2.length) {
+                            let list = []
+                            for(let i = 0; i < xmzxMsg2.length; i ++) {
+                                let obj = {}
+                                obj.createTime=xmzxMsg2[i].createTime
+                                obj.createUserName=xmzxMsg2[i].createUserName;
+                                obj.attachName=xmzxMsg2[i].attachName;
+                                obj.attachUrl=xmzxMsg2[i].attachUrl;
+                                list.push(obj)
+                            }
+                            this.xmzxList2 = list
                         }
                     }
                     
+
+
+                    // 项目验收
+                    if(dataList[3].list.length) {
+                        let result = dataList[3].list
+                        this.xmyhzl = result[0].zlList
+                        this.xmyhqt = result[0].qtList
+                        this.xmyhsp = result[0].spList
+
+                        this.xmyyszl = result[1].zlList
+                        this.xmyysqt = result[1].qtList
+
+                        this.xmysfhzl = result[2].zlList
+                        this.xmysfhqt = result[2].qtList
+                    }
+
+                    // 项目维保 xmwbjszl 
+                    if(dataList[4].list.length) {
+                        let result = dataList[4].list
+                        this.xmwbjszl = result[0].zlList
+                        this.xmwbjsqt = result[0].qtList
+                        this.xmwbjssp = result[0].spList
+                        
+                        this.xmjszbzl = result[1].zlList
+                        this.xmjszbqt = result[1].qtList
+                    }
 
                 }
             })
         },
 
         handleSellectNode() {
-            // console.log(2)
+            
         },
 
         handleLookNode(type, index, number, nodeName) {
@@ -1358,7 +1969,12 @@ export default {
                 elCollection = this.$refs.cgbox.getElementsByClassName('sh-file-box')
             }else if(nodeName == "zxbox") {
                 elCollection = this.$refs.zxbox.getElementsByClassName('sh-file-box')
+            }else if(nodeName == "yhbox") {
+                elCollection = this.$refs.yhbox.getElementsByClassName('sh-file-box')
+            }else if(nodeName == "wbbox") {
+                elCollection = this.$refs.wbbox.getElementsByClassName('sh-file-box')
             }
+
             for(let i = 0; i < elCollection.length; i ++) {
                 elCollection[i].style.display = "none"
             }
@@ -1488,6 +2104,7 @@ export default {
             let status = Number(store.state.proInfo.status)
             let index = 0
             let elCollection = ""
+            // console.log(status)
             if(status == 4 || status == 5) {
                 this.activeName = "1"
                 elCollection = this.$refs.lxbox.getElementsByClassName('sh-file-box')
@@ -1513,10 +2130,79 @@ export default {
                 index = 3
             }
 
-            for(let i = 0; i < elCollection.length; i ++) {
-                elCollection[i].style.display = "none"
+            if(elCollection.length) {
+                for(let i = 0; i < elCollection.length; i ++) {
+                    elCollection[i].style.display = "none"
+                }
+                elCollection[index].style.display = "block"
             }
-            elCollection[index].style.display = "block"
+            
+        },
+
+        init() {
+            let params = { 
+                id:this.exproInfo.id
+            }
+            this.$http.post('/api/project/getProjectMsgById', params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.arrivalTime = res.data.arrivalTime
+                    this.installationAddress = res.data.installationAddress
+                    this.installationTime = res.data.installationTime
+
+                    this.tZbjRatio=res.data.tZbjRatio;
+                    this.tZbj=res.data.tZbj;
+                    this.tZbjRemark=res.data.tZbjRemark;
+
+                    if(res.data.isTbao){    
+                        if(res.data.isTbao!=0){ 
+                            if(res.data.isTbao==1){
+                                this.isTB='1';
+
+                                if( res.data.sjTbaoRatio){
+                                    this.sjTbaoRatio=res.data.sjTbaoRatio;
+                                }
+                                if( res.data.sjTaoMoney){
+                                    this.sjTaoMoney=res.data.sjTaoMoney;
+                                }
+                                if( res.data.sjTbaoTime){
+                                    this.sjTbaoTime=res.data.sjTbaoTime;
+                                }
+
+                            }else{
+                                this.isTB='2'; 
+                                if( res.data.nTbaoRemark){
+                                    this.nTbaoRemark=res.data.nTbaoRemark;
+                                }
+                                this.sjTbaoRatio='';
+                                this.sjTaoMoney='';
+                                this.sjTbaoTime='';
+                            }
+                        }                           
+                    }
+                    this.tbaoRemark=res.data.tbaoRemark;
+                }else{
+
+                }
+            })
+            .catch((err) => {
+
+            })
+        },
+
+        getPayMentList(){
+            let params = {
+                pid:this.exproInfo.id
+            };
+            this.$http.post('/api/project/getYsfhPayMent', params)
+            .then((res) => {
+              if(res.code=="00000"){               
+                  this.infoArr=res.data; 
+              }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         }
 
     },
@@ -1539,9 +2225,16 @@ export default {
 
         // get approve detail
         this.getApproveDetail()
+
+        // init
+        this.init()
         
         // auto open command
         this.handleCommand();
+
+        // 付款信息列表
+        this.getPayMentList()
+
     },
 
     created() {
@@ -1723,6 +2416,128 @@ export default {
                         }
                     }
                 }
+
+                // new acceptance
+                .st-item{
+                    .pl-item-wrapper{
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 10px;
+                        .pl-input{
+                            flex: 1;
+                            display: flex;
+                            align-items: center;
+                            .pl-input-name{
+                                min-width: 100px;
+                                font-size: 16px;
+                                color: #39475B;
+                                i{
+                                    color: red;
+                                }
+                            }
+                            .pl-input-name+div{
+                                width: 220px;
+                            }
+                        }
+                    }
+
+                    .st-edit-content{
+                        .st-ed-head{
+                            display: flex;
+                            background: #F8F9FB;
+                            margin-top: 20px;
+                            height: 50px;
+                            overflow: hidden;
+                            >div{
+                                flex: 1;
+                                line-height: 50px;
+                                text-align: center;
+                                span{
+                                    font-size: 14px;
+                                    color: #39475B;
+                                }
+                                i{
+                                    color: #FE5959;
+                                    font-size: 18px;
+                                    display: inline-block;
+                                    height: 20px;
+                                }
+                            }
+                        }
+                        .st-edit-item:nth-child(odd){
+                            background: #F8F9FB;
+                            & /deep/ .el-input__inner{
+                                background: #F8F9FB;
+                            }
+                        }
+                        .st-edit-item:nth-child(even){
+                            background: #FCFDFF;
+                            & /deep/ .el-input__inner{
+                                background: #FCFDFF;
+                            }
+                        }
+                        .st-oparate{
+                            height: 50px;
+                            display: flex;
+                            align-items: center;
+                            .st-oparate-col{
+                                .el-date-editor.el-input, .el-date-editor.el-input__inner{
+                                    width: 100%;
+                                }
+                                flex: 1;
+                                & /deep/ input{
+                                    text-align: center;
+                                    border: none;
+                                }
+                                & /deep/ input[type=number]::-webkit-inner-spin-button,
+                                & /deep/ input[type=number]::-webkit-outer-spin-button {
+                                    -webkit-appearance: none;
+                                    margin: 0;
+                                }
+                                .st-icon-edit{
+                                    display: inline-block;
+                                    background-position: -377px -91px;
+                                }
+                                .st-icon-del{
+                                    display: inline-block;
+                                    width: 20px;
+                                    height: 20px;
+                                    background-position: -377px -168px;
+                                    margin-left: 44px;
+                                }
+                                & /deep/ .el-input__prefix{
+                                    display: none;
+                                }
+                                
+                            }
+                            .st-oparate-btn{
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                        }
+                    }
+                }
+                .st-item-two{
+                    .pl-item-wrapper{
+                        .pl-input{
+                            .pl-input-name{
+                                min-width: 120px;
+                                margin-left: 10px;
+                            }
+                        }
+                        
+                    }
+                    .pl-item-wrapper:nth-child(2) {
+                        .pl-input{
+                            flex:2;
+                            .pl-input-box{
+                                flex:2;
+                            }
+                        }
+                    }
+                    
+                }
             }
 
             .sh-node-wrapper{
@@ -1785,7 +2600,7 @@ export default {
                     color: #8392A7;
                 }
                 button:nth-child(1){
-                    width: 80px;
+                    // width: 100px;
                     background: #F9FAFC;
                     border: 1px solid #AEB9CA;
                     border-radius: 4px;

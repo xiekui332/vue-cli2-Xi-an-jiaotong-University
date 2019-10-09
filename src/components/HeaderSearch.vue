@@ -220,10 +220,22 @@ export default {
                     obj.fundsSources = this.sel3
                     obj.searchText = this.tex
                 }
-
+                if(this.type == "tracking") {
+                    obj.days=this.selD;
+                    obj.tex=this.tex;
+                }
+                else if(this.type=="all"){
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectNode = this.sel5
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
+                }
             }else{
                 if(this.type === 'tracking') {
-                    
+                    obj.days=this.selD;
+                    obj.tex=this.tex;
                 }else if(this.type === 'todo') {
                     if(this.sel6 == 1){
                         obj.type = '已审批'
@@ -260,6 +272,13 @@ export default {
                     obj.projectType = this.sel2
                     obj.fundsSources = this.sel3
                     obj.searchText = this.tex
+                }else if(this.type=="all"){
+                    obj.year = this.sel1
+                    obj.projectState = this.sel4
+                    obj.projectNode = this.sel5
+                    obj.projectType = this.sel2
+                    obj.fundsSources = this.sel3
+                    obj.searchText = this.tex
                 }
                 
             }
@@ -278,6 +297,7 @@ export default {
             }
         },
         changeStatus(param){//状态改变
+              this.sel5='';
               this.$emit('handleChangeStatus', param)
         }
 

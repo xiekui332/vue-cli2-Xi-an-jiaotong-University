@@ -110,22 +110,22 @@ export default {
                 {
                     prop:'premoney',
                     label:'预算金额',
-                    width:''
+                    width:'60'
                 },
                 {
                     prop:'money',
                     label:'中标金额',
-                    width:''
+                    width:'60'
                 },
                 {
-                    prop:'status',
+                    prop:'stateNodeNames',
                     label:'项目状态',
-                    width:''
+                    width:'100'
                 },
                 {
                     prop:'men',
                     label:'负责人',
-                    width:''
+                    width:'100'
                 },
                 {
                     prop:'kind',
@@ -158,7 +158,8 @@ export default {
             caigou_total:'',
             yanshou_total:'',
             weibao_total:'',
-            daituibao_total:''
+            daituibao_total:'',
+            status:''
         }
     },
     methods:{
@@ -174,7 +175,6 @@ export default {
         },
 
         handlePageUp(params) {
-            // console.log(params)
             this.page = params
             this.init()
         },
@@ -183,7 +183,7 @@ export default {
             this.$http.post("/api/project/getProjectCountByState", param)
             .then((res) => {
                 if(res.success == true) {
-                    console.log(state_name+"==",res.total)
+                    // console.log(state_name+"==",res.total)
                     if(state_name === 'proj_total'){
                         this.proj_total = res.total;
                     }else  if(state_name === 'caigou_total'){
@@ -218,9 +218,11 @@ export default {
                 year:this.year,
                 fundsSources:this.fundsSources,
                 searchText:this.searchText,
-                projectState:this.projectState
+                projectState:this.projectState,
+                status:this.status
             };
-            this.$http.post("/api/project/getProjectList",params).then(res =>{
+            this.$http.post("/api/project/zlProjectList",params).then(res =>{
+             //   console.log(res)
                 if(res.success){
                     this.total=res.total;
                     var datalsit=res.rows;
@@ -231,50 +233,37 @@ export default {
                         obj.num=datalsit[i].no;
                         obj.name=datalsit[i].name;
                         obj.premoney=(datalsit[i].ysje).toFixed(2);
-                        obj.money="0.00";
-                        obj.status = datalsit[i].projectStateName
+                        if(datalsit[i].zbJe){
+                           obj.money=(datalsit[i].zbJe).toFixed(2);
+                        }
+                        if(datalsit[i].pStatus==2){
+                           obj.stateNodeNames = "已终止"; 
+                        }
+                        if(datalsit[i].status==16){
+                           obj.stateNodeNames = "已结题" ;
+                        }
+                        if(datalsit[i].pStatus!=2&&datalsit[i].status!=16){
+                           obj.stateNodeNames = datalsit[i].stateNodeNames 
+                        }
+                        
                         obj.resource=datalsit[i].sourcesFundName;
                         obj.men=datalsit[i].leaderNames;
-                        // obj.menId=datalsit[i].leaderId;
                         obj.kind=datalsit[i].projectTypeName;
                         obj.time=datalsit[i].createTime;
                         obj.id=datalsit[i].id;
-                        // obj.projectNode=datalsit[i].projectNode;
-                        // obj.sourcesFundingType=datalsit[i].sourcesFundingType;
-                        // obj.projectCategory=datalsit[i].projectCategory;
-                        // obj.projectState=datalsit[i].projectState;
-                        // obj.startTime=datalsit[i].startTime;
-                        // obj.endTime=datalsit[i].endTime;
-                        // obj.remark=datalsit[i].remark;
-                        // obj.projectType=datalsit[i].projectType;
-                        // obj.isOldProject=datalsit[i].isOldProject;
-                        // obj.projectTypeNames=datalsit[i].projectTypeNames;
-                        // obj.projectCategoryNames=datalsit[i].projectCategoryNames;
-                        //  obj.projectStateName=datalsit[i].projectStateName;
-                        //  obj.projectNodeName=datalsit[i].projectNodeName;
-
                         proList.push(obj)
                     }
-
-                    this.tableData = proList
-                    
+                    this.tableData = proList                   
                 }
             })
         },
-
-        // cell click
         handleLookDetail(row, column, cell ,event) {
-            // console.log(row)
             if(column.label == '项目名称'){   
-                this.getProjectMsgById(row.id)
-                
+                this.getProjectMsgById(row.id)       
             }
         },
-
         getProjectMsgById(id){
-            let params = {
-                id:id
-            }
+            let params = {id:id}
             this.$http.post('/api/project/getProjectMsgById', params)
             .then((res) => {
                 if(res.code === '00000') {
@@ -286,40 +275,39 @@ export default {
                 }
             })
         },
-        
-
         cell({row, column, rowIndex, columnIndex}) {
-            // console.log(columnIndex)
             if( columnIndex == 2){
                 return 'project-style'
             }
             
         },
-
         handlePageRows(params) {
-            // console.log(params)
             this.rows = params
             this.init()
         },
-
-        // search
         handleSearchRes(params) {
             if(params.projectState == "0") {
                 params.projectState = ""
             }
+            if(params.projectState=="1"){
+                params.status=2;
+                params.projectState="";
+            }
+            if(params.projectState=="2"){
+                params.projectState="";
+                params.status=16;
+            }
             if(params.projectType == "0") {
                 params.projectType = ""
             }
-            // console.log(params)
-            this.year = params.year
-            this.projectType = params.projectType
-            this.fundsSources = params.fundsSources
-            this.searchText = params.searchText
-            this.projectState = params.projectState
+            this.year = params.year;
+            this.projectType = params.projectType;
+            this.fundsSources = params.fundsSources;
+            this.searchText = params.searchText;
+            this.projectState = params.projectState;
+            this.status=params.status;
             this.init()
         },
-
-        // pro status
         getStatusAndNodes() {
             this.$http.post("/api/template/getStatusAndNodes", {})
             .then((res) => {
@@ -333,6 +321,14 @@ export default {
                             msg['label']=this.statusList1[a].name;
                             this.options4.push(msg);
                         } 
+                        var msg={};
+                        msg['value']=1;
+                        msg['label']="已终止";
+                        this.options4.push(msg);
+                        var msg1={};
+                        msg1['value']=2;
+                        msg1['label']="已结题";
+                        this.options4.push(msg1);
                     }
                 }else{
                     this.$message({

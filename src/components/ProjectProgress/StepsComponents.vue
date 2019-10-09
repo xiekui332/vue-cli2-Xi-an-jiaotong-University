@@ -3,7 +3,7 @@
         <div class="st-btn pub-family">
             <p v-if="exTwoproInfo"> <img src="../../assets/img/icon-trans.png" alt="">阶段完成</p>
             <p v-else> <img src="../../assets/img/icon-trans.png" alt="">阶段进行中</p>
-            <el-row>
+            <el-row v-show="sessionGet.projectNode">
                 <el-button type="primary" round @click="handleLookSteps">审批进度</el-button>
             </el-row>
         </div>
@@ -13,40 +13,40 @@
             
 
             <!-- 立项申请 S -->
-            <StepsApplication v-if="currentstep === 'excutingstep1' || currentstep === 'allstep1' || currentstep === 'situatiostep1'" />
+            <StepsApplication v-if="currentstep === 'excutingstep1' || currentstep === 'trackstep1' || currentstep === 'allstep1' || currentstep === 'situatiostep1'" />
 
             <!-- 立项论证 S -->
-            <Demonstration v-if="currentstep === 'excutingstep2' || currentstep === 'allstep2' || currentstep === 'situatiostep2'" />
+            <Demonstration v-if="currentstep === 'excutingstep2' || currentstep === 'trackstep2' || currentstep === 'allstep2' || currentstep === 'situatiostep2'" />
 
             <!-- 项目采购--需求论证 -->
-            <Demand v-if="currentstep === 'excutingstep3' || currentstep === 'allstep3' || currentstep === 'situatiostep3'" />
+            <Demand v-if="currentstep === 'excutingstep3' || currentstep === 'trackstep3' || currentstep === 'allstep3' || currentstep === 'situatiostep3'" />
 
             <!-- 项目采购--采购申请 -->
-            <Requisition v-if="currentstep === 'excutingstep4' || currentstep === 'allstep4' || currentstep === 'situatiostep4'" />
+            <Requisition v-if="currentstep === 'excutingstep4' || currentstep === 'trackstep4' || currentstep === 'allstep4' || currentstep === 'situatiostep4'" />
             
             <!-- 项目采购--采购会 -->
-            <Sourcing v-if="currentstep === 'excutingstep5' || currentstep === 'allstep5' || currentstep === 'situatiostep5'" />
+            <Sourcing v-if="currentstep === 'excutingstep5' || currentstep === 'trackstep5' || currentstep === 'allstep5' || currentstep === 'situatiostep5'" />
 
             <!-- 项目采购--合同签订 -->
-            <Sign v-if="currentstep === 'excutingstep6' || currentstep === 'allstep6' || currentstep === 'situatiostep6'" />
+            <Sign v-if="currentstep === 'excutingstep6' || currentstep === 'trackstep6' || currentstep === 'allstep6' || currentstep === 'situatiostep6'" />
 
             <!-- 项目执行--执行资料 -->
-            <Implementation v-if="currentstep === 'excutingstep7' || currentstep === 'allstep7' || currentstep === 'situatiostep7'" />
+            <Implementation v-if="currentstep === 'excutingstep7' || currentstep === 'trackstep7' || currentstep === 'allstep7' || currentstep === 'situatiostep7'" />
 
             <!-- 验收-验收申请 -->
-            <Acceptance v-if="currentstep === 'excutingstep8' || currentstep === 'allstep8' || currentstep === 'situatiostep8'" />
+            <Acceptance v-if="currentstep === 'excutingstep8' || currentstep === 'trackstep8' || currentstep === 'allstep8' || currentstep === 'situatiostep8'" />
 
             <!-- 验收-预验收 -->
-            <Preacceptance v-if="currentstep === 'excutingstep9' || currentstep === 'allstep9' || currentstep === 'situatiostep9'" />
+            <Preacceptance v-if="currentstep === 'excutingstep9' || currentstep === 'trackstep9' || currentstep === 'allstep9' || currentstep === 'situatiostep9'" />
 
             <!-- 验收-验收复核 -->
-            <Acceptancereview v-if="currentstep === 'excutingstep10' || currentstep === 'allstep10' || currentstep === 'situatiostep10'" />
+            <Acceptancereview v-if="currentstep === 'excutingstep10' || currentstep === 'trackstep10' || currentstep === 'allstep10' || currentstep === 'situatiostep10'" />
 
             <!-- 维保-结束申请 -->
-            <Closeapplication v-if="currentstep === 'excutingstep11' || currentstep === 'allstep11' || currentstep === 'situatiostep11'" />
+            <Closeapplication v-if="currentstep === 'excutingstep11' || currentstep === 'trackstep11' || currentstep === 'allstep11' || currentstep === 'situatiostep11'" />
 
             <!-- 维保-技术指标验收 -->
-            <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'allstep12' || currentstep === 'situatiostep12'" />
+            <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'trackstep12' || currentstep === 'allstep12' || currentstep === 'situatiostep12'" />
 
             
         </div>
@@ -172,8 +172,7 @@ export default {
                 nodeId:this.sessionGet.projectNode
             }
             this.$http.post('/api/project/getExamineList', params)
-            .then((res) => {
-                //   console.log(res)
+            .then(res => {
                 if(res.code == '00000'){
                     this.hasNode = true
                   

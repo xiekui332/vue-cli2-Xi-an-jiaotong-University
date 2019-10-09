@@ -366,7 +366,6 @@ export default {
                             obj.approveType=this.approveType;
                             listArray.push(obj)
                         }
-
                         this.tableData = listArray
                     }
                 }
@@ -391,7 +390,7 @@ export default {
         },
 
         handleChangeDetail(params) {
-            // console.log(params)  
+            // console.log(params)   
             this.tableData = []
             this.hasExcutingDetail = params
         }

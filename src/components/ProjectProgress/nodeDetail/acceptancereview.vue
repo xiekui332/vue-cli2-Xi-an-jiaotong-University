@@ -29,7 +29,7 @@
         <div class="st-item">
             <div class="st-item-header">
                 <span class="pub-family">信息填写(付款信息)</span>
-                <a href="javascript:;" class="st-add" v-if="!noDrop" @click="handleAddmenu('fill')">添加</a>
+                <a href="javascript:;" class="st-add" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('fill')">添加</a>
             </div>
 
             <div class="st-edit-content">
@@ -39,7 +39,7 @@
                     <div><i>*</i> <span>付款金额(万)</span></div>
                     <div><i>*</i> <span>剩余付款金额(万)</span></div>
                     <div> <span>备注</span></div>
-                    <div> <span>操作</span></div>
+                    <div v-show="!isSituatiostep"> <span>操作</span></div>
                 </div>
                 <div class="st-edit-item st-oparate" v-for="(i, ind) in infoArr" :key="ind">
                     <div class="st-oparate-col">
@@ -63,13 +63,10 @@
                     <div class="st-oparate-col">
                         <el-input v-model="i.remark" maxlength='20' :disabled="true" ></el-input>
                     </div>
-                    <div class="st-oparate-col st-oparate-btn" v-if="i.pType=='2'">
-                        <i :class="noDrop?'st-icon-edit pub-dis':'st-icon-edit'"  @click="handleEdit(i, 'edit', ind)"> 编辑</i>
-                        <i :class="noDrop?'st-icon-edit pub-dis':'st-icon-edit'" @click="handleEdit(i, 'del')"> 删除</i>
-                        
-                    </div>
-                    <div class="st-oparate-col"  v-if="i.pType=='1'">
-                       <i :disabled="true">签订合同阶段付款信息</i>
+                    <div class="st-oparate-col st-oparate-btn" v-show="!isSituatiostep">
+                        <i v-if="i.pType=='2'" :class="noDrop?'st-icon-edit pub-dis':'st-icon-edit'"  @click="handleEdit(i, 'edit', ind)"> 编辑</i>
+                        <i v-if="i.pType=='2'" :class="noDrop?'st-icon-edit pub-dis':'st-icon-edit'" @click="handleEdit(i, 'del')"> 删除</i>
+                        <i v-if="i.pType=='1'" :disabled="true">签订合同阶段付款信息</i>
                     </div>
                 </div>
             </div>
@@ -82,7 +79,7 @@
                 <span class="pub-family">模板资料</span>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
@@ -101,6 +98,7 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
@@ -109,7 +107,24 @@
 
                     </div>
                 </div>                
-            </div>           
+            </div>  
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div> <span>资料模板</span></div>
+                    <div> <span>上传资料</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in zlList" :key="ind">
+                    <div>{{i.mb.name}}</div>
+                    <div class="allow-down" @click="handleDownLoadSitua(i.zl[0].attachUrl)">{{i.zl.length && i.zl[0].attachName?i.zl[0].attachName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createUserName?i.zl[0].createUserName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createTime?i.zl[0].createTime:""}}</div>
+                </div>
+            </div>             
         </div>
 
         <!-- 其他资料 -->
@@ -117,10 +132,10 @@
         <div class="st-item st-templates st-icon-none">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('other')">增行</a>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
@@ -152,8 +167,24 @@
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div class="st-qt-name"> <span>资料名称</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in otherArr" :key="ind">
+                    <div class="st-qt-name allow-down" @click="handleDownLoadSitua(i.attachUrl)">{{i.attachName}}</div>
+                    <div>{{i.createUserName}}</div>
+                    <div>{{i.createTime}}</div>
+                </div>
+            </div>
         </div>
-        <el-row class="st-checkHandle" v-if="!noDrop">
+
+        <el-row class="st-checkHandle" v-if="!noDrop" v-show="!isSituatiostep">
             <el-button type="primary" :disabled="noDrop" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
@@ -247,10 +278,17 @@ export default {
             loading:false,
             proNode:13,
             proNodeId:'4643a77c44be4544b230725091498f20',
+
+            isSituatiostep:false
         }
     },
 
     methods:{
+
+        handleDownLoadSitua(url) {
+            window.open(url)
+        },
+
         handleEdit(i,type,index){
             if(this.sessionGet.status > this.proNode) {
                 return false
@@ -630,7 +668,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -687,6 +725,18 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
+
+        // resource == situatiostep
+        if(this.$route.name.indexOf("situatiostep") < 0) {
+            this.isSituatiostep = false
+        }else{
+            this.isSituatiostep = true
+            this.noDrop = true
+        }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
     }
 }
 </script>
@@ -1109,6 +1159,56 @@ export default {
                 margin-left: 20px;
             }
         } 
+    }
+
+    .st-templates{
+
+        // resource == situation
+        .st-edit-content-situation{
+            .st-edit-item{
+                line-height: 50px;
+            }
+            .st-ed-head > div:nth-child(1){
+                text-indent: 0;
+            }
+            .st-ed-head > div{
+                padding-left: 10px;
+            }
+            .st-ed-head > div:nth-child(1){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(2){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(4){
+                min-width: 200px;
+            }
+            .st-ed-List{
+                >div{
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    padding-left: 10px;
+                }
+                >div:nth-child(1){
+                    min-width: 200px;
+                }
+                >div:nth-child(2){
+                    min-width: 200px;
+                }
+                >div:nth-child(4){
+                    min-width: 200px;
+                }
+            }
+            .st-qt-name{
+                min-width: 350px!important;
+            }
+            .allow-down{
+                cursor: pointer;
+                color: #3B7CFF;
+            }
+            
+        }
     }
 }
 </style>

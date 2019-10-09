@@ -440,7 +440,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -545,12 +545,10 @@ export default {
                 id:this.proInfo.id,
                 nodeId:this.proInfo.projectNode
             }
-            // console.log(params)
             this.$http.post('/api/project/getExamineList', params)
             .then((res) => {
                 if(res.code == '00000'){
                     let isprogress = res.data[res.data.length - 1].state
-                    // console.log(isprogress)
                     if(isprogress == 1) {
                         this.isProgress = true
                     }else{
@@ -570,14 +568,16 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
-        this.handleisProgress()
-
-        // resource == situatiostep
+        this.handleisProgress();
         if(this.$route.name.indexOf("situatiostep") < 0) {
             this.isSituatiostep = false
         }else{
             this.isSituatiostep = true
         }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
         
     },
 
@@ -593,7 +593,7 @@ export default {
 
     watch:{
         exprint(params) {
-            console.log(params)
+           // console.log(params)
             if(!params) {
                 this.dialogVisibleFill = false
             }

@@ -35,7 +35,7 @@
                 <span class="pub-family">模板资料</span>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
@@ -54,6 +54,7 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
@@ -62,17 +63,34 @@
 
                     </div>
                 </div>                
-            </div>           
+            </div>  
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div> <span>资料模板</span></div>
+                    <div> <span>上传资料</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in zlList" :key="ind">
+                    <div>{{i.mb.name}}</div>
+                    <div class="allow-down" @click="handleDownLoadSitua(i.zl[0].attachUrl)">{{i.zl.length && i.zl[0].attachName?i.zl[0].attachName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createUserName?i.zl[0].createUserName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createTime?i.zl[0].createTime:""}}</div>
+                </div>
+            </div>         
         </div>
 
         <!-- 其他资料 -->
         <div class="st-item st-templates st-icon-none">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('other')">增行</a>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
@@ -104,7 +122,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div class="st-qt-name"> <span>资料名称</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in otherArr" :key="ind">
+                    <div class="st-qt-name allow-down" @click="handleDownLoadSitua(i.attachUrl)">{{i.attachName}}</div>
+                    <div>{{i.createUserName}}</div>
+                    <div>{{i.createTime}}</div>
+                </div>
+            </div>
         </div>
+
         <!-- 审批资料-->
         <div class="st-item st-templates">
             <div class="st-item-header">
@@ -112,7 +146,7 @@
             </div>
 
             <div class="st-edit-content">
-                <div class="st-edit-item st-ed-head">
+                <div class="st-edit-item st-ed-head st-ed-head-two">
                     <div> <span>审批附件名称</span></div>
                     <div> <span>操作时间</span></div>
                     <div> <span>操作人</span></div>
@@ -120,7 +154,7 @@
                 <div class="st-edit-item" v-for="(i, ind) in shpiFiles" :key="ind">
                     <div class="st-icon-file-title" @click="handleDownHisFile(i, 'qi')">
                         <i class="st-icon-file"></i>
-                        <span class="st-file-title">{{i.attachName}} </span>
+                        <span class="st-file-title st-file-span">{{i.attachName}} </span>
                     </div>
                     <div class="st-icon-file-title">
                         <span class="st-file-title">{{i.createTime}} </span>
@@ -132,7 +166,7 @@
             </div>
         </div>
 
-        <el-row class="st-checkHandle" v-if="!noDrop">
+        <el-row class="st-checkHandle" v-if="!noDrop" v-show="!isSituatiostep">
             <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
@@ -169,14 +203,21 @@ export default {
             proNodeId:'a2414bacf75144098799a178f0ff2a41',
             shpiFiles:[],
             isMust:true,
-            zbaoje:0
+            zbaoje:0,
+
+            isSituatiostep:false
 
         }
     },
 
     methods:{
+
+        handleDownLoadSitua(url) {
+            window.open(url)
+        },
+
         handleChangeMoney(){
-          this.val2 = (this.zbaoje * this.val1 *0.01).toFixed(2)+"元";
+          this.val2 = (this.zbaoje * this.val1 *0.01).toFixed(2);
         },
        handleAddMsg(){
             var params={id:this.sessionGet.id,tZbjRatio:this.val1,remark:this.val3}
@@ -430,7 +471,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -473,6 +514,18 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
+
+        // resource == situatiostep
+        if(this.$route.name.indexOf("situatiostep") < 0) {
+            this.isSituatiostep = false
+        }else{
+            this.isSituatiostep = true
+            this.haslk = true;
+        }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
     }
 }
 </script>
@@ -645,6 +698,16 @@ export default {
             }
             
         }
+
+        .st-icon-file-title{
+            .st-file-span{
+                display: flex;
+                justify-content:flex-start;
+                cursor: pointer;
+                color: #3B7CFF!important;
+                margin-left: -4em;
+            }
+        }
     }
 
     .st-checkHandle{
@@ -714,6 +777,8 @@ export default {
             background-position: 0 0!important;
         }
     }
+
+
 }
 </style>
 

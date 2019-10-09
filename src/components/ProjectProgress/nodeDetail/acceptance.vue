@@ -7,7 +7,7 @@
                 <span class="pub-family st-print">
                     <span class="pub-family st-print" @click="handleAddMsg()" v-if="haslk==false">保存</span>
                     <span class="pub-family st-print" v-if="haslk==false"  @click="handleTjSp()">提交审核</span>
-                    <span class="pub-family st-print">打印自验单</span>
+                    <span class="pub-family st-print" @click="handleprint()" v-print="'#print'">打印自验单</span>
                 </span>
             </div>
 
@@ -48,7 +48,7 @@
                 <span class="pub-family">模板资料</span>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
@@ -67,6 +67,7 @@
                             :limit="1"
                             :file-list="fileList"
                             accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
+                            :disabled="noDrop"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
@@ -75,16 +76,33 @@
 
                     </div>
                 </div>                
-            </div>           
+            </div>   
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div> <span>资料模板</span></div>
+                    <div> <span>上传资料</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in zlList" :key="ind">
+                    <div>{{i.mb.name}}</div>
+                    <div class="allow-down" @click="handleDownLoadSitua(i.zl[0].attachUrl)">{{i.zl.length && i.zl[0].attachName?i.zl[0].attachName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createUserName?i.zl[0].createUserName:""}}</div>
+                    <div>{{i.zl.length && i.zl[0].createTime?i.zl[0].createTime:""}}</div>
+                </div>
+            </div>        
         </div>
 
         <div class="st-item st-templates st-icon-none">
             <div class="st-item-header">
                 <span class="pub-family">其他资料</span>
-                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" @click="handleAddmenu('other')">增行</a>
+                <a href="javascript:;" :class="noDrop?'st-add pub-dis':'st-add'" v-if="!noDrop" v-show="!isSituatiostep" @click="handleAddmenu('other')">增行</a>
             </div>
 
-            <div class="st-edit-content">
+            <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
                     <div> <span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
@@ -116,6 +134,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- resource == situationstep -->
+            <div v-show="isSituatiostep" class="st-edit-content st-edit-content-situation">
+                <div class="st-edit-item st-ed-head">
+                    <div class="st-qt-name"> <span>资料名称</span></div>
+                    <div> <span>操作人</span></div>
+                    <div> <span>操作时间</span></div>
+                </div>
+
+                <div class="st-edit-item st-ed-List" v-for="(i, ind) in otherArr" :key="ind">
+                    <div class="st-qt-name allow-down" @click="handleDownLoadSitua(i.attachUrl)">{{i.attachName}}</div>
+                    <div>{{i.createUserName}}</div>
+                    <div>{{i.createTime}}</div>
+                </div>
+            </div>
         </div>
 
         <div class="st-item st-templates">
@@ -124,7 +157,7 @@
             </div>
 
             <div class="st-edit-content">
-                <div class="st-edit-item st-ed-head">
+                <div class="st-edit-item st-ed-head st-ed-head-two">
                     <div> <span>审批附件名称</span></div>
                     <div> <span>操作时间</span></div>
                     <div> <span>操作人</span></div>
@@ -132,7 +165,7 @@
                 <div class="st-edit-item" v-for="(i, ind) in shpiFiles" :key="ind">
                     <div class="st-icon-file-title" @click="handleDownHisFile(i, 'qi')">
                         <i class="st-icon-file"></i>
-                        <span class="st-file-title">{{i.attachName}} </span>
+                        <span class="st-file-title st-file-span">{{i.attachName}} </span>
                     </div>
                     <div class="st-icon-file-title">
                         <span class="st-file-title">{{i.createTime}} </span>
@@ -143,13 +176,99 @@
                 </div>
             </div>
         </div>
-        <el-row class="st-checkHandle" v-if="!noDrop">
+        <el-row class="st-checkHandle" v-if="!noDrop" v-show="!isSituatiostep">
             <el-button type="primary" :disabled="noDrop" :loading="loading" @click="handleFinishNode()">完成本节点</el-button>
             <div class="st-checkHandle-tips">
                 <i class="el-icon-info"></i>
                 完成后项目进入下一节点，本节点将不能编辑信息、上传资料。
             </div>
         </el-row>
+
+
+        <div class="st-dayin" ref="print" id="print">
+            <div class="da-title">网络信息中心货物类采购项目自验单</div>
+            <div class="da-head"><span>验收日期：</span><span>2019年10月8日</span></div>
+            <table class="table" border="1">
+                <tr class="tr-item-1">
+                    <td>项目单位</td>
+                    <td>{{printInfo.company}}</td>
+                    <td>经费来源</td>
+                    <td>{{printInfo.sourcesFundingType}}</td>
+                </tr>
+                <tr class="tr-item-1"><td>项目名称</td><td>{{printInfo.name}}</td><td>合同金额</td><td>{{printInfo.zbje}}</td></tr>
+                <tr class="tr-item-1"><td>招标编号</td><td>{{printInfo.zbno}}</td><td>合同编号</td><td>{{printInfo.htno}}</td></tr>
+                <tr class="tr-item-1"><td>供 应 商</td><td>{{printInfo.supplier}}</td><td>安置地点</td><td>{{printInfo.azAddress}}</td></tr>
+                <tr class="tr-item-1"><td>到货日期</td><td>{{printInfo.dhTime}}</td><td>安装日期</td><td>{{printInfo.azTime}}</td></tr>
+                <tr class="tr-item-1 tr-item-2">
+                    <td colspan="4">
+                        安装调试情况（包括提供验收的技术文件、安装日期、安装过程、出现问题及处理、
+                        自验情况；调试、测试结果等与合同对比等评价、建议；是否具备验收的条件等。）
+                        <br><br>
+                        <span>经办人（签字）：</span>
+                    </td>
+                </tr>
+                <tr class="tr-item-1 tr-item-3">
+                    <td>技术验收结论：
+                        <br><br> 验收人：
+                    </td>
+                    <td>数据验收结论：<br><br> 验收人：</td>
+                    <td>安全验收结论：<br><br> 验收人：</td>
+                    <td>功能验收结论：<br><br> 验收人：</td>
+                </tr>
+                <tr class="tr-item-1 tr-item-2 tr-item-4"><td colspan="4">验收组（三名在编在岗人员）签字：</td></tr>
+                <tr class="tr-item-1 tr-item-4">
+                    <td>姓   名</td>
+                    <td>职  称</td>
+                    <td>单   位</td>
+                    <td>姓   名</td>
+                    <td>职  称</td>
+                    <td>单   位</td>
+                </tr>
+                <tr class="tr-item-1 tr-item-4"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr class="tr-item-1 tr-item-4"><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr class="tr-item-1 tr-item-2">
+                    <td>验收结论及意见：
+                        <br><br>
+                        <p>自验通过，具备验收条件。</p>
+                        <span>（验收组负责人签字）：</span>
+                    </td>
+                </tr>
+                <tr class="tr-item-1 tr-item-2">
+                    <td>项目单位意见：
+                        <br><br>
+                        <p>同意申请复核验收。</p>
+                        <span>
+                            主  管/副主管（签字）：
+                            <br>
+                            主管副处（签字）：
+                            </span>
+                    </td>
+                </tr>
+                <tr class="tr-item-1 tr-item-2">
+                    <td>用户单位意见:
+                        <br><br>
+                        <p>同意申请复核验收。</p>
+                        <span>
+                            用户单位负责人（签字）： 
+                            <br>
+                             （用户单位公章）
+                        </span>
+                    </td>
+                </tr>
+                <tr class="tr-item-1 tr-item-5">
+                    <td>供货单位意见：
+                        <br><br>
+                        <p>供方授权 <span> 233 </span> 为代表参加  <span>2019</span> 年 <span>10</span> 月 <span>20</span> 日需方组织的验收并对由供方代表签字的专家意见表示确认。</p>
+                        <br>
+                        <span>
+                            供应商负责人/授权代表（签字）
+                        </span>
+                        <br>
+                    </td>
+                </tr>
+            </table>
+            <p>特别说明：自验完成后请提交院处采购工作小组组织处内验收或者申报学校验收。</p>
+        </div>
     </div>
 </template>
 
@@ -178,11 +297,19 @@ export default {
             loading:false,
             proNode:11,
             proNodeId:'2798118bf3ca47439750b4e4acdd7735',
-            shpiFiles:[]
+            shpiFiles:[],
+            printInfo:{},
+
+            isSituatiostep:false
         }
     },
 
     methods:{
+
+        handleDownLoadSitua(url) {
+            window.open(url)
+        },
+        
        handleAddMsg(){
             var params={id:this.sessionGet.id,arrivalTime:this.val2,installationTime:this.val3,installationAddress:this.val1}
             this.$http.post("/api/project/addAZMsg", params)
@@ -207,6 +334,10 @@ export default {
                 })
             })
        },
+       handleprint(){
+           
+       },
+       // 提交审核
        handleTjSp(){
          if(this.sessionGet.installationTime){
             var params={id:this.sessionGet.id}
@@ -435,7 +566,7 @@ export default {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
             }
-            if(this.sessionGet.status > this.proNode) {
+            if(this.sessionGet.status > this.proNode || this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
                 params.nodeId = this.proNodeId
                 this.noDrop = true
                 store.dispatch('commitChangeIsHistory',true)
@@ -472,11 +603,41 @@ export default {
                     message:err.message
                 })
             })
+        },
+
+        getPrintInfo(id) {
+            let params = {
+                id:id
+            }
+
+            this.$http.post("/api/project/getZydMsg", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.printInfo = res.data
+                }
+            })
+            .catch((err) => {
+
+            })
         }
     },
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
+
+        this.getPrintInfo(this.sessionGet.id)
+
+        // resource == situatiostep
+        if(this.$route.name.indexOf("situatiostep") < 0) {
+            this.isSituatiostep = false
+        }else{
+            this.isSituatiostep = true
+            this.haslk=true;
+        }
+
+        // if(this.sessionGet.pStatus == 1 || this.sessionGet.pStatus == 2) {
+        //     this.isSituatiostep = true
+        // }
     }
 }
 </script>
@@ -589,11 +750,245 @@ export default {
             color: #3B7CFF;
         }
     }
+    
+
+
     .st-icon-none{
         .st-icon-file{
             background-position: 0 0!important;
         }
     }
+    
+
+    // 只读
+    .st-templates{
+
+        // resource == situation
+        .st-edit-content-situation{
+            .st-edit-item{
+                line-height: 50px;
+            }
+            .st-ed-head > div:nth-child(1){
+                text-indent: 0;
+            }
+            .st-ed-head > div{
+                padding-left: 10px;
+            }
+            .st-ed-head > div:nth-child(1){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(2){
+                min-width: 200px;
+            }
+            .st-ed-head > div:nth-child(4){
+                min-width: 200px;
+            }
+            .st-ed-List{
+                >div{
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    padding-left: 10px;
+                }
+                >div:nth-child(1){
+                    min-width: 200px;
+                }
+                >div:nth-child(2){
+                    min-width: 200px;
+                }
+                >div:nth-child(4){
+                    min-width: 200px;
+                }
+            }
+            .st-qt-name{
+                min-width: 350px!important;
+            }
+            .allow-down{
+                cursor: pointer;
+                color: #3B7CFF;
+            }
+            
+        }
+
+        .st-icon-file-title{
+            .st-file-span{
+                display: flex;
+                justify-content:flex-start;
+                cursor: pointer;
+                color: #3B7CFF!important;
+                // text-indent:1em;
+                margin-left: -3em;
+            }
+        }
+
+        .st-edit-content{
+            .st-ed-head-two{
+                >div:nth-child(1){
+                    text-indent: 1em;
+                }
+            }
+        }
+        
+    }
+
+    // 打印
+    @media print {
+        .st-dayin{
+            background: #ffffff;
+            padding: 10px;
+            .da-title{
+                text-align: center;
+                font-size: 18px;
+                line-height: 40px;
+            }
+            .da-head{
+                text-align: right;
+                padding-right: 40px;
+
+            }
+            .table{
+                width: 100%;
+                tr{
+                    width: 100%;
+                    overflow: hidden;
+                    display: flex;
+                }
+                td{
+                    flex: 1;
+                }
+                .tr-item-1{
+                    line-height: 30px;
+                    min-height: 30px;
+                    td{
+                        text-align: center;
+                    }
+                }
+                .tr-item-2{
+                    td{
+                        text-align: left!important;
+                        text-indent: 2em;
+                        padding: 10px 0;
+                        span{
+                            display: block;
+                            text-align: right;
+                            padding-right: 20%;
+                        }
+                        p{
+                            padding-left: 20%;
+                        }
+                    }
+                }
+                .tr-item-3{
+                    td{
+                        // width: 25%;
+                        text-align: left;
+                        padding-left: 10px;
+                    }
+                }
+                .tr-item-4{
+                    td{
+                        text-align: center;
+                    }
+                    
+                }
+                .tr-item-5{
+                    td{
+                        text-align: left;
+                        padding-left: 20px;
+                        p{
+                            text-indent: 2em;
+                            span{
+                                padding: 0 10px;
+                            }
+                        }
+                        >span{
+                            display: block;
+                            text-align: right;
+                            padding-right: 20%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .st-dayin{
+        background: #ffffff;
+        padding: 10px;
+        .da-title{
+            text-align: center;
+            font-size: 18px;
+            line-height: 40px;
+        }
+        .da-head{
+            text-align: right;
+            padding-right: 40px;
+
+        }
+        .table{
+            width: 100%;
+            tr{
+                width: 100%;
+                overflow: hidden;
+                display: flex;
+            }
+            td{
+                flex: 1;
+            }
+            .tr-item-1{
+                line-height: 30px;
+                min-height: 30px;
+                td{
+                    text-align: center;
+                }
+            }
+            .tr-item-2{
+                td{
+                    text-align: left!important;
+                    text-indent: 2em;
+                    padding: 10px 0;
+                    span{
+                        display: block;
+                        text-align: right;
+                        padding-right: 20%;
+                    }
+                    p{
+                        padding-left: 20%;
+                    }
+                }
+            }
+            .tr-item-3{
+                td{
+                    // width: 25%;
+                    text-align: left;
+                    padding-left: 10px;
+                }
+            }
+            .tr-item-4{
+                td{
+                    text-align: center;
+                }
+                
+            }
+            .tr-item-5{
+                td{
+                    text-align: left;
+                    padding-left: 20px;
+                    p{
+                        text-indent: 2em;
+                        span{
+                            padding: 0 10px;
+                        }
+                    }
+                    >span{
+                        display: block;
+                        text-align: right;
+                        padding-right: 20%;
+                    }
+                }
+            }
+        }
+    }
+    
     
 }
 </style>
