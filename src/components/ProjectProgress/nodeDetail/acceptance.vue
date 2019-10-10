@@ -831,87 +831,9 @@ export default {
         
     }
 
-    // 打印
-    @media print {
-        .st-dayin{
-            background: #ffffff;
-            padding: 10px;
-            .da-title{
-                text-align: center;
-                font-size: 18px;
-                line-height: 40px;
-            }
-            .da-head{
-                text-align: right;
-                padding-right: 40px;
-
-            }
-            .table{
-                width: 100%;
-                tr{
-                    width: 100%;
-                    overflow: hidden;
-                    display: flex;
-                }
-                td{
-                    flex: 1;
-                }
-                .tr-item-1{
-                    line-height: 30px;
-                    min-height: 30px;
-                    td{
-                        text-align: center;
-                    }
-                }
-                .tr-item-2{
-                    td{
-                        text-align: left!important;
-                        text-indent: 2em;
-                        padding: 10px 0;
-                        span{
-                            display: block;
-                            text-align: right;
-                            padding-right: 20%;
-                        }
-                        p{
-                            padding-left: 20%;
-                        }
-                    }
-                }
-                .tr-item-3{
-                    td{
-                        // width: 25%;
-                        text-align: left;
-                        padding-left: 10px;
-                    }
-                }
-                .tr-item-4{
-                    td{
-                        text-align: center;
-                    }
-                    
-                }
-                .tr-item-5{
-                    td{
-                        text-align: left;
-                        padding-left: 20px;
-                        p{
-                            text-indent: 2em;
-                            span{
-                                padding: 0 10px;
-                            }
-                        }
-                        >span{
-                            display: block;
-                            text-align: right;
-                            padding-right: 20%;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    
     .st-dayin{
+        display: none;
         background: #ffffff;
         padding: 10px;
         .da-title{
@@ -991,6 +913,87 @@ export default {
     
     
 }
+
+// 打印
+    @media print {
+        .st-dayin{
+            background: #ffffff;
+            padding: 10px;
+            .da-title{
+                text-align: center;
+                font-size: 18px;
+                line-height: 40px;
+            }
+            .da-head{
+                text-align: right;
+                padding-right: 40px;
+
+            }
+            .table{
+                width: 100%;
+                tr{
+                    width: 100%;
+                    overflow: hidden;
+                    display: flex;
+                }
+                td{
+                    flex: 1;
+                }
+                .tr-item-1{
+                    line-height: 30px;
+                    min-height: 30px;
+                    td{
+                        text-align: center;
+                    }
+                }
+                .tr-item-2{
+                    td{
+                        text-align: left!important;
+                        text-indent: 2em;
+                        padding: 10px 0;
+                        span{
+                            display: block;
+                            text-align: right;
+                            padding-right: 20%;
+                        }
+                        p{
+                            padding-left: 20%;
+                        }
+                    }
+                }
+                .tr-item-3{
+                    td{
+                        // width: 25%;
+                        text-align: left;
+                        padding-left: 10px;
+                    }
+                }
+                .tr-item-4{
+                    td{
+                        text-align: center;
+                    }
+                    
+                }
+                .tr-item-5{
+                    td{
+                        text-align: left;
+                        padding-left: 20px;
+                        p{
+                            text-indent: 2em;
+                            span{
+                                padding: 0 10px;
+                            }
+                        }
+                        >span{
+                            display: block;
+                            text-align: right;
+                            padding-right: 20%;
+                        }
+                    }
+                }
+            }
+        }
+    }
 </style>
 
 
