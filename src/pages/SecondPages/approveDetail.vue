@@ -179,8 +179,8 @@
                                             <el-dropdown-menu slot="dropdown">
                                                 <el-dropdown-item icon="" @click.native="handleLookNode('2', 0, 6, 'cgbox')">需求论证</el-dropdown-item>
                                                 <el-dropdown-item icon="" @click.native="handleLookNode('2', 1, 7, 'cgbox')">采购申请</el-dropdown-item>
-                                                <el-dropdown-item icon="" @click.native="handleLookNode('2', 2, 8, 'cgbox')">采购会</el-dropdown-item>
-                                                <el-dropdown-item icon="" @click.native="handleLookNode('2', 3, 9, 'cgbox')">签订合同</el-dropdown-item>
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('2', 2, 8, 'cgbox')">采购磋商</el-dropdown-item>
+                                                <el-dropdown-item icon="" @click.native="handleLookNode('2', 3, 9, 'cgbox')">合同签订</el-dropdown-item>
                                             </el-dropdown-menu>
                                         </el-dropdown>
 
@@ -1392,7 +1392,7 @@ export default {
     data() {
         return {
             activeName: '',         // 绑定值需为 String 否则为 Array
-            radio:'1',
+            radio:0,
             isClear:false,
             textarea:'',
             title:'上传文件',
@@ -1520,7 +1520,10 @@ export default {
             
         },
 
-        handleComfire() {            
+        handleComfire() {  
+            if(this.radio==0){
+                return this.$message.error("请选择审批类型(同意还是驳回)") ;
+            }        
             var rowmsg=this.exRowInfo;
             if(this.radio==2){
                 if(!this.textarea){
@@ -1528,11 +1531,9 @@ export default {
                 }
             }
            if(rowmsg.projectNode=="6a3c8fb95ebe4a4696cd13e2051473b4"||rowmsg.projectNode=="2798118bf3ca47439750b4e4acdd7735"||rowmsg.projectNode=="a2414bacf75144098799a178f0ff2a41"){
-                var param={fileName:this.fileName,fileUrl:this.fileUrl,fileType:this.fileType,pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl,type:rowmsg.approveType,spState:this.radio,remark:this.textarea};
-     
+                var param={fileName:this.fileName,fileUrl:this.fileUrl,fileType:this.fileType,pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl,type:rowmsg.approveType,spState:this.radio,remark:this.textarea};    
             this.$http.post("/api/project/confirmApproval",param).then(res =>{
-                    if(res.code=="00000"){
-                        
+                    if(res.code=="00000"){                       
                         if(res.data.message) {
                             this.$message({
                                 type:'success',
@@ -2054,13 +2055,6 @@ export default {
             this.$http.post("/api/project/getExamineOpinion", params)
             .then((res) => {
                 if(res.code == "00000") {
-                    // if(res.data.state) {
-                    //     if(res.data.state == "1") {
-                    //         res.data.state = "通过"
-                    //     }else if(res.data.state == "2") {
-                    //         res.data.state = "驳回"
-                    //     }
-                    // }
                     this.approveRemark = res.data.remark
                     this.approveState = res.data.state
                     this.radio = res.data.state

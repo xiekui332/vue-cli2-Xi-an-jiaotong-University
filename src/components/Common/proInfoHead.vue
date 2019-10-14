@@ -18,7 +18,7 @@
                         </p>
                         <p>
                             <span>立项时间：</span>
-                            <span>{{exTwoproInfo.createTime?exTwoproInfo.createTime:'暂无'}}</span>
+                            <span>{{exTwoproInfo.cTime?exTwoproInfo.cTime:'暂无'}}</span>
                         </p>
                     </div>
                     <div class="et-col-item">

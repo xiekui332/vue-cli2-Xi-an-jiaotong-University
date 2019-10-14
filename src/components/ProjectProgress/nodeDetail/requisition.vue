@@ -15,7 +15,9 @@
                     <div class="st-oparate-col">采购申请表</div>
                     <div class="st-oparate-col">
                         <span :class="noDrop?'pub-dis':''" @click="handleFillApplication('open')">填写申请单</span>
-                        <span @click="handleSub" v-show="!isSituatiostep" :class="noDrop?'pub-dis':''">提交审核</span><span v-show="!isSituatiostep" style="color:darkgray;font-size:12px;">(历史项目无需审核)</span>
+                        <span v-if="isSHZ==true">
+                            <span @click="handleSub" v-show="!isSituatiostep" :class="noDrop?'pub-dis':''">提交审核</span><span v-show="!isSituatiostep" style="color:darkgray;font-size:12px;">(历史项目无需审核)</span>
+                        </span>
                         <span v-show="isProgress" @click="handlePrint">打印</span>
                     </div>
                 </div>
@@ -219,7 +221,8 @@ export default {
             alredayDone:false,
 
             isSituatiostep:false,
-            isProgress:false
+            isProgress:true,
+            isSHZ:true
         }
     },
 
@@ -256,6 +259,11 @@ export default {
             .then((res) => {
                 if(res.code === '00000') {
                     this.sessionGet = res.data
+                    if(res.data.spareIi){
+                        this.isSHZ=false;
+                    }else{
+                        this.isSHZ=true;
+                    }
                     store.dispatch('commitChangeProInfo',res.data)
                     this.getNodeAppendix();
                 }else{
@@ -285,6 +293,7 @@ export default {
                     this.alredayDone = true
                     this.exchangeFill = true
                     this.getProjectMsgById(this.sessionGet.id)
+                    store.dispatch('commitChangeErrorTips',false)
 
                 }else{
                     this.$message({
@@ -356,8 +365,6 @@ export default {
                 formData.append('no',"");
                 formData.append('spareI',"");
             }
-            
-            // console.log(formData)
             this.fileList = []
             this.$http.post("/api/project/uploadNodeAppendixCgsq", formData)
             .then((res) => {
@@ -435,7 +442,6 @@ export default {
         },
 
         getNodeAppendix() {
-            // console.log(this.sessionGet)
             let params = {
                 pid:this.sessionGet.id,
                 nodeId:this.sessionGet.projectNode
@@ -568,7 +574,7 @@ export default {
     mounted() {
         this.sessionGet = store.state.proInfo
         this.getProjectMsgById(this.sessionGet.id)
-        this.handleisProgress();
+        // this.handleisProgress();
         if(this.$route.name.indexOf("situatiostep") < 0) {
             this.isSituatiostep = false
         }else{
@@ -688,7 +694,7 @@ export default {
     
     .st-caigou{
         .st-oparate-col{
-            text-indent: 5em;
+            text-indent: 3em;
         }
         .st-oparate-col:nth-child(1){
             font-size: 14px;

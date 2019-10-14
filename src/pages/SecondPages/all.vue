@@ -20,7 +20,7 @@
 
         <div class="de-tips">
             <i class="pub-css de-icon"></i>
-            <p class="de-tips-txt">项目总计 <span>{{allCount.a?allCount.a:"0"}}</span> 项：   项目立项 {{ allCount.b?allCount.b:'0' }} 项，  项目采购 {{ allCount.c?allCount.c:'0' }} 项，  项目执行 {{ allCount.d?allCount.d:'0' }} 项，   项目验收 {{ allCount.e?allCount.e:'0' }} 项，   项目维保 {{ allCount.f?allCount.f:'0' }} 项。</p>
+            <p class="de-tips-txt">项目总计 <span>{{allCount.a?allCount.a:"0"}}</span> 项：   项目立项 {{ allCount.b?allCount.b:'0' }} 项，  项目采购 {{ allCount.c?allCount.c:'0' }} 项，  项目执行 {{ allCount.d?allCount.d:'0' }} 项，   项目验收 {{ allCount.e?allCount.e:'0' }} 项，   项目维保 {{ allCount.f?allCount.f:'0' }} 项，   项目终止 {{ allCount.g?allCount.g:'0' }} 项，   项目结题 {{ allCount.h?allCount.h:'0' }} 项。</p>
         </div>
 
         <ul class="de-items">
@@ -32,7 +32,7 @@
                     <el-tooltip class="item" effect="dark" :content="i.name?i.name:'暂无'" placement="top">
                         <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
                     </el-tooltip>
-                    <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.createTime?i.createTime:'暂无'}}</span></p>
+                    <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.cTime?i.cTime:'暂无'}}</span></p>
                 </div>
                 <div class="de-item-num">
                     <span>中标</span>
@@ -133,11 +133,6 @@ export default {
                 this.pageList = []
                 if(res.code == "00000") {
                     this.pageList = res.data
-                }else{
-                    this.$message({
-                        message: res.message,
-                        type: 'error'
-                    })
                 }
             })
             let obj = {}
@@ -147,7 +142,8 @@ export default {
             obj.projectType = params.projectType;
             obj.fundsSources = params.fundsSources;
             obj.searchText = params.searchText;
-            this.getProjectStateCount(obj);
+            obj.status=params.status;
+            this.getAllCount(obj);
 
         },
 
@@ -170,18 +166,17 @@ export default {
                 }
             })
         },
-
-        
         getPastYear(n) {
-            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
-                // unshift 插入到数组开头
-                this.options1.unshift({
-                    value:i,
-                    label:i + ' 年'
-                })
-            }
+            this.$http.get("/api/system/get/systemTime").then(res =>{
+                for(let last = res.message, i = last - n; i <= last; i ++ ) {
+                    // unshift 插入到数组开头
+                    this.options1.unshift({
+                        value:i,
+                        label:i + ' 年'
+                    })
+                }
+            });
         },
-
         getFundsSource(){
             let params = {}
             this.$http.post('/api/project/getFundsSource')
@@ -280,9 +275,10 @@ export default {
             })
         },
 
-        getProjectStateCount(params) {
-            this.$http.post("/api/project/getProjectStateCount", params)
+        getAllCount(params) {
+            this.$http.post("/api/project/getAllCount", params)
             .then((res) => {
+    //    console.log(res)
                 if(res.code == "00000") {
                     let n = 0
                     for(let i = 0; i < res.data.length; i ++ ) {
@@ -294,6 +290,8 @@ export default {
                     this.allCount.d = res.data[2]
                     this.allCount.e = res.data[3]
                     this.allCount.f = res.data[4]
+                    this.allCount.g = res.data[5]
+                    this.allCount.h = res.data[6]
                 }else{
                     this.$message({
                         message: res.message,

@@ -115,13 +115,13 @@ export default {
                         order:7
                       },
                       {
-                        title:'采购会', 
+                        title:'采购磋商', 
                         path:this.parentRoute + '/' + this.type +'/step5',
                         status:false,
                         order:8
                       },
                       {
-                        title:'签订合同', 
+                        title:'合同签订', 
                         path:this.parentRoute + '/' + this.type +'/step6',
                         status:false,
                         order:9
@@ -189,7 +189,8 @@ export default {
             msgtime:'',
             exproInfo:{},
             exparamsUrl:'',
-            sessionGet:{}
+            sessionGet:{},
+            // hasErrorTips:false
         }
     },
     methods:{
@@ -221,10 +222,10 @@ export default {
                         this.handleSetroute("项目采购", "采购申请")
                     }else if(routerStep == 8) {
                         this.handleSetroute("项目立项")
-                        this.handleSetroute("项目采购", "采购会")
+                        this.handleSetroute("项目采购", "采购磋商")
                     }else if(routerStep == 9) {
                         this.handleSetroute("项目立项")
-                        this.handleSetroute("项目采购", "签订合同")
+                        this.handleSetroute("项目采购", "合同签订")
                     }else if(routerStep == 10) {
                         this.handleSetroute("项目立项")
                         this.handleSetroute("项目采购")
@@ -354,7 +355,14 @@ export default {
                  this.msgremark=res.data.remark;
                  this.msguser=res.data.spUser;
                  this.msgtime=res.data.time;
+             }else{
+                 store.dispatch('commitChangeErrorTips',false)
+                // this.hasErrorTips=false;
              }
+            })
+            .catch((err) => {
+                store.dispatch('commitChangeErrorTips',false)
+                // this.hasErrorTips=false;
             })
 
         }
@@ -384,7 +392,12 @@ export default {
                 this.handleToRoute()
                 store.dispatch('commitChangeUpdate',false)
             }
-        }
+        },
+
+        // ErrorTips(params) {
+        //     this.hasErrorTips=params;
+        //     console.log(this.hasErrorTips)
+        // }
     },
 
     computed:{

@@ -68,11 +68,11 @@
             </div>
             <div class="pl-item-wrapper">
                 <div class="pl-input">
-                    <span class="pl-input-name"><i></i>招标编号：</span>
+                    <span class="pl-input-name"><i>*</i>招标编号：</span>
                     <el-input class="pl-input-box" v-model="biddinfNo" placeholder="请输入内容" :disabled="isSign"></el-input>
                 </div>
                 <div class="pl-input">
-                    <span class="pl-input-name"><i></i>合同编号：</span>
+                    <span class="pl-input-name"><i>*</i>合同编号：</span>
                     <el-input class="pl-input-box" v-model="contractNo" placeholder="请输入内容" :disabled="isSign"></el-input>
                 </div>
             </div>
@@ -492,6 +492,30 @@ export default {
                 if(this.isSign) {
                     return false
                 }
+                if(!this.supplier){
+                     return this.$message.error("供应商不能为空");
+                }
+                if(!this.zbiaoJe){
+                     return this.$message.error("中标金额不能为空");
+                }
+                if(!this.isServiceFee){
+                     return this.$message.error("是否所要服务费不能为空");
+                }
+                if(!this.contractTime){
+                     return this.$message.error("合同签订日期不能为空");
+                }
+                if(!this.repairPeriod){
+                     return this.$message.error("维保期不能为空");
+                }
+                if(!this.retentionMoney){
+                     return this.$message.error("质保金不能为空");
+                }
+                if(!this.biddinfNo){
+                     return this.$message.error("招标编号不能为空");
+                }
+                if(!this.contractNo){
+                     return this.$message.error("合同编号不能为空");
+                }
                 var now = new Date(this.contractTime);
                 var str=this.repairPeriod.toString().split('.');
                 var years= now.getFullYear();//年
@@ -523,6 +547,7 @@ export default {
                     contractNo:this.contractNo,     // 合同编号
                     repairEndTime:str
                 }
+                console.log(params)
                 this.$http.post("/api/project/fileContract", params)
                 .then((res) => {
                     if(res.code == "00000") {

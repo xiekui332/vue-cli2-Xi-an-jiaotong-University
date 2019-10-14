@@ -32,7 +32,7 @@
                     <el-tooltip class="item" effect="dark" :content="i.name?i.name:'暂无'" placement="top">
                         <p class="de-item-name-title">{{i.name?i.name:'暂无'}}</p>
                     </el-tooltip>
-                    <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.createTime?i.createTime:'暂无'}}</span></p>
+                    <p class="de-item-name-time"><span>{{i.no?i.no:'暂无'}}</span> | <span>{{i.cTime?i.cTime:'暂无'}}</span></p>
                 </div>
                 <div class="de-item-num">
                     <span>中标</span>
@@ -163,15 +163,16 @@ export default {
 
         
         getPastYear(n) {
-            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
-                // unshift 插入到数组开头
-                this.options1.unshift({
-                    value:i,
-                    label:i + ' 年'
-                })
-            }
+            this.$http.get("/api/system/get/systemTime").then(res =>{
+                for(let last = res.message, i = last - n; i <= last; i ++ ) {
+                    // unshift 插入到数组开头
+                    this.options1.unshift({
+                        value:i,
+                        label:i + ' 年'
+                    })
+                }
+            });
         },
-
         getFundsSource(){
             let params = {}
             this.$http.post('/api/project/getFundsSource')

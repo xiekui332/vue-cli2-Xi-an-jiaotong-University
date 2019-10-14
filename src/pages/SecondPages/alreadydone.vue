@@ -139,15 +139,16 @@ export default {
     },
     methods:{
         getPastYear(n) {
-            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
-                // unshift 插入到数组开头
-                this.options1.unshift({
-                    value:i,
-                    label:i + ' 年'
-                })
-            }
+            this.$http.get("/api/system/get/systemTime").then(res =>{
+                for(let last = res.message, i = last - n; i <= last; i ++ ) {
+                    // unshift 插入到数组开头
+                    this.options1.unshift({
+                        value:i,
+                        label:i + ' 年'
+                    })
+                }
+            });
         },
-        
         handleSearchRes(params) {
             // console.log(params)
         },

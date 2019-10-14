@@ -132,6 +132,8 @@ export default {
         handleSearchRes(params) {
              this.days=params.days;
              this.tex=params.tex;
+             this.page=1;
+             this.total=0;
              this.init();
         },
         handleTrackLook() {

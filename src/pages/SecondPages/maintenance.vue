@@ -27,7 +27,9 @@
                 <el-row class="de-btn de-reset-btn">
                     <el-button type="primary" round @click="handleAssign">指定负责人</el-button>
                 </el-row>
-
+                <el-row class="de-btn de-reset-btn">
+                    <el-button type="primary" round @click="handleXz">下载Excel模板</el-button>
+                </el-row>
                 <el-row class="de-btn de-reset-btn de-import">
                     <el-button type="primary" round @click="handleExcel">
                         Excel批量导入
@@ -39,7 +41,7 @@
                         :http-request="customRequest"
                         :limit="1"
                         :file-list="fileList"
-                        accept='.doc,.docx,.xls,.xlsx'
+                        accept='.xls,.xlsx'
                         >
                         <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                     </el-upload>
@@ -195,6 +197,8 @@ export default {
              this.projectType=params.sel2;
              this.projectSource=params.sel3;
              this.tex=params.tex;
+             this.page=1;
+             this.total=0;
              this.init();
         },
         handleReload(params){
@@ -214,6 +218,7 @@ export default {
             }
             var params={page:this.page,rows:this.rows,projectType:projectType,year:this.year,fundsSources:projectSource,searchText:this.tex,isLeader:this.isLeader};
             this.$http.post("/api/project/getProjectList",params).then(res =>{
+             //   console.log(res)
                 if(res.success){
                     this.total=res.total;
                     this.tableData=[];
@@ -228,7 +233,7 @@ export default {
                         obj.men=datalsit[i].leaderNames;
                         obj.menId=datalsit[i].leaderId;
                         obj.kind=datalsit[i].projectTypeName;
-                        obj.time=datalsit[i].createTime;
+                        obj.time=datalsit[i].cTime;
                         obj.id=datalsit[i].id;
                         obj.projectNode=datalsit[i].projectNode;
                         obj.sourcesFundingType=datalsit[i].sourcesFundingType;
@@ -243,6 +248,7 @@ export default {
                         obj.projectCategoryNames=datalsit[i].projectCategoryNames;
                          obj.projectStateName=datalsit[i].projectStateName;
                          obj.projectNodeName=datalsit[i].projectNodeName;
+                         obj.status=datalsit[i].status;
                         this.tableData.push(obj); 
                     }
                     
@@ -397,7 +403,7 @@ export default {
 
         // berfore upload
         handleBefore(file) {
-            console.log("???")
+        //    console.log("???")
             this.files = file
 
             let limitCount = 1024*1024*5
@@ -406,10 +412,16 @@ export default {
                 return false
             }
         },
-
+        handleXz(){
+            this.$http.post("/api/project/getXzExcel",{}).then((res) =>{
+                if(res.code=="00000"){
+                     window.open(res.message);
+                }
+            })
+            
+        },
         // upload
         customRequest() {
-            console.log("****")
             const formData = new FormData();
             formData.append('files',this.files);
 
@@ -429,7 +441,9 @@ export default {
                     this.$message({
                         type:'error',
                         message:res.message
-                    })
+                    });
+                    this.files = {};
+                    this.fileList=[];
                 }
             })
             .catch((err) => {

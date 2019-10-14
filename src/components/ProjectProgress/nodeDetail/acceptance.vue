@@ -7,7 +7,7 @@
                 <span class="pub-family st-print">
                     <span class="pub-family st-print" @click="handleAddMsg()" v-if="haslk==false">保存</span>
                     <span class="pub-family st-print" v-if="haslk==false"  @click="handleTjSp()">提交审核</span>
-                    <span class="pub-family st-print" @click="handleprint()" v-print="'#print'">打印自验单</span>
+                    <span class="pub-family st-print" @click="handleprint()" v-print="'#print'" v-if="isSHTG==true">打印自验单</span>
                 </span>
             </div>
 
@@ -187,7 +187,7 @@
 
         <div class="st-dayin" ref="print" id="print">
             <div class="da-title">网络信息中心货物类采购项目自验单</div>
-            <div class="da-head"><span>验收日期：</span><span>2019年10月8日</span></div>
+            <div class="da-head"><span>验收日期：</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</span></div>
             <table class="table" border="1">
                 <tr class="tr-item-1">
                     <td>项目单位</td>
@@ -209,11 +209,11 @@
                 </tr>
                 <tr class="tr-item-1 tr-item-3">
                     <td>技术验收结论：
-                        <br><br> 验收人：
+                        <br>{{printInfo.ysjsRemark}}<br> 验收人：{{printInfo.ysjsUserName}}
                     </td>
-                    <td>数据验收结论：<br><br> 验收人：</td>
-                    <td>安全验收结论：<br><br> 验收人：</td>
-                    <td>功能验收结论：<br><br> 验收人：</td>
+                    <td>数据验收结论：<br>{{printInfo.yssjRemark}}<br> 验收人：{{printInfo.yssjUserName}}</td>
+                    <td>安全验收结论：<br>{{printInfo.yswlRemark}}<br> 验收人：{{printInfo.yswlUserName}}</td>
+                    <td>功能验收结论：<br>{{printInfo.ysgnRemark}}<br> 验收人：{{printInfo.ysgnUserName}}</td>
                 </tr>
                 <tr class="tr-item-1 tr-item-2 tr-item-4"><td colspan="4">验收组（三名在编在岗人员）签字：</td></tr>
                 <tr class="tr-item-1 tr-item-4">
@@ -299,7 +299,7 @@ export default {
             proNodeId:'2798118bf3ca47439750b4e4acdd7735',
             shpiFiles:[],
             printInfo:{},
-
+            isSHTG:false,
             isSituatiostep:false
         }
     },
@@ -613,7 +613,10 @@ export default {
             this.$http.post("/api/project/getZydMsg", params)
             .then((res) => {
                 if(res.code == "00000") {
-                    this.printInfo = res.data
+                    this.printInfo = res.data;
+                    this.isSHTG=true;
+                }else{
+                   this.isSHTG=false;
                 }
             })
             .catch((err) => {

@@ -163,15 +163,16 @@ export default {
         }
     },
     methods:{
-
         getPastYear(n) {
-            for(let last = new Date().getFullYear(), i = last - n; i <= last; i ++ ) {
-                // unshift 插入到数组开头
-                this.options1.unshift({
-                    value:i,
-                    label:i + ' 年'
-                })
-            }
+            this.$http.get("/api/system/get/systemTime").then(res =>{
+                for(let last = res.message, i = last - n; i <= last; i ++ ) {
+                    // unshift 插入到数组开头
+                    this.options1.unshift({
+                        value:i,
+                        label:i + ' 年'
+                    })
+                }
+            });
         },
 
         handlePageUp(params) {
@@ -179,38 +180,34 @@ export default {
             this.init()
         },
         getProjectStateCount(state_name,id) {
-            var param={projectState:id}
-            this.$http.post("/api/project/getProjectCountByState", param)
+            var param={
+                page:this.page,
+                rows:this.rows,
+                projectType:this.projectType,
+                year:this.year,
+                fundsSources:this.fundsSources,
+                searchText:this.searchText,
+                projectState:this.projectState,
+                status:this.status
+            };
+            this.$http.post("/api/project/getZlAllCount", param)
             .then((res) => {
-                if(res.success == true) {
-                    // console.log(state_name+"==",res.total)
-                    if(state_name === 'proj_total'){
-                        this.proj_total = res.total;
-                    }else  if(state_name === 'caigou_total'){
-                        this.caigou_total = res.total;
-                    }else  if(state_name === 'yanshou_total'){
-                        this.yanshou_total = res.total;
-                    }else  if(state_name === 'weibao_total'){
-                        this.weibao_total = res.total;
-                    }else  if(state_name === 'daituibao_total'){
-                        this.daituibao_total = res.total;
-                    }
-                    
+              //  console.log(res)
+                if(res.code == "00000") {
+                    var list=res.data;                 
+                    this.proj_total = list[0];             
+                    this.caigou_total = list[1];              
+                    this.yanshou_total = list[2];             
+                    this.weibao_total =  list[3];                
+                    this.daituibao_total =  list[4];                   
                 }else{
-                    this.$message({
-                        message: res.message,
-                        type: 'error'
-                    })
+                    this.$message({message: res.message, type: 'error' })
                 }
             })
         },
 
         init() {
-            this.getProjectStateCount('proj_total','')
-            this.getProjectStateCount('caigou_total','9d7cba37176a4252b67be2294a45a87b')
-            this.getProjectStateCount('yanshou_total','aba2a0b30afa49dc918b4be6f5659143')
-            this.getProjectStateCount('weibao_total','7573afa999d346dcba4696a230c91c39')
-            this.getProjectStateCount('daituibao_total','9d7cba37176a4252b67be2294a45a87b')
+            this.getProjectStateCount();
             var params={
                 page:this.page,
                 rows:this.rows,
@@ -222,7 +219,6 @@ export default {
                 status:this.status
             };
             this.$http.post("/api/project/zlProjectList",params).then(res =>{
-             //   console.log(res)
                 if(res.success){
                     this.total=res.total;
                     var datalsit=res.rows;
@@ -249,7 +245,7 @@ export default {
                         obj.resource=datalsit[i].sourcesFundName;
                         obj.men=datalsit[i].leaderNames;
                         obj.kind=datalsit[i].projectTypeName;
-                        obj.time=datalsit[i].createTime;
+                        obj.time=datalsit[i].cTime;
                         obj.id=datalsit[i].id;
                         proList.push(obj)
                     }
@@ -306,6 +302,8 @@ export default {
             this.searchText = params.searchText;
             this.projectState = params.projectState;
             this.status=params.status;
+            this.page=1;
+            this.total=0;
             this.init()
         },
         getStatusAndNodes() {

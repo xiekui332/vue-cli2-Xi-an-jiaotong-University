@@ -199,7 +199,7 @@ export default {
             }
             this.$http.post("/api/syslog/user/viewLog", this.params)
             .then((res) => {
-                console.log(res)
+               // console.log(res)
                 if(res.success == true) {
                     this.tableData = res.rows
                     this.total = res.total

@@ -402,7 +402,7 @@ export default {
                   fileList:JSON.stringify(this.fileMsgList),
                   leaderNo:JSON.stringify(this.leading)};
                     this.$http.post("/api/project/addProjectMsg",params).then(res =>{
-                        console.log(res)
+                       // console.log(res)
                         if(res.code=="00000"){
                             this.name='';
                             this.establishmenTime='';
@@ -629,7 +629,7 @@ export default {
             this.hasDis = params
         },
         msgDetails(params){
-            // console.log(params)
+           //  console.log(params)
             if(params){//编辑
                 this.isxj=true;
                 this.isChange=true;

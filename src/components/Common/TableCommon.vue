@@ -126,7 +126,7 @@
             </div>
 
             <el-row class="ta-btn-wrapper">
-                <el-button type="primary" round @click="handleBtn('sure','isTrue')">确定</el-button>
+                <el-button type="primary" round @click="handleBtn('sure',isTrue)">确定</el-button>
                 <el-button type="primary" round @click="handleBtn('cancel')">取消</el-button>
             </el-row>
         </el-dialog>
@@ -181,7 +181,7 @@ export default {
             if(type === 'edit') {
                 this.$emit('handleChangeEdit', id, false)
             }else if(type === 'del') {
-               if(id.projectNode){
+               if(id.status==3&&id.menId==null){
                   this.isTrue=false;
                }else{
                   this.isTrue=true;
@@ -267,9 +267,8 @@ export default {
                     if(istrue==true){ //执行中项目也就是有节点的项目不能删除
                        this.handleErroe()
                     }else{
-                        var params={projectId:this.projectId}
+                        var params={projectId:this.projectId}             
                         this.$http.post("/api/project/deleteProjectById",params).then(res =>{
-                            console.log(res)
                             if(res.code=="00000"){
                                 this.$message.success("删除成功");
                                 this.$emit('handleReload',true);
@@ -285,11 +284,19 @@ export default {
              
              }else{ //终止
                 if(type === 'sure') {
-                    this.hasdialog = false;
+                    
+                    if(!this.textarea) {
+                        this.$message({
+                            type:"error",
+                            message:"请填写原因说明。"
+                        })
+                        return false
+                    }
                     var params={projectId:this.projectId,stopRemark:this.textarea};
                     this.$http.post("/api/project/updateProjectStop",params).then(res =>{
                        if(res.code=="00000"){
                             this.$message.success("操作完成")
+                            this.hasdialog = false;
                             this.$emit('handleReload',true);
                        }
                     })

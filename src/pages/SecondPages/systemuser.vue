@@ -160,7 +160,7 @@ export default {
         init() {
             this.$http.post("/api/user/getlist", this.params)
             .then((res) => {
-                console.log(res)
+               // console.log(res)
                 if(res.success == true) {
                     var msg= res.rows;
                     this.tableData=[];
