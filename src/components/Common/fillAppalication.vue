@@ -71,16 +71,23 @@
                                 <span>操作</span>
                             </div>
                             <div class="fl-list" v-for="(i, ind) in listArr" :key="ind">
-                                <div class="fl-order">
+                                  
+                                <div class="fl-order">                         
                                     <span>{{ind + 1}}</span>
-                                    &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>
+                                    &nbsp;&nbsp; 
+                                    <el-tooltip class="item" effect="dark" placement="top-start">  
+                                      <div slot="content" class="pub-width">{{i.name}}</div>                               
+                                      <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>                                
+                                    </el-tooltip>
                                 </div>
                                 <div>
                                     <el-input class="fl-L-input" type="number" v-model="i.cgNumber" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.company" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                     <el-tooltip class="item" effect="dark" placement="top">  
+                                        <div slot="content" class="pub-width">{{i.company}}</div>   
+                                        <el-input class="fl-L-input" v-model="i.company" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                     </el-tooltip>
                                 </div>
                                 <div>
                                     <el-input class="fl-L-input" v-model="i.planMoney" placeholder="请输入内容" :disabled="hasLook"></el-input>
@@ -116,19 +123,25 @@
                                 <div class="fl-order">
                                     <span>{{ind + 1}}</span>
                                     &nbsp;&nbsp;
-                                    <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>
+                                    <el-tooltip class="item" effect="dark" placement="top">  
+                                       <div slot="content" class="pub-width">{{i.name}}</div>  
+                                       <el-input class="fl-L-input" v-model="i.name" placeholder="请输入内容"  maxlength="50" :disabled="hasLook"></el-input>
+                                    </el-tooltip>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.address" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                       <el-input class="fl-L-input" v-model="i.address" placeholder="请输入内容" :disabled="hasLook"></el-input>     
+                                </div>
+                                <div>                   
+                                       <el-input class="fl-L-input" v-model="i.legalPerson" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                </div>
+                                <div>              
+                                       <el-input class="fl-L-input" v-model="i.phone" placeholder="请输入内容" :disabled="hasLook"></el-input>
                                 </div>
                                 <div>
-                                    <el-input class="fl-L-input" v-model="i.legalPerson" placeholder="请输入内容" :disabled="hasLook"></el-input>
-                                </div>
-                                <div>
-                                    <el-input class="fl-L-input" v-model="i.phone" placeholder="请输入内容" :disabled="hasLook"></el-input>
-                                </div>
-                                <div>
-                                    <el-input class="fl-L-input" v-model="i.email" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                    <el-tooltip class="item" effect="dark" placement="top">  
+                                       <div slot="content" class="pub-width">{{i.email}}</div>             
+                                       <el-input class="fl-L-input" v-model="i.email" placeholder="请输入内容" :disabled="hasLook"></el-input>
+                                    </el-tooltip>
                                 </div>
                                 <div>
                                     <!-- <i class="pub-css fl-icon-edit" @click="handleListEdit('supllier', ind)"></i> -->
@@ -727,7 +740,6 @@ export default {
         }
         opacity: 0;
     }
-
     @media print {
         @import url('./less/print.less');
     }

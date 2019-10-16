@@ -430,9 +430,7 @@ export default {
             var params={projectId:params}
             this.$http.post("/api/project/getProjectAppendixById",params).then(res =>{
               if(res.code=="00000"){
-
                   var msglsit=res.data;
-                //   console.log(msglsit)
                   this.oldAppdendixList=[];
                   for(var i=0;i<msglsit.length;i++){
                       var msg={};
@@ -440,6 +438,8 @@ export default {
                       msg.id=msglsit[i].id;
                        this.oldAppdendixList.push(msg);
                   }
+              } else{
+                  this.oldAppdendixList=[];
               }
             })
         },

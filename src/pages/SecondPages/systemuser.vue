@@ -24,11 +24,13 @@
         <el-divider></el-divider>
 
         <el-table
+            ref="multipleTable"
             :data="tableData"
             tooltip-effect="dark"
             style="width: 100%"
             :stripe='true'
             :cell-class-name="cell"
+            :type='type'
             @selection-change="handleSelectionChange"
             @cell-click='handleLookDetail'>
         
@@ -151,7 +153,8 @@ export default {
             hasClose:true,
             rolesList:[],
             checkStatus:true,
-            checkList:[]
+            checkList:[],
+            type:"user"
         }
     },
 
@@ -202,7 +205,13 @@ export default {
         },
 
         handleSelectionChange(val) {
-            this.changeParams = val
+            if (val.length > 1) {
+                    this.$refs.multipleTable.clearSelection();
+                    this.$refs.multipleTable.toggleRowSelection(val.pop());            
+                    this.multipleSelection = val;
+            }else{
+                this.changeParams = val
+            } 
         },
 
         cell({row, column, rowIndex, columnIndex}) {

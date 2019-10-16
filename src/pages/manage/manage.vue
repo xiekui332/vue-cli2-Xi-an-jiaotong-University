@@ -93,14 +93,30 @@ export default {
 
         handleSee(type) {
             if(type == 5) {
-                this.$router.push({
-                    path:"/approve/todo?pid=866c24ef6d4f425d84348998c4505a83&id=a2ab072b1ea84170b9b0a498ad5514ae"
+                var params={type:"2"};
+                this.$http.post("/api/project/getIndexAuth",params).then((res) =>{
+                    if(res.code=="00000"){
+                        this.$router.push({
+                            path:"/approve/todo?pid=866c24ef6d4f425d84348998c4505a83&id=a2ab072b1ea84170b9b0a498ad5514ae"
+                        })
+                    }else{
+                        this.$message.error(res.message);
+                    }
                 })
+
             }else{
-                this.$router.push({
-                    path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00&id=f2ed28e9b1f9426eb65ebd5a81e841a4"
+                var params={type:"1"};
+                this.$http.post("/api/project/getIndexAuth",params).then((res) =>{
+                  //  console.log(res)
+                    if(res.code=="00000"){
+                        this.$router.push({
+                            path:"/proj/excuting?pid=b83ce29ef56849b8b43a51293e2faf00&id=f2ed28e9b1f9426eb65ebd5a81e841a4"
+                        })
+                        store.dispatch('commitChangeExcutStatus',type)
+                    }else{
+                        this.$message.error(res.message);
+                    }
                 })
-                store.dispatch('commitChangeExcutStatus',type)
                 
             }
             

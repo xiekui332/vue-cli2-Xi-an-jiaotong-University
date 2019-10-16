@@ -1124,23 +1124,38 @@
                     <div class="sh-node-tips">
                         <div>
                             <el-upload
+
                                 class="upload-demo"
                                 :action= getuploadUrl1
                                 :before-upload="handleBefore"
+                                :on-preview="handlePreview"
                                 :http-request="customRequest"
-                                :on-remove="handleDel"
                                 :on-exceed="handleExc"
-                                :limit="1"
+                                 multiple
+                                :limit="3"
                                 :file-list="fileList"
                                 accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
                                 >
                                 <el-button size="small" type="primary">
                                     <i class="pub-css st-upload-icon"></i>
-                                </el-button>
+                                </el-button> 
                             </el-upload>
                         </div>
+                        <div class="ro-item ro-file-wrapper" >
+                        <span class="ro-title-b"></span>
+                        <div>
+                            <div class="ro-file-b" v-for="(item,index) in oldAppdendixList" :key="index">
+                                <i class="pub-css st-icon-file"></i>
+                                <span @click="handleDownLoad(item.attachUrl)">{{item.attachName}}</span>
+                                <i  class="pub-css st-icon-del" @click="handleDelet(item)"></i>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
                         <span>如需上传资料请点击</span> 
                     </div>
+    
                     <el-row class="sh-node-btn">
                         <el-button type="primary" @click="handleCancel()">取消</el-button>
                         <el-button type="primary" :disabled="extableType" @click="handleComfire()">确认审批</el-button>
@@ -1246,7 +1261,7 @@
                                             <el-table-column
                                                 prop="name"  
                                                 label="采购内容"
-                                                width="180">
+                                                width="200">
                                             </el-table-column>
                                             <el-table-column
                                                 prop="cgNumber"
@@ -1256,7 +1271,7 @@
                                             <el-table-column
                                                 prop="company"
                                                 label="单位"
-                                                width="180">
+                                                width="200">
                                             </el-table-column>
                                             <el-table-column
                                                 prop="planMoney"
@@ -1279,7 +1294,7 @@
                                         <el-table-column
                                             prop="name"  
                                             label="推荐供应商/代理商"
-                                            width="150">
+                                            width="180">
                                         </el-table-column>
                                         <el-table-column
                                             prop="address"
@@ -1492,7 +1507,8 @@ export default {
             // basic info
             arrivalTime:"",         // 到货时间
             installationAddress:"", // 安装地址
-            installationTime:""     // 安装时间
+            installationTime:"",     // 安装时间
+            oldAppdendixList:[]
 
         }
     },
@@ -1520,9 +1536,9 @@ export default {
             
         },
 
-        handleComfire() {  
+        handleComfire() { 
             if(this.radio==0){
-                return this.$message.error("请选择审批类型(同意还是驳回)") ;
+                return this.$message.error("请选择审批类型(同意或者驳回)") ;
             }        
             var rowmsg=this.exRowInfo;
             if(this.radio==2){
@@ -1531,7 +1547,7 @@ export default {
                 }
             }
            if(rowmsg.projectNode=="6a3c8fb95ebe4a4696cd13e2051473b4"||rowmsg.projectNode=="2798118bf3ca47439750b4e4acdd7735"||rowmsg.projectNode=="a2414bacf75144098799a178f0ff2a41"){
-                var param={fileName:this.fileName,fileUrl:this.fileUrl,fileType:this.fileType,pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl,type:rowmsg.approveType,spState:this.radio,remark:this.textarea};    
+            var param={fileName:"",fileUrl:"",fileType:"",pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl,type:rowmsg.approveType,spState:this.radio,remark:this.textarea};    
             this.$http.post("/api/project/confirmApproval",param).then(res =>{
                     if(res.code=="00000"){                       
                         if(res.data.message) {
@@ -1980,8 +1996,7 @@ export default {
                 elCollection[i].style.display = "none"
             }
             elCollection[index].style.display = "block"
-        },
-        
+        },      
 
         handleDel(file, fileList) {
             this.fileName="";
@@ -2010,39 +2025,74 @@ export default {
             
             
         },
-
+        handlePreview(file) {
+        },
+        handleDelet(item) {//删除附件
+            if(item.id) {
+                let params = {
+                    appendixId:item.id
+                }
+                this.$http.post("/api/project/deletedNodeAppendixZxjh", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        this.getAppendix(this.projectId);
+                    }else{
+                        this.$message.error(res.message);
+                    }
+                })
+                .catch((err) => {
+                    this.$message.error(err.message);
+                })
+            }else{
+                for(let i = 0; i < this.fileMsgList.length; i ++) {
+                    if(this.fileMsgList[i].fileName == item.fileName) {
+                        this.fileMsgList.splice(i, 1)
+                    }
+                }
+            }
+            
+        },  
+        getAppendix(){//获取附件
+            var rowmsg=this.exRowInfo;
+            var params={pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl};
+            this.$http.post("/api/project/getSpAppendix",params).then(res =>{
+                console.log(res)
+              if(res.code=="00000"){
+                  var msglsit=res.data;
+                  this.oldAppdendixList=[];
+                  for(var i=0;i<msglsit.length;i++){
+                      var msg={};
+                      msg.attachName=msglsit[i].attachName;
+                      msg.id=msglsit[i].id;
+                       this.oldAppdendixList.push(msg);
+                  }
+              } else{
+                  this.oldAppdendixList=[];
+              }
+            })
+        },
         customRequest() {
-            const formData = new FormData();
-            
+            const formData = new FormData();          
             formData.append('file',this.files);
-            
-            
-            this.$http.post("/api/system/project/uploadAppdenix", formData)
+            var rowmsg=this.exRowInfo;
+            formData.append('pid',rowmsg.id);
+            formData.append('nodeId',rowmsg.projectNode);
+            formData.append('pl',rowmsg.pl);
+            formData.append('type',rowmsg.approveType);
+           this.$http.post("/api/system/spUploadAppenddix", formData)
             .then((res) => {
+               // console.log(res)
                 if(res.code == "00000") {
-                    this.$message({
-                        type:'success',
-                        message:res.message
-                    })
-
-                    this.fileName=res.data.fileName;
-                    this.fileUrl=res.data.fileUrl;
-                    this.fileType=res.data.fileType;
-                    
+                    this.$message.success(res.message);
+                    this.oldAppdendixList.push(res.data);         
                 }else{
                     this.fileList = []
-                    this.$message({
-                        type:'error',
-                        message:res.message
-                    })
+                    this.$message(res.message);
                 }
             })
             .catch((err) => {
                 this.fileList = []
-                this.$message({
-                    type:'error',
-                    message:err.message
-                })
+                this.$message(err.message)
             })
         },
 
@@ -2222,6 +2272,8 @@ export default {
 
         // init
         this.init()
+
+        this.getAppendix();
         
         // auto open command
         this.handleCommand();

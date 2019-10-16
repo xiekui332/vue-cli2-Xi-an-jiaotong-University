@@ -9,21 +9,23 @@
                 <div class="ma-header-navs">
                     <ul class="ma-header-ul">
                         <li v-for="(i, ind) in nav" :key="ind">
-                            <router-link :to='i.path'>
-                                <i class="ma-icon" v-if="i.title ==='总览'">
-                                    <img src="../assets/svg/zonglan.svg" alt="">
-                                </i>
-                                <i class="ma-icon" v-else-if="i.title ==='项目'">
-                                    <img src="../assets/img/icon/xiangmu.png" alt="">
-                                </i>
-                                <i class="ma-icon" v-else-if="i.title ==='审批'">
-                                    <img src="../assets/img/icon/shenpi.png" alt="">
-                                </i>
-                                <i class="ma-icon" v-else-if="i.title ==='系统管理'">
-                                    <img src="../assets/img/icon/xitongguanli.png" alt="">
-                                </i>
-                                <p>{{i.title}}</p>
-                            </router-link>
+                            <!-- <router-link :to='i.path'> -->
+                                <a href="javascript:;" @click="handleNav(i, ind)" :class="i.active?'router-link-exact-active router-link-active':''">
+                                    <i class="ma-icon" v-if="i.title ==='总览'">
+                                        <img src="../assets/svg/zonglan.svg" alt="">
+                                    </i>
+                                    <i class="ma-icon" v-else-if="i.title ==='项目'">
+                                        <img src="../assets/img/icon/xiangmu.png" alt="">
+                                    </i>
+                                    <i class="ma-icon" v-else-if="i.title ==='审批'">
+                                        <img src="../assets/img/icon/shenpi.png" alt="">
+                                    </i>
+                                    <i class="ma-icon" v-else-if="i.title ==='系统管理'">
+                                        <img src="../assets/img/icon/xitongguanli.png" alt="">
+                                    </i>
+                                    <p>{{i.title}}</p>
+                                </a>
+                            <!-- </router-link> -->
                             <span class="ma-transparent"></span>
                         </li>
                     </ul>
@@ -48,13 +50,11 @@
 </template>
 
 <script>
-import { clearSession, getSession } from '../utils/util.js'
+import { clearSession, getSession, setSession } from '../utils/util.js'
 export default {
     data() {
         return {
-            nav:[
-
-            ],
+            nav:[],
             user:getSession('userName')
         }
     },
@@ -83,22 +83,68 @@ export default {
                      var msg={};
                      msg["title"]=msglist[i].name;
                      msg["path"]=msglist[i].url;
+                     msg["active"] = false
+                     msg["id"] = msglist[i].id;
                      list[i]=msg;
                    }
                    this.nav=list;
+                   this.init()
                }
             })
         },
 
         init() {
-            let el = document.getElementsByClassName('ma-header-ul')[0]
-            // console.log(el)
+            this.nav[Number(getSession('subMeneNum'))].active = true
+        },
+
+        handleNav(i, ind) {
+            for(let i = 0;i < this.nav.length; i ++) {
+                this.nav[i].active = false
+            }
+            i.active = true
+            setSession('subMeneNum', ind)
+
+            if(i.id == "c63413dae6034485b7cb6275f78c0091") {
+                this.$router.push({
+                    path:i.path
+                })
+
+                return false
+            }
             
+            let param={
+                powerId:i.id
+            }
+
+            this.$http.post("/api/user/getUserPowerLevelTwo",param).then((res) =>{
+                if(res.code!="10001"){
+                    var dataMsg=res.data;
+                    
+                    if(dataMsg.length) {
+                        if(dataMsg[0].list) {
+                            this.$router.push({
+                                path:dataMsg[0].list[0].url
+                            })
+                        }else{
+                            this.$router.push({
+                                path:dataMsg[0].url
+                            })
+                        }
+                        
+                    }
+                    
+                }    
+            })
+
         }
     },
     mounted() {
         this.getmeneOne();
-        this.init()
+        
+    },
+
+    computed: {
+        
     }
 }
 </script>

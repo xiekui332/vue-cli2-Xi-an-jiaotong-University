@@ -61,12 +61,12 @@
 
             <div class="st-edit-content" v-show="!isSituatiostep">
                 <div class="st-edit-item st-ed-head">
-                    <div> <span>资料模板</span></div>
+                    <div><span>下载模板</span>&nbsp;&nbsp;&nbsp;&nbsp; <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
                 <div class="st-edit-item" v-for="(i, ind) in zlList" :key="ind" @click="handleUploadChange('1', ind, i.mb.id)">
                     <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>
+                        <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                         <span class="st-file-title"><i class="st-tips-required" v-if="i.mb.isMust==0" >*</i> {{i.mb.name}}</span>
                     </div>
                     <div class="st-icon-file-name">
@@ -121,8 +121,8 @@
                 </div>
                 <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind" @click="handleUploadChange('0', ind)">
                     <div class="st-icon-file-title">
-                        <i class="st-icon-file"></i>
-                        <span class="st-file-title">其他资料 </span>
+                        <!-- <i class="st-icon-file"></i> -->
+                        <span class="st-file-title st-file-title-indent">其他资料 </span>
                     </div>
                     <div class="st-icon-file-name">
                         <el-upload
@@ -600,6 +600,9 @@ watch:{
                         cursor: pointer;
                         color: #3B7CFF;
                         text-indent:1em;
+                    }
+                    .st-file-title-indent{
+                        text-indent: 1em;
                     }
                 }
                 .st-icon-file-name{

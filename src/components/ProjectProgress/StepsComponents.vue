@@ -116,20 +116,7 @@ export default {
             currentstep:this.$route.name,
             pageType:'',
             dialogVisible:false,
-            roleArr:[
-                {
-                    name:'创立项目'
-                },
-                {
-                    name:'部门主管'
-                },
-                {
-                    name:'中心副主任'
-                },
-                {
-                    name:'采购工作小组组长'
-                }
-            ],
+            roleArr:[],
             steps:1,
             sessionGet:{},
             hasNode:false,

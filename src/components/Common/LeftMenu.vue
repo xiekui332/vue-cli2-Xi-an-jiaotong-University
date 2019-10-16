@@ -73,10 +73,15 @@ export default {
 
         handlePush() {
             let id = getUrlParams('id')
-            // console.log(id)
             if(this.menu.length) {
                 if(!id) {
-                    let path = this.menu[0].children[0].path
+                    let path ="";
+                    if(this.menu[0].children.length){
+                        path = this.menu[0].children[0].path;
+                    }else{
+                        path = this.menu[0].path;
+                    }
+             
                     this.$router.push({
                         path:path
                     })
@@ -115,7 +120,7 @@ export default {
         navArray(params){
             // console.log(params)
             this.menu = params
-            this.handlePush();
+            // this.handlePush();
         },
 
         screenWidth(val) {

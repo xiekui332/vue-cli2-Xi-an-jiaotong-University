@@ -220,8 +220,20 @@ export default {
         },
 
         handleSelectionChange(val) {
-            this.multipleSelection = val;
-             this.$emit('handleSelectOprate', val);
+              if(this.type=="role"){        
+                if (val.length > 1) {
+                    this.$refs.multipleTable.clearSelection();
+                    this.$refs.multipleTable.toggleRowSelection(val.pop());
+                    this.multipleSelection = val;
+                }else{
+                   this.$emit('handleSelectOprate', val);
+                }  
+
+              }else{
+                this.multipleSelection = val;
+                this.$emit('handleSelectOprate', val);
+              }
+
         },
 
         cell({row, column, rowIndex, columnIndex}) {
@@ -283,8 +295,7 @@ export default {
                 }
              
              }else{ //终止
-                if(type === 'sure') {
-                    
+                if(type === 'sure') { 
                     if(!this.textarea) {
                         this.$message({
                             type:"error",
@@ -397,7 +408,7 @@ export default {
     }
     & /deep/ .todo-style .cell{
         display: flex;
-        justify-content: center;
+        // justify-content: center;
     }
     .ma-icon{
         cursor: pointer;

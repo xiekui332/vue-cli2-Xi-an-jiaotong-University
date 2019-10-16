@@ -49,13 +49,13 @@
             </div>
 
             <div class="st-edit-content" v-show="!isSituatiostep">
-                <div class="st-edit-item st-ed-head">
-                    <div> <span>资料模板</span></div>
+                <div class="st-edit-item st-ed-head st-ed-indent">
+                    <div><span>下载模板</span>&nbsp;&nbsp;&nbsp;&nbsp; <span>资料模板</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
                 <div class="st-edit-item" v-for="(i, ind) in zlList" :key="ind" @click="handleUploadChange('1', ind, i.mb.id)">
                     <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>
+                        <i class="pub-css st-icon-file" @click="handleDownLoad(i)"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                         <span class="st-file-title"><i class="st-tips-required" v-if="i.mb.isMust==0" >*</i> {{i.mb.name}}</span>
                     </div>
                     <div class="st-icon-file-name">
@@ -826,6 +826,11 @@ export default {
 
         .st-edit-content{
             .st-ed-head-two{
+                >div:nth-child(1){
+                    text-indent: 1em;
+                }
+            }
+            .st-ed-indent{
                 >div:nth-child(1){
                     text-indent: 1em;
                 }
