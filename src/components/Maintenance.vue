@@ -305,12 +305,32 @@ export default {
         },
         handleSave(){
           if(this.projectId){//编辑项目
-              var isOldProject=0;
+               var isOldProject=0;
                if(this.checked==true){
                    isOldProject=1;
                }
+              if(!this.name){
+                   return this.$message.error("项目名称不能为空");
+               }
+               if(!this.establishmenTime){
+                   return this.$message.error("立项时间不能为空");
+               }
+               var startTime=(this.planningTime)[0];
+               var endTime=(this.planningTime)[1];
+               if(startTime==null||endTime==null){
+                    return this.$message.error("计划周期不能为空");
+               }
+               if(!this.budgetNum){
+                   return this.$message.error("项目预算不能为空");
+               }
+                if(!this.kind){
+                   return this.$message.error("项目类别不能为空");
+               }
+               if(!this.types){
+                   return this.$message.error("项目类型不能为空");
+               }
                var ptype="";
-               if(this.kind!=this.projectType){
+               if(this.kind!=this.projectType){            
                   ptype=this.kind;
                }
                var pcate="";
@@ -320,13 +340,12 @@ export default {
                 var params={
                     id:this.projectId, name:this.name,createTime:this.establishmenTime,
                     startTime:startTime,endTime:endTime,ysje:this.budgetNum,
-                    category:this.ptype,type:this.pcate,
+                    category:ptype,type:pcate,
                     isOldProject:isOldProject,
                     remark: this.textarea,
                     fileList:JSON.stringify(this.fileMsgList),
                     leaderNo:JSON.stringify(this.leading)
                   };
-
                   if(!this.leading || !this.leading.length) {
                       this.$message.error("编辑项目时项目负责人不能为空")
                       return

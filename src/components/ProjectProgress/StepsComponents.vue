@@ -48,7 +48,8 @@
             <!-- 维保-技术指标验收 -->
             <Technical v-if="currentstep === 'excutingstep12' || currentstep === 'trackstep12' || currentstep === 'allstep12' || currentstep === 'situatiostep12'" />
 
-            
+            <!-- 付款资料上传 -->
+            <Payment v-if="currentstep === 'allstep13'" />
         </div>
 
         <el-dialog
@@ -93,6 +94,7 @@ import Preacceptance from '@/components/ProjectProgress/nodeDetail/preacceptance
 import Acceptancereview from '@/components/ProjectProgress/nodeDetail/acceptancereview'
 import Closeapplication from '@/components/ProjectProgress/nodeDetail/closeapplication'
 import Technical from '@/components/ProjectProgress/nodeDetail/technical'
+import Payment from '@/components/ProjectProgress/nodeDetail/payment'
 import { store } from '@/store'
 export default {
     components:{
@@ -107,7 +109,8 @@ export default {
         Preacceptance,
         Acceptancereview,
         Closeapplication,
-        Technical
+        Technical,
+        Payment
     },
     data() {
         return {

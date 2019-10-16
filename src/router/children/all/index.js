@@ -27,37 +27,42 @@ export default [
     },
     {
         path: '/proj/all/step6',
-        name: 'allstep6',    // 项目进度 执行计划
+        name: 'allstep6',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step7',
-        name: 'allstep7',    // 项目进度 执行计划
+        name: 'allstep7',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step8',
-        name: 'allstep8',    // 项目进度 执行计划
+        name: 'allstep8',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step9',
-        name: 'allstep9',    // 项目进度 执行计划
+        name: 'allstep9',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step10',
-        name: 'allstep10',    // 项目进度 执行计划
+        name: 'allstep10',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step11',
-        name: 'allstep11',    // 项目进度 执行计划
+        name: 'allstep11',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     },
     {
         path: '/proj/all/step12',
-        name: 'allstep12',    // 项目进度 执行计划
+        name: 'allstep12',    // 项目进度 
+        component: () => import('@/components/ProjectProgress/StepsComponents')
+    },
+    {
+        path: '/proj/all/step13',
+        name: 'allstep13',    // 项目进度 
         component: () => import('@/components/ProjectProgress/StepsComponents')
     }
 ]

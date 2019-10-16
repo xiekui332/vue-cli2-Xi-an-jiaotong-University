@@ -117,6 +117,8 @@ export default {
 	
 	mounted() {
 		this.togo();
+
+		sessionStorage.removeItem("subMeneNum")
 	}
 }
 </script>

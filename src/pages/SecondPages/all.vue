@@ -50,6 +50,9 @@
                 <div class="de-item-btn" @click="handleLook(i.id)">
                     查看
                 </div>
+                <div class="de-item-btn de-payment-btn" @click="handle_upload_payment(i.id)">
+                    付款资料上传
+                </div>
 
                 <div class="pub-css de-back" v-if="i.isBH"></div>
             </li>
@@ -148,6 +151,11 @@ export default {
         },
 
         handleLook(id) {
+            this.getProjectMsgById(id)
+        },
+
+        handle_upload_payment(id) {
+            store.dispatch("commitChangeIspayment", true)
             this.getProjectMsgById(id)
         },
 
@@ -412,7 +420,7 @@ export default {
                 }
             }
             .de-item-percent{
-                width: 404px;
+                width: 304px;
                 overflow: hidden;
                 >p:nth-child(1){
                     margin: 30px 0 0 0;
@@ -439,15 +447,18 @@ export default {
                 }
             }
             .de-item-btn{
-                width: 50px;
-                font-size: 12px;
+                min-width: 50px;
+                font-size: 13px;
                 color: #3B7CFF;
                 letter-spacing: 1px;
                 cursor: pointer;
                 line-height: 88px;
-                margin-left: 30px;
+                // margin-left: 30px;
                 margin-right: 10px;
                 text-align: center;
+            }
+            .de-payment-btn{
+                min-width: 100px;
             }
             .de-item-name-title{
                 font-size: 18px;

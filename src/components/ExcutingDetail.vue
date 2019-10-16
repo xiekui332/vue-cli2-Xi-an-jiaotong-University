@@ -50,6 +50,12 @@
                                 </li>
                             </ul>
                         </li>
+
+                        <li class="et-steps-payment">
+                            <router-link to="/proj/all/step13?pid=b83ce29ef56849b8b43a51293e2faf00&id=5778c6ea4c79411b8ec92f6f57d8db8f" class="et-upload-payment">
+                                <span>付款资料上传</span>
+                            </router-link>
+                        </li>
                     </ul>
                 </div>
                 
@@ -203,11 +209,15 @@ export default {
                 if(res.code === '00000') {
                     this.sessionGet = res.data
                     store.dispatch('commitChangeProInfo',res.data)
+
+
                     let routerStep = this.sessionGet.status
                    // console.log(routerStep)
                     if(routerStep == 16) {
                         routerStep = 15;
                     }
+
+                    
 
                     
                     if(routerStep == 4) {
@@ -265,7 +275,16 @@ export default {
                         this.handleSetroute("项目维保")
                     }
 
-                    
+                    // 付款资料上传
+
+                    if(this.payment) {
+                        
+                        this.$router.push({
+                            path:"/proj/all/step13?pid=b83ce29ef56849b8b43a51293e2faf00&id=5778c6ea4c79411b8ec92f6f57d8db8f"
+                        })
+                        store.dispatch("commitChangeIspayment", false)
+                        return
+                    }
                     
                 }else{
                     
@@ -278,7 +297,7 @@ export default {
         },
 
         handleSetroute(parentName, childName) {
-            // console.log(this.steps)
+
             for(let i = 0; i < this.steps.length; i ++ ) {
                 if(this.steps[i].title == parentName) {
                     if(childName) {
@@ -316,6 +335,8 @@ export default {
                             }
                         }
                     }
+                    
+                    
                     
                 }
                 
@@ -407,6 +428,10 @@ export default {
 
        hasErrorTips() {
            return store.state.hasErrorTips
+       },
+
+       payment() {
+           return store.state.ispayment
        }
     }
 }
@@ -465,6 +490,11 @@ export default {
                         height: 0;
                         overflow: hidden;
                     }
+                    .et-steps-payment{
+                        .router-link-exact-active,.router-link-active{
+                            color: #3B7CFF;
+                        }
+                    }
                 }
                 .et-steps-ul>li:hover .et-tips{
                     display: block;
@@ -498,6 +528,13 @@ export default {
                             line-height: 15px;
                         }
                     }
+                }
+
+                .et-steps-ul .et-upload-payment{
+                    color: #3B4859;
+                }
+                .et-steps-ul .et-upload-payment::before{
+                    background: #3B7CFF;
                 }
                 .et-steps-ul .et-default:hover{
                     .et-child-tips{

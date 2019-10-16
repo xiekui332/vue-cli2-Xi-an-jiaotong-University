@@ -12,6 +12,7 @@
                     <div><i>*</i> <span>计划付款时间</span></div>
                     <div><i>*</i> <span>计划付款%</span></div>
                     <div><i>*</i> <span>计划付款金额(万元)</span></div>
+                    <div><i>*</i> <span>付款节点</span></div>
                     <div> <span>备注</span></div>
                     <div v-show="!isSituatiostep"> <span>操作</span></div>
                 </div>
@@ -31,6 +32,9 @@
                     </div>
                     <div class="st-oparate-col">
                         <el-input v-model="i.moneyVal" type='number' title=" " :disabled='true'></el-input>
+                    </div>
+                     <div class="st-oparate-col">
+                        <el-input v-model="i.name" type='text' title=" " :disabled='true'></el-input>
                     </div>
                     <div class="st-oparate-col">
                         <el-input v-model="i.remarksVal" :disabled='i.isEdit' maxlength='20'></el-input>
@@ -185,6 +189,7 @@
                     <div><i>*</i> <span>计划付款时间</span></div>
                     <div><i>*</i> <span>计划付款%</span></div>
                     <div><i>*</i> <span>计划付款金额(万元)</span></div>
+                    <div><i>*</i> <span>付款节点</span></div>
                     <div> <span>备注</span></div>
                 </div>
 
@@ -205,8 +210,15 @@
                             <el-input v-model="diaMoneyVal" placeholder="系统计算" type='number' title=" " :disabled='true'></el-input>
                         </div>
                         <div class="st-oparate-col">
-                            <el-input v-model="diaRemarksVal" placeholder="请输入备注(选填)" maxlength='20'></el-input>
+                            <el-select v-model="fkNodeId" placeholder="请选择付款节点" >
+                                <el-option v-for="item in fkNodeList" :key="item.id" :label="item.name" :value="item.id">
+                                </el-option>
+                            </el-select>
                         </div>
+                        <div class="st-oparate-col">
+                            <el-input v-model="diaRemarksVal" placeholder="请输入内容" maxlength='20'></el-input>
+                        </div>
+
                     </div>
 
                     <div class="fl-btn-wrapper">
@@ -267,14 +279,11 @@ export default {
             diaId:'',
 
             isSituatiostep:false,
-            situationList:[
-                {
-                   mouldName:"项目管理平台需求说明书V1.1(1)",
-                   fileName:"项目管理平台需求说明书V1.1(1)",
-                   operateMen:"谢奎",
-                   operateTime:"2019-09-23"
-                }
-            ]
+            situationList:[],
+
+            fkNodeId:'',
+            fkNodeList:[],
+            newFkId:''
         }
     },
 
@@ -291,12 +300,19 @@ export default {
                 this.handleClearInfo()
                 this.isDialogInfo = true
                 this.isAdd = true
+                this.handleAllNode();
             }else if(type === 'other') {
                 this.otherArr.push({})
             }
             
         },
-
+        handleAllNode(){
+            this.$http.post("/api/system/getAllNode",{}).then(res=>{
+                if(res.code=="00000"){
+                    this.fkNodeList=res.data;
+                }
+            })
+        },
         handleItem(type, ind) {
             if(this.sessionGet.status > this.proNode) {
                 return false
@@ -309,8 +325,10 @@ export default {
                 this.disPercentVal = this.infoArr[ind].percentVal
                 this.diaMoneyVal = this.infoArr[ind].moneyVal
                 this.diaRemarksVal = this.infoArr[ind].remarksVal
-
+                this.newFkId=this.infoArr[ind].name
+                this.fkNodeId=this.infoArr[ind].name;
                 this.isDialogInfo = true
+                this.handleAllNode();
             }else if(type == 'del') {
                 // console.log(this.infoArr[ind])
                 let params = {
@@ -320,6 +338,7 @@ export default {
                 if(this.infoArr[ind].id){
                     this.$http.post("/api/project/deletePayMentRecode", params)
                     .then((res) => {
+                        console.log(res)
                         if(res.code == "00000") {
                             this.$message({
                                 type:"success",
@@ -430,6 +449,7 @@ export default {
             }
             this.$http.post("/api/project/getPayMentRecodeList", params)
             .then((res) => {
+                this.infoArr=[];
                 if(res.code == "00000") {
                     if(res.data) {
                         let arr = []
@@ -440,15 +460,14 @@ export default {
                             obj.remarksVal = res.data[i].remark
                             obj.percentVal = res.data[i].payRatio
                             obj.id = res.data[i].id
+                            obj.name=res.data[i].name,
+                            obj.spareIi=res.data[i].spareIi;
                             obj.pid = res.data[i].pid
                             obj.isEdit = true
                             arr.push(obj)
                         }
                         this.infoArr = arr
-                    }
-                    
-                }else{
-                    
+                    }   
                 }
             })
             .catch((err) => {
@@ -725,7 +744,8 @@ export default {
                         pid:this.sessionGet.id,
                         expectTime:this.diaTime,
                         remark:this.diaRemarksVal,
-                        ratio:this.disPercentVal
+                        ratio:this.disPercentVal,
+                        fkNodeId:this.fkNodeId
                     }
                     if(!this.diaTime) {
                         this.$message({
@@ -739,8 +759,13 @@ export default {
                             message:"请输入计划付款百分比"
                         })
                         return false
+                    }else if(!this.fkNodeId){
+                        this.$message({
+                            type:"info",
+                            message:"请选择付款节点"
+                        })
+                        return false
                     }
-
                     this.$http.post("/api/project/addPayMentRecode", params)
                     .then((res) => {
                         if(res.code == "00000") {
@@ -764,12 +789,36 @@ export default {
                         })
                     })
                 }else{
+                    if(!this.diaTime) {
+                        this.$message({
+                            type:"info",
+                            message:"请选择计划付款时间"
+                        })
+                        return false
+                    }else if(!this.disPercentVal) {
+                        this.$message({
+                            type:"info",
+                            message:"请输入计划付款百分比"
+                        })
+                        return false
+                    }else if(!this.fkNodeId){
+                        this.$message({
+                            type:"info",
+                            message:"请选择付款节点"
+                        })
+                        return false
+                    }
+                    var fkid="";
+                    if(this.newFkId!=this.fkNodeId){
+                       fkid=this.fkNodeId;
+                    }
                     let params = {
                         pid:this.sessionGet.id,
                         id:this.diaId,
                         expectTime:this.diaTime,
                         remark:this.diaRemarksVal,
-                        payRatio:this.disPercentVal
+                        payRatio:this.disPercentVal,
+                        fkNodeId:fkid
                     }
                     this.$http.post("/api/project/updatePayMentRecode", params)
                     .then((res) => {

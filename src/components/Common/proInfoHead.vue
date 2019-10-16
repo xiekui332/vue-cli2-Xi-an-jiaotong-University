@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="et-right">
-                <p class="et-flag">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} <span v-if="exTwoproInfo.projectNodeName"> / </span> {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</p>
+                <p class="et-flag"><span class="et-flag-text">项目进度：</span><span class="et-flag-value">{{exTwoproInfo.projectStateName?exTwoproInfo.projectStateName:'暂无'}} <span v-if="exTwoproInfo.projectNodeName"> / </span> {{exTwoproInfo.projectNodeName?exTwoproInfo.projectNodeName:''}}</span></p>
                 <p class="et-money-num">¥<span>{{exTwoproInfo.zbje?exTwoproInfo.zbje:'0.00'}}</span>万</p>
                 <p class="et-money-txt">中标金额</p>
             </div>
@@ -153,11 +153,13 @@ export default {
             flex: 2;
             text-align: right;
             .et-flag{
-                font-size: 18px;
-                color: #3560F6;
+                font-size: 14px;
                 letter-spacing: 0;
                 line-height: 24px;
                 margin: 40px 0px 60px 0;
+            }
+            .et-flag-value{
+              color: #3560F6;
             }
             .et-money-num{
                 font-size: 20px;

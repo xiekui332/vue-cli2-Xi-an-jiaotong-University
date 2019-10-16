@@ -1124,7 +1124,6 @@
                     <div class="sh-node-tips">
                         <div>
                             <el-upload
-
                                 class="upload-demo"
                                 :action= getuploadUrl1
                                 :before-upload="handleBefore"
@@ -1134,10 +1133,9 @@
                                  multiple
                                 :limit="3"
                                 :file-list="fileList"
-                                accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'
-                                >
+                                accept='.jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF,.doc,.docx'>
                                 <el-button size="small" type="primary">
-                                    <i class="pub-css st-upload-icon"></i>
+                                    <i class="pub-css st-upload-icon"> <span class="zdy-upload-text">如需上传资料请点击</span> </i>
                                 </el-button> 
                             </el-upload>
                         </div>
@@ -1146,14 +1144,14 @@
                         <div>
                             <div class="ro-file-b" v-for="(item,index) in oldAppdendixList" :key="index">
                                 <i class="pub-css st-icon-file"></i>
-                                <span @click="handleDownLoad(item.attachUrl)">{{item.attachName}}</span>
+                                <span @click="handleDOwnLoad(item.attachUrl)">{{item.attachName}}</span>
                                 <i  class="pub-css st-icon-del" @click="handleDelet(item)"></i>
                             </div>
                             
                         </div>
                         
                     </div>
-                        <span>如需上传资料请点击</span> 
+                       
                     </div>
     
                     <el-row class="sh-node-btn">
@@ -2056,7 +2054,7 @@ export default {
             var rowmsg=this.exRowInfo;
             var params={pid:rowmsg.id,nodeId:rowmsg.projectNode,pl:rowmsg.pl};
             this.$http.post("/api/project/getSpAppendix",params).then(res =>{
-                console.log(res)
+              //  console.log(res)
               if(res.code=="00000"){
                   var msglsit=res.data;
                   this.oldAppdendixList=[];
@@ -2131,8 +2129,6 @@ export default {
         },
 
         handleCell(row, column, cell, event) {
-            // console.log(column)
-            // console.log(row)
             if(column.property == "attachName") {
                 window.open(row.attachUrl)
             }
@@ -2597,7 +2593,7 @@ export default {
             background: #FFFFFF;
             box-shadow: 0 2px 4px 0 #EFF2F7;
             border-radius: 4px;
-            padding: 0 20px 20px;
+            padding: 0 10px 20px;
             .sh-node-operate{
                 padding: 30px 0px 10px;
             }
@@ -2615,6 +2611,7 @@ export default {
                 margin-top: 10px;  
                 >div{
                     margin-bottom: 10px;  
+                    overflow: hidden;
                     & /deep/ .el-upload{
                         margin-left: -10px;
                     }
@@ -2628,7 +2625,10 @@ export default {
                     border: none;
                     padding: 6px 10px;
                 }
-                
+                & /deep/ .el-upload-list{
+                    height: 0;
+                    overflow: hidden;
+                }
                 .st-upload-icon{
                     display: inline-block;
                     width: 20px;
@@ -2681,7 +2681,6 @@ export default {
             }
         }
     }
-
     & /deep/ .el-collapse-item__content{
         padding-bottom: 0;
     }
@@ -2692,6 +2691,9 @@ export default {
 
     & /deep/ .el-table .el-table__body-wrapper .cell{
         text-indent: 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     @import url('../../components/Common/less/commNode.less');
@@ -2715,8 +2717,49 @@ export default {
             margin-top: 0!important;
         }
     }
-}
-            
+} 
+.zdy-upload-text{
+    font-size: 14px;
+    color: #3b7cff;
+    padding-left: 28px;
+}   
+.ro-file-b{
+    line-height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-decoration: underline;
+    color: #3B7CFF;
+    cursor: pointer;
+    .st-icon-file{
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-position: -375px -314px;
+        margin-right: 10px;
+    }
+    .st-icon-del{
+        margin: 0 10px 0 0;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-position: -377px -168px;
+        margin:0 10px;
+        cursor: pointer;
+        opacity: .2;
+        transition: all .3s ease;
+    }
+    .st-icon-del:hover{
+        opacity: 1;
+    }
+    >span{
+        display: inline-block;
+        min-width: 270px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}    
 .el-dropdown-menu{
     padding: 0;
 }

@@ -12,7 +12,8 @@ export const store = new Vuex.Store({
         isHistory:false,
         status:'',
         hasErrorTips:false,
-        isprint:false
+        isprint:false,
+        ispayment:false
     },
     mutations:{
         changePath(state, path) {
@@ -48,6 +49,10 @@ export const store = new Vuex.Store({
         
         changeIsprint(state, data) {
             state.isprint = data
+        },
+        
+        changeIspayment(state, data) {
+            state.ispayment = data
         }
 
     },
@@ -60,6 +65,7 @@ export const store = new Vuex.Store({
         commitChangeIsHistory:({commit}, data) => commit('changeIsHistory', data),
         commitChangeExcutStatus:({commit}, data) => commit('changeExcutStatus', data),
         commitChangeErrorTips:({commit}, data) => commit('changeErrorTips', data),
-        commitChangeIsprint:({commit}, data) => commit('changeIsprint', data)
+        commitChangeIsprint:({commit}, data) => commit('changeIsprint', data),
+        commitChangeIspayment:({commit}, data) => commit('changeIspayment', data)
     }
 })

@@ -108,18 +108,24 @@ export default {
                     width:'150'
                 },
                 {
+                    prop:'sourcesFundName',
+                    label:'经费来源',
+                    width:''
+                },
+                {
                     prop:'premoney',
                     label:'预算金额',
-                    width:'60'
+                    width:'80'
                 },
                 {
                     prop:'money',
-                    label:'中标金额',
-                    width:'60'
+                    label:'合同金额',
+                    width:'80'
                 },
+                // 需要修改
                 {
-                    prop:'stateNodeNames',
-                    label:'项目状态',
+                    prop:'',
+                    label:'已执行金额',
                     width:'100'
                 },
                 {
@@ -136,6 +142,16 @@ export default {
                     prop:'time',
                     label:'立项时间',
                     width:''
+                },
+                {
+                    prop:'stateNodeNames',
+                    label:'项目状态',
+                    width:'100'
+                },
+                {
+                    prop:'',
+                    label:'当前状态时间',
+                    width:'110'
                 }
             ],
             type:'situatio',
@@ -247,6 +263,7 @@ export default {
                         obj.kind=datalsit[i].projectTypeName;
                         obj.time=datalsit[i].cTime;
                         obj.id=datalsit[i].id;
+                        obj.sourcesFundName = datalsit[i].sourcesFundName;
                         proList.push(obj)
                     }
                     this.tableData = proList                   
