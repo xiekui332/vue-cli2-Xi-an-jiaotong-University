@@ -171,6 +171,31 @@
                             </el-input>
                         </div>
 
+                        <div class="st-icon-file-name fl-new-upload" @click="handleUploadChange(1)">
+                            <p>调研情况附件</p>
+                            <el-upload
+                                class="upload-demo"
+                                :action= getuploadUr
+                                :before-upload="handleBefore"
+                                :http-request="customRequest"
+                                :file-list="surveyList"
+                                :limit="1"
+                                accept='.pdf, .PDF'
+                                :disabled="has_surveyList"
+                                >
+                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
+                            </el-upload>
+                            
+                            <p class="file-name" v-show="fileDyName">
+                                <span @click="handleDownHisFile(fileDyUrl)">{{fileDyName}}</span> 
+                                <i :class="hasLook?'pub-css pub-dis':'pub-css'" @click="handleFileDel(fileDyUrl, 1)"></i> 
+                            </p>
+                        </div>
+
+                        
+
+
+
                         <div class="fl-basis-block">
                             <div class="fl-basis-title">技术指标：</div>
                             <el-input
@@ -183,6 +208,28 @@
                                 v-model="txt2">
                             </el-input>
                         </div>
+
+                        <div class="st-icon-file-name fl-new-upload" @click="handleUploadChange(2)">
+                            <p>技术指标附件</p>
+                            <el-upload
+                                class="upload-demo"
+                                :action= getuploadUr
+                                :before-upload="handleBefore"
+                                :http-request="customRequest"
+                                :file-list="annexList"
+                                :limit="1"
+                                accept='.pdf, .PDF'
+                                :disabled="has_annexList"
+                                >
+                                <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
+                            </el-upload>
+                            
+                            <p class="file-name" v-show="fileJsName">
+                                <span @click="handleDownHisFile(fileJsUrl)">{{fileJsName}}</span> 
+                                <i :class="hasLook?'pub-css pub-dis':'pub-css'" @click="handleFileDel(fileJsUrl, 2)"></i> 
+                            </p>
+                        </div>
+
                     </div>
 
                     <el-divider></el-divider>
@@ -241,7 +288,7 @@
                                 <td colspan="2" width="25%" align="center">单位</td>
                                 <td colspan="2" width="25%" align="center">计划金额（万元）</td>
                             </tr>
-                            <tr v-for="(i, ind) in listArr" :key="ind">
+                            <tr v-for="(i, ind) in listArr" :key="'listArr-' + ind">
                                 <td colspan="2" width="25%" align="center">{{i.name}}</td>
                                 <td colspan="2" width="25%" align="center">{{i.cgNumber}}</td>
                                 <td colspan="2" width="25%" align="center">{{i.company}}</td>
@@ -273,7 +320,7 @@
                                 <td width="20%" align="center">手机号码</td>
                                 <td width="20%" align="center">E-mail</td>
                             </tr>
-                            <tr v-for="(i, ind) in listArr2" :key="ind">
+                            <tr v-for="(i, ind) in listArr2" :key="'listArr2-' + ind">
                                 <td width="20%" align="center">{{i.name}}</td>
                                 <td width="20%" align="center">{{i.address}}</td>
                                 <td width="20%" align="center">{{i.legalPerson}}</td>
@@ -397,14 +444,28 @@ export default {
             exchangeFill:false,
             exchangeLoad:this.hasLoad,
             fill:true,
-            dialogWid:"60%",
+            dialogWid:"65%",
             hasClose:true,
             marTop:'15vh',
             hasNewClass:false,
             hasSuccessStatus:true,
             sessionGet:{},
             id:"",
-            hasLook:false
+            hasLook:false,
+
+            // 新增上传字段
+            getuploadUr:"",
+            surveyList:[],
+            annexList:[],
+
+            file:null,
+            file_type:"",
+            fileDyName:"",
+            fileDyUrl:"",
+            fileJsUrl:"",
+            fileJsName:"",
+            has_surveyList:false,
+            has_annexList:false
         }
     },
     methods:{
@@ -665,6 +726,28 @@ export default {
                     this.txt1 = res.data.cgMsg.investigation
                     this.txt2 = res.data.cgMsg.technicalIndicators
                     this.id = res.data.cgMsg.id
+
+                    // 上传附件信息
+                    this.fileDyName = res.data.cgMsg.fileDyName
+                    this.fileDyUrl = res.data.cgMsg.fileDyUrl
+                    this.fileJsName = res.data.cgMsg.fileJsName
+                    this.fileJsUrl = res.data.cgMsg.fileJsUrl
+
+                    if(this.fileDyName) {
+                        this.has_surveyList = true
+                    }else{
+                        this.surveyList = []
+                        this.has_surveyList = false
+                    }
+
+                    if(this.fileJsName) {
+                        this.has_annexList = true
+                    }else{
+                        this.annexList = []
+                        this.has_annexList = false
+                    }
+                    
+
                 }else{
                     // this.$message({
                     //     type:'error',
@@ -685,12 +768,90 @@ export default {
                 this.$print(this.$refs.print)
             }
             
+        },
+
+
+        // 新增上传
+        handleBefore(file) {
+            this.file = file
+
+        },
+
+        customRequest() {
+            const formData = new FormData();
+            formData.append('pid',this.exProInfo.id);
+            formData.append('files',this.file);
+            formData.append('type',this.file_type);
+
+            this.$http.post("/api/project/uploadCGSQAppendix", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:"上传成功"
+                    })
+                    this.init()
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
+        },
+
+        handleDownHisFile(url) {
+            window.open(url)
+        },
+
+        handleUploadChange(type) {
+            this.file_type = type
+        },
+
+        handleFileDel(url, type) {
+            if(this.hasLook) {
+                return
+            }
+            let params = {
+                fileUrl:url,
+                pid:this.exProInfo.id,
+                type:type
+            }
+
+            this.$http.post("/api/project/deleteCGSQAppendix", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:"success",
+                        message:res.message
+                    })
+                    
+                    this.init()
+                }else{
+                    this.$message({
+                        type:"error",
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+
+            })
         }
+
     },
     mounted() {
         this.sessionGet = store.state.proInfo
         
         this.hasLook=this.sessionGet.spareIi?true:false;
+        this.has_surveyList = this.sessionGet.spareIi?true:false
+        this.has_annexList = this.sessionGet.spareIi?true:false
         // console.log(this.hasLook)
         this.init()
         this.baseName = this.sessionGet.no + this.sessionGet.name
@@ -833,6 +994,87 @@ export default {
         }
 
         
+    }
+
+
+    // 新增上传样式
+    .st-icon-file-name{
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        .upload-demo{
+            width: 40px;
+        }
+        & /deep/ .el-upload-list{
+            width: 80%;
+        }
+        & /deep/ .el-upload{
+            float: right;
+        }
+        .el-button--primary{
+            background: rgba(59, 124, 255, 0);
+            border: none;
+            padding: 6px 10px;
+        }
+        .st-upload-icon{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-position: -10px -365px;
+            margin-top: 10px;
+        }
+    }
+
+    .file-wrapper{
+        margin: 5px 0 20px 0;
+    }
+    .file-name{
+        width: 50%;
+        line-height: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding-left: 10px;
+        i{
+            margin: 0 10px 0 0;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-position: -377px -168px;
+            margin:0 10px;
+            cursor: pointer;
+            opacity: .2;
+            transition: all .3s ease;
+        }
+        i:hover{
+            opacity: 1;
+        }
+        .pub-dis:hover{
+            cursor:  no-drop;
+            opacity: .2;
+        }
+        span:hover{
+            color: #3B7CFF;
+        }
+        span{
+            display: inline-block;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+    .upload-demo{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        & /deep/ .el-upload-list{
+            opacity: 0;
+            width: 0;
+            height: 0;
+            display: none;
+        }
     }
     
 </style>

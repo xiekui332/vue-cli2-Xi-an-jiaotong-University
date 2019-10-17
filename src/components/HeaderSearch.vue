@@ -111,6 +111,10 @@
             <el-row class="de-btn de-reset-btn">
                 <el-button type="primary" round @click="handleSearch('clear')">清空</el-button>
             </el-row>
+
+            <el-row class="de-btn de-reset-btn" v-if="isExcel==true">
+                <el-button type="primary" round @click="handleExcel()">导出Excel</el-button>
+            </el-row>
         </div>
     </div>
 </template>
@@ -154,7 +158,8 @@ export default {
             tex:'',
             selD:'',
             optD:this.optionsDate,
-            explaceholder:''
+            explaceholder:'',
+            isExcel:false
         }
     },
     methods:{
@@ -165,7 +170,15 @@ export default {
                 this.$emit('handleSearchRes', this.dataCollation('clear'))
             }
         },
-
+        handleExcel(){
+            var obj={};
+            obj.year = this.sel1;
+            obj.projectState = this.sel4;
+            obj.projectType = this.sel2;
+            obj.fundsSources = this.sel3;
+            obj.searchText = this.tex;
+            this.$emit('handleExcel',obj);
+        },
         dataCollation(type) {
             let obj = {}       
             if(type === 'clear') {
@@ -290,9 +303,10 @@ export default {
                 this.explaceholder = this.placeholder
             }else if(type === 'upload') {
                 this.explaceholder = '模板名称'
-            }
-              
-            else{
+            }else if(type === 'situatio'){
+                this.isExcel=true;
+                this.explaceholder = '搜索：负责人、项目编号、项目名称'
+            }else{
                 this.explaceholder = '搜索：负责人、项目编号、项目名称'
             }
         },
@@ -397,7 +411,7 @@ export default {
     font-size: 12px;
 }
 .de-btn button{
-    width: 88px;
+    // width: 88px;
     height: 36px;
     margin-right: 20px;
 }

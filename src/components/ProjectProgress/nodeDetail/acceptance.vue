@@ -815,12 +815,15 @@ export default {
 
         .st-icon-file-title{
             .st-file-span{
-                display: flex;
-                justify-content:flex-start;
+                // display: flex;
+                // justify-content:flex-start;
                 cursor: pointer;
                 color: #3B7CFF!important;
-                // text-indent:1em;
                 margin-left: -3em;
+                width: 230px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
             }
         }
 

@@ -9,13 +9,13 @@
 
             <div class="st-edit-content">
                 <div class="st-edit-item st-ed-head">
-                    <div><span>下载模板</span>&nbsp;&nbsp;&nbsp;&nbsp; <span>资料名称</span></div>
+                    <div><span>资料名称</span></div>
                     <div> <span>上传资料</span></div>
                 </div>
                 <div class="st-edit-item" v-for="(i, ind) in otherArr" :key="ind" @click="handleUploadChange('0', ind)">
                     <div class="st-icon-file-title">
-                        <i class="pub-css st-icon-file"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <span class="st-file-title"> 付款资料</span>
+                        <!-- <i class="pub-css st-icon-file"></i> -->
+                        <span class="st-file-title"> &nbsp;&nbsp;&nbsp;&nbsp;付款资料</span>
                     </div>
                     <div class="st-icon-file-name">
                         <el-upload
@@ -27,6 +27,7 @@
                             :file-list="fileList"
                             accept='.xls,.xlsx'
                             :disabled="noDrop"
+                            :on-exceed="exceed"
                             >
                             <el-button size="small" type="primary"><i class="pub-css st-upload-icon"></i></el-button>
                         </el-upload>
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-
+import { store } from "@/store"
 export default {
     components: {},
     data () {
@@ -55,14 +56,23 @@ export default {
             otherArr:[],
             fileList:[],
             getuploadUrl1:"",
-            loading:false
+            loading:false,
+            file:null
         };
     },
 
-    computed: {},
+    computed: {
+        project_info() {
+            return store.state.proInfo
+        },
+
+        project_exactPath() {
+            return store.state.exactPath
+        }
+    },
 
     mounted() {
-
+        this.get_otherArr();
     },
 
     methods: {
@@ -85,30 +95,104 @@ export default {
             
         },
 
-        handleBefore() {
-
+        handleBefore(file) {
+            this.file = file
         },
 
         customRequest() {
+            const formData = new FormData();
+            formData.append('pid',this.project_info.id);
+            formData.append('files',this.file);
+            formData.append('type',"4");
 
+            this.$http.post("/api/project/uploadFkAppendix", formData)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.$message({
+                        type:'success',
+                        message:"上传成功"
+                    })
+                    this.get_otherArr()
+                }else{
+                    this.$message({
+                        type:'error',
+                        message:res.message
+                    })
+                }
+            })
+            .catch((err) => {
+                this.$message({
+                    type:'error',
+                    message:err.message
+                })
+            })
         },
 
         handleDownHisFile(i) {
-
+            window.open(i.attachUrl)
         },
 
         handleFileDel(id, ind) {
             if(!id) {
                 this.otherArr.splice(ind, 1)
             }else{
+                let params = {
+                    appendixId:id
+                }
 
+                this.$http.post("/api/project/deletedNodeAppendixLxsq", params)
+                .then((res) => {
+                    if(res.code == "00000") {
+                        this.$message({
+                            type:"success",
+                            message:"删除成功"
+                        }) 
+
+                        this.get_otherArr()
+
+                    }else{
+                    this.$message({
+                            type:"error",
+                            message:res.message
+                        }) 
+                    }
+                })
+                .catch((err) => {
+                    this.$message({
+                        type:"error",
+                        message:err.message
+                    })
+                })
             }
         },
 
         handleFinishNode() {
             this.$router.push({
-                path:"/proj/all?pid=b83ce29ef56849b8b43a51293e2faf00&id=5778c6ea4c79411b8ec92f6f57d8db8f"
+                path:"/proj/all" + this.project_exactPath
             })
+        },
+
+        get_otherArr() {
+            let data = this.project_info
+            let params = {
+                pid:data.id
+            }
+
+            this.$http.post("/api/project/getFkAppendix", params)
+            .then((res) => {
+                if(res.code == "00000") {
+                    this.otherArr = res.data
+                }else{
+
+                }
+            })
+            .catch((err) => {
+
+            })
+        },
+
+        exceed() {
+            
         }
     }
 }

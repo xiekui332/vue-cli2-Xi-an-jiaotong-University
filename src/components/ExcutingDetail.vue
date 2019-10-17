@@ -51,8 +51,8 @@
                             </ul>
                         </li>
 
-                        <li class="et-steps-payment">
-                            <router-link to="/proj/all/step13?pid=b83ce29ef56849b8b43a51293e2faf00&id=5778c6ea4c79411b8ec92f6f57d8db8f" class="et-upload-payment">
+                        <li v-if="isallstep" class="et-steps-payment">
+                            <router-link :to="'/proj/all/step13' + this.exparamsUrl" class="et-upload-payment">
                                 <span>付款资料上传</span>
                             </router-link>
                         </li>
@@ -196,7 +196,8 @@ export default {
             exproInfo:{},
             exparamsUrl:'',
             sessionGet:{},
-            // hasErrorTips:false
+            // hasErrorTips:false,
+            isallstep:false
         }
     },
     methods:{
@@ -275,16 +276,7 @@ export default {
                         this.handleSetroute("项目维保")
                     }
 
-                    // 付款资料上传
-
-                    if(this.payment) {
-                        
-                        this.$router.push({
-                            path:"/proj/all/step13?pid=b83ce29ef56849b8b43a51293e2faf00&id=5778c6ea4c79411b8ec92f6f57d8db8f"
-                        })
-                        store.dispatch("commitChangeIspayment", false)
-                        return
-                    }
+                    
                     
                 }else{
                     
@@ -324,9 +316,20 @@ export default {
                         for(let j = 0; j < this.steps[i].children.length; j ++) {
                             this.steps[i].children[j].path = this.steps[i].children[j].path + this.exparamsUrl
                             if(this.steps[i].children[j].status === true){
-                                this.$router.push({
-                                    path:this.steps[i].children[j].path
-                                })
+                                if(this.isallstep && this.payment) {
+
+                                    this.$router.push({
+                                        path:"/proj/all/step13" + this.exparamsUrl
+                                    }, () => {
+                                        
+                                    })
+                                    
+                                }else{
+                                    this.$router.push({
+                                        path:this.steps[i].children[j].path
+                                    })
+                                }
+                                
                             }else{
                                 
                                 // this.$router.push({
@@ -397,6 +400,13 @@ export default {
         this.handleToRoute()
         // console.log(this.steps)
         this.getBhMsg();
+
+        // resource == allstep
+        if(this.$route.name.indexOf("all") < 0) {
+            this.isallstep = false
+        }else{
+            this.isallstep = true
+        }
     },
 
     destroyed(){

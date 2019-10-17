@@ -151,6 +151,7 @@ export default {
         },
 
         handleLook(id) {
+            store.dispatch("commitChangeIspayment", false)
             this.getProjectMsgById(id)
         },
 

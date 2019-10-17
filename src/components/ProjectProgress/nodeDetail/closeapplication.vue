@@ -433,6 +433,7 @@ export default {
             })
         },
         getProjectMsgById(id){
+            
             let params = {
                 id:id
             }
@@ -443,9 +444,9 @@ export default {
                     if( res.data.tZbj){
                         this.val2=res.data.tZbj;
                     }
-                    if( res.data.tZbjRatio){
-                        this.val1=res.data.tZbjRatio;
-                    }
+                    
+                    this.val1=res.data.tZbjRatio?res.data.tZbjRatio:100
+
                     if( res.data.tZbjRemark){
                         this.val3=res.data.tZbjRemark;
                     }
@@ -580,11 +581,15 @@ export default {
                         flex:1;
                     }
                     .st-file-span{
-                        display: flex;
-                        justify-content:flex-start;
+                        display: block;
+                        // justify-content:flex-start;
                         cursor: pointer;
                         color: #3B7CFF;
-                        text-indent:1em;
+                        padding-left: 10px;
+                        width: 220px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
                     }
                     .st-file-title-indent{
                         text-indent: 1em;
@@ -704,11 +709,10 @@ export default {
 
         .st-icon-file-title{
             .st-file-span{
-                display: flex;
-                justify-content:flex-start;
                 cursor: pointer;
                 color: #3B7CFF!important;
                 margin-left: -4em;
+                
             }
         }
     }

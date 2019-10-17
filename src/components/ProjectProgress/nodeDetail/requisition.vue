@@ -709,7 +709,7 @@ export default {
                 cursor: pointer;
             }
             span:nth-child(2){
-                margin:0 20px;
+                margin:0 10px;
             }
         }
     }
@@ -754,11 +754,15 @@ export default {
                         flex:1;
                     }
                     .st-file-span{
-                        display: flex;
-                        justify-content:flex-start;
+                        // display: flex;
+                        // justify-content:flex-start;
                         cursor: pointer;
                         color: #3B7CFF;
-                        text-indent:1em;
+                        padding-left: 10px;
+                        width: 230px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
                     }
                 }
                 .st-icon-file-name{

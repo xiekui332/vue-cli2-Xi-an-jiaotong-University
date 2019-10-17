@@ -42,6 +42,7 @@
         <div class="si-list-wrapper">
             <HeaderSearch 
                 @handleSearchRes='handleSearchRes' 
+                @handleExcel='handleExcel'
                 :type='type'
                 :options1='options1'
                 :options2='options2'
@@ -124,7 +125,7 @@ export default {
                 },
                 // 需要修改
                 {
-                    prop:'',
+                    prop:'yzxJe',
                     label:'已执行金额',
                     width:'100'
                 },
@@ -149,7 +150,7 @@ export default {
                     width:'100'
                 },
                 {
-                    prop:'',
+                    prop:'nodeTime',
                     label:'当前状态时间',
                     width:'110'
                 }
@@ -190,7 +191,9 @@ export default {
                 }
             });
         },
-
+        handleExcel(params){
+          console.log(params)
+        },
         handlePageUp(params) {
             this.page = params
             this.init()
@@ -256,14 +259,15 @@ export default {
                         }
                         if(datalsit[i].pStatus!=2&&datalsit[i].status!=16){
                            obj.stateNodeNames = datalsit[i].stateNodeNames 
-                        }
-                        
+                        }        
                         obj.resource=datalsit[i].sourcesFundName;
                         obj.men=datalsit[i].leaderNames;
                         obj.kind=datalsit[i].projectTypeName;
                         obj.time=datalsit[i].cTime;
                         obj.id=datalsit[i].id;
                         obj.sourcesFundName = datalsit[i].sourcesFundName;
+                        obj.nodeTime=datalsit[i].nodeTime;
+                        obj.yzxJe=(datalsit[i].yzxJe).toFixed(2);
                         proList.push(obj)
                     }
                     this.tableData = proList                   
