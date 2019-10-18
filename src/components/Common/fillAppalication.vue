@@ -774,7 +774,6 @@ export default {
         // 新增上传
         handleBefore(file) {
             this.file = file
-
         },
 
         customRequest() {
@@ -790,12 +789,26 @@ export default {
                         type:'success',
                         message:"上传成功"
                     })
-                    this.init()
+                    if(this.file_type == 1) {
+                        this.has_surveyList = true
+                        this.fileDyName = res.data.fileName
+                        this.fileDyUrl = res.data.fileUrl
+                    }else if(this.file_type == 2) {
+                        this.has_annexList = true
+                        this.fileJsName = res.data.fileName
+                        this.fileJsUrl = res.data.fileUrl
+                    }
+                    
                 }else{
                     this.$message({
                         type:'error',
                         message:res.message
                     })
+                    if(this.file_type == 1) {
+                        this.has_surveyList = false
+                    }else if(this.file_type == 2) {
+                        this.has_annexList = false
+                    }
                 }
             })
             .catch((err) => {
@@ -803,6 +816,11 @@ export default {
                     type:'error',
                     message:err.message
                 })
+                if(this.file_type == 1) {
+                    this.has_surveyList = false
+                }else if(this.file_type == 2) {
+                    this.has_annexList = false
+                }
             })
         },
 
@@ -832,16 +850,35 @@ export default {
                         message:res.message
                     })
                     
-                    this.init()
+                    if(type == 1) {
+                        this.has_surveyList = false
+                        this.fileDyName = ""
+                        this.fileDyUrl = ""
+                        this.surveyList = []
+                    }else if(type == 2) {
+                        this.has_annexList = false
+                        this.fileJsName = ""
+                        this.fileJsUrl = ""
+                        this.annexList = []
+                    }
                 }else{
                     this.$message({
                         type:"error",
                         message:res.message
                     })
+                    if(type == 1) {
+                        this.has_surveyList = true
+                    }else if(type == 2) {
+                        this.has_annexList = true
+                    }
                 }
             })
             .catch((err) => {
-
+                if(type == 1) {
+                    this.has_surveyList = true
+                }else if(type == 2) {
+                    this.has_annexList = true
+                }
             })
         }
 
